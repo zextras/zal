@@ -1,0 +1,31 @@
+pkgname="carbonio-zal"
+epoch="1"
+pkgver="4.14.0"
+pkgrel="1"
+pkgdesc="Abstraction Layer for Carbonio"
+maintainer="Zextras <packages@zextras.com>"
+arch=('x86_64')
+license=("GPL-2.0-only")
+section="admin"
+priority="optional"
+url="https://www.zextras.com/"
+source=(
+  "zal.jar"
+)
+sha256sums=(
+  "SKIP"
+)
+
+package() {
+  install -Dm 744 "${srcdir}/zal.jar" \
+    "${pkgdir}/opt/zextras/zal/zal.jar"
+  mkdir -p "${pkgdir}/opt/zextras/lib/ext/carbonio"
+  ln -s "/opt/zextras/zal/zal.jar" \
+    "${pkgdir}/opt/zextras/lib/ext/carbonio/zal.jar"
+}
+
+postinst() {
+  echo "======================================================"
+  echo "Carbonio ZAL installed successfully!"
+  echo "======================================================"
+}

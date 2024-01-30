@@ -1,0 +1,11 @@
+{
+  "name": "carbonio-zal",
+  "description": "Carbonio ZAL",
+  "buildDir": "/tmp/",
+  "output": "artifacts",
+  "projects": [
+    {
+      "name": "packages/"
+    }
+  ]
+}
