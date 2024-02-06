@@ -222,7 +222,7 @@ public interface Provisioning
     throws ZimbraException;
 
   @Nullable
-  Account createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
+  CalendarResource createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
     throws ZimbraException;
 
   @Nullable
