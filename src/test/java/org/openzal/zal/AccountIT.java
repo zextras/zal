@@ -1,6 +1,6 @@
 package org.openzal.zal;
 
-import com.zimbra.cs.mailbox.ZalZimbraSimulator;
+import org.openzal.zal.mailbox.ZalZimbraSimulator;
 import com.zimbra.soap.account.message.GetSMIMEPublicCertsRequest;
 import com.zimbra.soap.account.message.GetSMIMEPublicCertsResponse;
 import com.zimbra.soap.account.type.SMIMEPublicCertInfo;

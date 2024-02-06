@@ -1,4 +1,4 @@
-package com.zimbra.cs.account.ldap;
+package org.openzal.zal.account.ldap;
 
 
 import com.zimbra.cs.account.ldap.entry.LdapDomain;

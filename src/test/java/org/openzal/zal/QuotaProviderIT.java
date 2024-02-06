@@ -1,6 +1,6 @@
 package org.openzal.zal;
 
-import com.zimbra.cs.mailbox.ZalZimbraSimulator;
+import org.openzal.zal.mailbox.ZalZimbraSimulator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,5 +1,5 @@
 package org.openzal.zal.extension;
-import com.zimbra.cs.mailbox.ZalZimbraSimulator;
+import org.openzal.zal.mailbox.ZalZimbraSimulator;
 
 import org.junit.Rule;
 import org.junit.Test;

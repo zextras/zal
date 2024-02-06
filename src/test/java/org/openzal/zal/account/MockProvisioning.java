@@ -1,21 +1,44 @@
-package com.zimbra.cs.account;
+package org.openzal.zal.account;
 
 import com.zimbra.common.account.Key;
 import com.zimbra.common.account.ProvisioningConstants;
 import com.zimbra.common.service.ServiceException;
-import com.zimbra.cs.ZEUtils;
-import com.zimbra.cs.ZxPair;
+import com.zimbra.cs.account.Account;
+import com.zimbra.cs.account.AccountServiceException;
+import com.zimbra.cs.account.AliasedEntry;
+import com.zimbra.cs.account.CalendarResource;
+import com.zimbra.cs.account.Config;
+import com.zimbra.cs.account.Cos;
+import com.zimbra.cs.account.DataSource;
+import com.zimbra.cs.account.DistributionList;
+import com.zimbra.cs.account.Domain;
+import com.zimbra.cs.account.Entry;
+import com.zimbra.cs.account.GalContact;
+import com.zimbra.cs.account.GlobalGrant;
+import com.zimbra.cs.account.Group;
+import com.zimbra.cs.account.Identity;
+import com.zimbra.cs.account.NamedEntry.Visitor;
+import com.zimbra.cs.account.Provisioning;
+import com.zimbra.cs.account.SearchAccountsOptions;
+import com.zimbra.cs.account.SearchDirectoryOptions;
+import com.zimbra.cs.account.Server;
+import com.zimbra.cs.account.ShareLocator;
+import com.zimbra.cs.account.Signature;
+import com.zimbra.cs.account.XMPPComponent;
+import com.zimbra.cs.account.Zimlet;
+import org.openzal.zal.ZEUtils;
+import org.openzal.zal.ZxPair;
 import com.zimbra.cs.account.accesscontrol.RightCommand;
 import com.zimbra.cs.account.accesscontrol.RightModifier;
 import com.zimbra.cs.account.auth.AuthContext;
-import com.zimbra.cs.account.ldap.LdapDomainProxy;
+import org.openzal.zal.account.ldap.LdapDomainProxy;
 import com.zimbra.cs.gal.GalSearchParams;
 import com.zimbra.cs.gal.GalSearchResultCallback;
 import com.zimbra.cs.ldap.ZAttributes;
 import com.zimbra.cs.ldap.ZLdapFilter;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
 import com.zimbra.cs.mime.MimeTypeInfo;
-import com.zimbra.cs.mime.MockMimeTypeInfo;
+import org.openzal.zal.mime.MockMimeTypeInfo;
 import com.zimbra.cs.mime.handler.TextEnrichedHandler;
 import com.zimbra.cs.mime.handler.TextHtmlHandler;
 import com.zimbra.cs.mime.handler.TextPlainHandler;
@@ -109,7 +132,7 @@ public class MockProvisioning extends Provisioning
   private final Map<String, Signature>          id2signatue  = new HashMap<String, Signature>();
   private final Map<String, Identity>           name2identity= new HashMap<String, Identity>();
 
-  private final Config                    config        = new Config(new HashMap<String, Object>()
+  private final Config config        = new Config(new HashMap<String, Object>()
   {{
       put("confKey", "configurationValue");
       put( "zimbraEphemeralBackendURL", "in-memory");
@@ -117,7 +140,7 @@ public class MockProvisioning extends Provisioning
 
   private final Map<String, ShareLocator> shareLocators = new HashMap<String, ShareLocator>();
 
-  private       Server       mLocalhost;
+  private Server mLocalhost;
   private final List<Server> mServers;
   private final Cos          mDefaultCos;
 
@@ -687,7 +710,7 @@ public class MockProvisioning extends Provisioning
     return new ArrayList<Domain>(id2domain.values());
   }
 
-  public void getAllDomains(NamedEntry.Visitor visitor, String[] retAttrs) throws ServiceException
+  public void getAllDomains(Visitor visitor, String[] retAttrs) throws ServiceException
   {
     for( Domain domain : getAllDomains() )
     {
@@ -957,11 +980,11 @@ public class MockProvisioning extends Provisioning
     return new ArrayList<Account>(name2account.values());
   }
 
-  public void getAllAccounts(Domain d, NamedEntry.Visitor visitor) {
+  public void getAllAccounts(Domain d, Visitor visitor) {
     throw new UnsupportedOperationException();
   }
 
-  public void getAllAccounts(Domain d, Server s, NamedEntry.Visitor visitor) {
+  public void getAllAccounts(Domain d, Server s, Visitor visitor) {
     throw new UnsupportedOperationException();
   }
 
@@ -969,11 +992,11 @@ public class MockProvisioning extends Provisioning
     throw new UnsupportedOperationException();
   }
 
-  public void getAllCalendarResources(Domain d, NamedEntry.Visitor visitor) {
+  public void getAllCalendarResources(Domain d, Visitor visitor) {
     throw new UnsupportedOperationException();
   }
 
-  public void getAllCalendarResources(Domain d, Server s, NamedEntry.Visitor visitor) {
+  public void getAllCalendarResources(Domain d, Server s, Visitor visitor) {
     throw new UnsupportedOperationException();
   }
 
@@ -1301,7 +1324,7 @@ public class MockProvisioning extends Provisioning
   public void deleteShareLocator(String id) throws ServiceException {
     shareLocators.remove(id);
   }
-  public void searchAccountsOnServer(Server server, SearchAccountsOptions options, NamedEntry.Visitor visitor) throws ServiceException
+  public void searchAccountsOnServer(Server server, SearchAccountsOptions options, Visitor visitor) throws ServiceException
   {
     for( Account account : getAllAccounts(null))
     {
@@ -1314,7 +1337,7 @@ public class MockProvisioning extends Provisioning
     }
   }
 
-  public void searchDirectory(SearchDirectoryOptions options, NamedEntry.Visitor visitor) throws ServiceException
+  public void searchDirectory(SearchDirectoryOptions options, Visitor visitor) throws ServiceException
   {
     String accountId = options.getFilter().toString();
 
