@@ -34,6 +34,10 @@ public class ICalendarTimezone
 {
   private ICalTimeZone mICalTimeZone;
 
+  public static ICalendarTimezone utc() {
+    return new ICalendarTimezone(ICalTimeZone.getUTC());
+  }
+
   public ICalendarTimezone(@Nonnull Object timeZone)
   {
     if (timeZone == null)
