@@ -4,7 +4,7 @@ import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.util.ZimbraLog;
 import org.openzal.zal.account.MockProvisioning;
 import com.zimbra.cs.db.DbPool;
-import com.zimbra.cs.db.HSQLZimbraDatabase;
+import org.openzal.zal.db.HSQLZimbraDatabase;
 import com.zimbra.cs.ephemeral.EphemeralStore;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
 import com.zimbra.cs.mailbox.MailboxIndex;

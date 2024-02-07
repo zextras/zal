@@ -1,10 +1,13 @@
-package com.zimbra.cs.db;
+package org.openzal.zal.db;
 
 /**
  * Zimbra Collaboration Suite Server
  */
 
 import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.db.DbMailbox;
+import com.zimbra.cs.db.DbPool;
+import com.zimbra.cs.db.HSQLDB;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +18,7 @@ import java.util.Properties;
 import java.util.UUID;
 import org.hsqldb.cmdline.SqlFile;
 
-public final class HSQLZimbraDatabase extends Db
+public final class HSQLZimbraDatabase extends HSQLDB
 {
   //
   // Populates ZIMBRA and MBOXGROUP1 schema.
@@ -96,10 +99,6 @@ public final class HSQLZimbraDatabase extends Db
     execute(conn,file,1);
   }
 
-  DbPool.PoolConfig getPoolConfig() {
-    return new Config();
-  }
-
   boolean supportsCapability(Capability capability) {
     switch (capability) {
       case MULTITABLE_UPDATE:
@@ -150,18 +149,6 @@ public final class HSQLZimbraDatabase extends Db
 
 // mRootUrl = null;
 // mConnectionUrl = "jdbc:hsqldb:file:/tmp/zimbra-it/zimbra";
-
-  public static class Config extends DbPool.PoolConfig
-  {
-    Config() {
-      mDriverClassName = "org.hsqldb.jdbcDriver";
-      mPoolSize = 10;
-      mRootUrl = null;
-      mConnectionUrl = "jdbc:hsqldb:mem:zimbra" + UUID.randomUUID().toString();
-      mSupportsStatsCallback = false;
-      mDatabaseProperties = new Properties();
-    }
-  }
 
   public String concat(String... fieldsToConcat) {
     String joined = "";
