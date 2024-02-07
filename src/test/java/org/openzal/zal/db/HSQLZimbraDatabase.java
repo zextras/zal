@@ -84,7 +84,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
     }
   }
 
-  private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String file) throws Exception
+  public static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String file) throws Exception
   {
     for( int i=1; i <= 100; ++i ) execute(conn, file, i);
   }
@@ -102,11 +102,6 @@ public final class HSQLZimbraDatabase extends HSQLDB
   public static void execute(DbPool.DbConnection conn, String file) throws Exception
   {
     execute(conn,file,1);
-  }
-
-  public boolean databaseExists(DbPool.DbConnection connection, String dbname)
-  {
-    return true;
   }
 
 
