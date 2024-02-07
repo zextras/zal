@@ -20,19 +20,16 @@ import org.hsqldb.cmdline.SqlFile;
 
 public final class HSQLZimbraDatabase extends HSQLDB
 {
-  //
-  // Populates ZIMBRA and MBOXGROUP1 schema.
-  //
-  public static void createDatabase() throws Exception {
-    createDatabase(false);
-  }
 
-  //
-  // Populates ZIMBRA and MBOXGROUP1 schema.
-  // @param zimbraServerDir the directory that contains the ZimbraServer project
-  // @throws Exception
-  //
-  public static void createDatabase(boolean isOctopus) throws Exception {
+  /**
+   * Executes db.sql and create_database.sql scripts to populate the database.
+   *
+   * Populates ZIMBRA and MBOXGROUP1 schema.
+   * @param basePath path where db.sql and create_database.sql are found.
+   *
+   * @throws Exception
+   */
+  public static void createDatabase(String basePath) throws Exception {
     PreparedStatement stmt = null;
     ResultSet rs = null;
     com.zimbra.cs.db.DbPool.DbConnection  conn = DbPool.getConnection();
@@ -46,8 +43,8 @@ public final class HSQLZimbraDatabase extends HSQLDB
       if (rs.next() && rs.getInt(1) > 0) {
         return;  // already exists
       }
-      execute(conn, getBaseSqlPath()+"/db.sql");
-      executeForAllGroups(conn, getBaseSqlPath()+"/create_database.sql");
+      execute(conn, basePath + "/db.sql");
+      executeForAllGroups(conn, basePath + "/create_database.sql");
     } finally {
       DbPool.closeResults(rs);
       DbPool.quietCloseStatement(stmt);
@@ -55,10 +52,8 @@ public final class HSQLZimbraDatabase extends HSQLDB
     }
   }
 
-
-  public static String getBaseSqlPath()
-  {
-    return "it/data/carbonio/sql/";
+  public static void createDatabase() throws Exception {
+    createDatabase("it/data/carbonio/sql/");
   }
 
   //
@@ -68,18 +63,28 @@ public final class HSQLZimbraDatabase extends HSQLDB
   //
   public static void clearDatabase() throws Exception
   {
+    clearDatabase("it/data/carbonio/sql/clear.sql");
+  }
+
+  /**
+   * Executes a clear script for all mailbox groups
+   * @param clearSqlScript sql script containing clear instructions
+   * @throws Exception
+   */
+  public static void clearDatabase(String clearSqlScript) throws Exception
+  {
     com.zimbra.cs.db.DbPool.DbConnection conn = DbPool.getConnection();
     try {
       executeForAllGroups(
-        conn,
-        getBaseSqlPath() + "/clear.sql"
+          conn,
+          clearSqlScript
       );
     } finally {
       DbPool.quietClose(conn);
     }
   }
 
-  public static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String file) throws Exception
+  private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String file) throws Exception
   {
     for( int i=1; i <= 100; ++i ) execute(conn, file, i);
   }
@@ -99,82 +104,11 @@ public final class HSQLZimbraDatabase extends HSQLDB
     execute(conn,file,1);
   }
 
-  boolean supportsCapability(Capability capability) {
-    switch (capability) {
-      case MULTITABLE_UPDATE:
-      case BITWISE_OPERATIONS:
-      case REPLACE_INTO:
-      case DISABLE_CONSTRAINT_CHECK:
-        return false;
-      default:
-        return true;
-    }
-  }
-
-  boolean compareError(SQLException e, Error error) {
-    switch (error) {
-      case DUPLICATE_ROW:
-        return e.getErrorCode() == -104;
-      default:
-        return false;
-    }
-  }
-
   public boolean databaseExists(DbPool.DbConnection connection, String dbname)
   {
     return true;
   }
 
-
-  String forceIndexClause(String index) {
-    return "";
-  }
-
-  String getIFNULLClause(String expr1, String expr2) {
-    return "COALESCE(" + expr1 + ", " + expr2 + ")";
-  }
-
-  public String bitAND(String expr1, String expr2) {
-    return "BITAND(" + expr1 + ", " + expr2 + ")";
-  }
-
-  public String bitANDNOT(String expr1, String expr2)
-  {
-    return expr1 + " & ~" + expr2;
-  }
-
-  public void flushToDisk() {
-  }
-
-
-// mRootUrl = null;
-// mConnectionUrl = "jdbc:hsqldb:file:/tmp/zimbra-it/zimbra";
-
-  public String concat(String... fieldsToConcat) {
-    String joined = "";
-
-    for( String field : fieldsToConcat )
-    {
-      joined += field + ", ";
-    }
-
-    if( joined.length() > 0 ) {
-      joined = joined.substring(0, joined.length()-2);
-    }
-    return "CONCAT(" + joined + ")";
-  }
-
-  public String sign(String field) {
-    return "SIGN(" + field + ")";
-  }
-
-  public String lpad(String field, int padSize, String padString) {
-    return "LPAD(" + field + ", " + padSize + ", '" + padString + "')";
-  }
-
-  public String limit(int offset, int limit) {
-    return "LIMIT " + limit + " OFFSET " + offset;
-  }
 
   public static void useMVCC() throws ServiceException, SQLException {
     //tell HSQLDB to use multiversion so our asserts can read while write is open
