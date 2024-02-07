@@ -32,7 +32,7 @@ public class DistributionList extends Group
 {
   @Nonnull private final com.zimbra.cs.account.DistributionList mDistributionList;
 
-  DistributionList(@Nonnull Object distributionList)
+  protected DistributionList(@Nonnull Object distributionList)
   {
     super(distributionList);
     mDistributionList = (com.zimbra.cs.account.DistributionList) distributionList;
