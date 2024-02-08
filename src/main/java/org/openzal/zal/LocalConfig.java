@@ -20,11 +20,13 @@
 
 package org.openzal.zal;
 
+import com.zimbra.common.localconfig.ConfigException;
 import com.zimbra.common.localconfig.LC;
 import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
+import org.dom4j.DocumentException;
 
 public class LocalConfig
 {
@@ -33,6 +35,15 @@ public class LocalConfig
   public static final String ldap_root_password = LC.ldap_root_password.key();
   public static final String zimbra_mailbox_groups = LC.zimbra_mailbox_groups.key();
 
+  public static void reload() {
+    try {
+      LC.reload();
+    } catch (DocumentException e) {
+      throw new RuntimeException(e);
+    } catch (ConfigException e) {
+      throw new RuntimeException(e);
+    }
+  }
   @Nonnull
   public static List<String> getAllKeys()
   {
