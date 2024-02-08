@@ -64,4 +64,8 @@ public class LocalConfig
   {
     LC.timezone_file.setDefault(path);
   }
+
+  public static void setLdapPort(long port) {
+    LC.ldap_port.setDefault(port);
+  }
 }
