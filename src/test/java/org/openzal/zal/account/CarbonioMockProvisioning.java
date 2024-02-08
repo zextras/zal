@@ -14,7 +14,10 @@ import org.openzal.zal.gal.SearchGalProperty;
 
 public class CarbonioMockProvisioning extends MockProvisioning {
 
-  public CarbonioMockProvisioning(Provisioning.CacheMode m) {
+  public CarbonioMockProvisioning() {
+  }
+
+  public CarbonioMockProvisioning(Provisioning.CacheMode mode) {
   }
 
   @Override
