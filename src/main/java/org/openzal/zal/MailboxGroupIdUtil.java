@@ -2,6 +2,9 @@ package org.openzal.zal;
 
 import org.openzal.zal.lib.ZimbraDatabase;
 
+/**
+ * @author Soner
+ */
 public final class MailboxGroupIdUtil {
     private MailboxGroupIdUtil() {
     }
