@@ -6,10 +6,16 @@ import com.zimbra.cs.account.Provisioning;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.mockito.Mockito;
 
 public class MockDistributionList extends DistributionList
 {
   private Set<String> mMembers;
+
+  public MockDistributionList(String name, String id, Map<String, Object> attrs)
+  {
+    this(name, id, attrs, Mockito.mock(com.zimbra.cs.account.Provisioning.class));
+  }
 
   public MockDistributionList(String name, String id, Map<String, Object> attrs, Provisioning prov)
   {
