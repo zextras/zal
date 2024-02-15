@@ -485,7 +485,7 @@ public class ProvisioningSimulator extends ProvisioningImp
     throw new RuntimeException("Provisioning method not implemented");
   }
 
-  public Account createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
+  public CalendarResource createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
       throws ZimbraException
   {
     throw new RuntimeException("Provisioning method not implemented");

@@ -166,4 +166,9 @@ public class FileBlobStoreWrapImpl implements FileBlobStoreWrap
   {
     mStore = store;
   }
+
+  public FileBlobStoreWrapImpl()
+  {
+    this(new FileBlobStore());
+  }
 }

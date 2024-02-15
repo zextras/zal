@@ -12,8 +12,9 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.
  * ***** END LICENSE BLOCK *****
  */
-package com.zimbra.cs.mime;
+package org.openzal.zal.mime;
 
+import com.zimbra.cs.mime.MimeTypeInfo;
 import java.util.HashSet;
 import java.util.Set;
 

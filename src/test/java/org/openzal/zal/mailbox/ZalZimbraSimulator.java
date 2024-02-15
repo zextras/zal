@@ -1,13 +1,15 @@
-package com.zimbra.cs.mailbox;
+package org.openzal.zal.mailbox;
 
 import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.util.ZimbraLog;
-import com.zimbra.cs.ProvisioningImpProxy;
-import com.zimbra.cs.account.MockProvisioning;
+import org.openzal.zal.account.MockProvisioning;
 import com.zimbra.cs.db.DbPool;
-import com.zimbra.cs.db.HSQLZimbraDatabase;
+import org.openzal.zal.db.HSQLZimbraDatabase;
 import com.zimbra.cs.ephemeral.EphemeralStore;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
+import com.zimbra.cs.mailbox.MailboxIndex;
+import com.zimbra.cs.mailbox.MailboxManager;
+import com.zimbra.cs.mailbox.ScheduledTaskManager;
 import com.zimbra.cs.util.JMSession;
 import java.io.File;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.rules.ExternalResource;
 import org.openzal.zal.MailboxManagerImp;
 import org.openzal.zal.Provisioning;
+import org.openzal.zal.ProvisioningImpProxy;
 import org.openzal.zal.extension.Zimbra;
 
 // for testing purpose only

@@ -1,4 +1,4 @@
-package com.zimbra.cs;
+package org.openzal.zal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;

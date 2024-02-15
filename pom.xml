@@ -383,6 +383,14 @@
       <version>1.6</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>zextras</groupId>
+      <artifactId>zm-store</artifactId>
+      <classifier>tests</classifier>
+      <version>${carbonio.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>zextras</groupId>

@@ -20,6 +20,9 @@
 
 package org.openzal.zal.soap;
 
+import static com.zimbra.common.soap.Element.parseJSON;
+
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapParseException;
 import javax.annotation.Nonnull;
@@ -28,6 +31,14 @@ public class SoapResponseImpl implements SoapResponse
 {
   public static SoapResponseImpl of(String wrapperElementName, String responseText) {
     return new SoapResponseImpl(parseJSON(wrapperElementName, responseText), null);
+  }
+
+  public static SoapResponseImpl fromJson(String jsonText) {
+    try {
+      return new SoapResponseImpl(Element.parseJSON(jsonText), null);
+    } catch (SoapParseException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static Element parseJSON(String action, String content) {
@@ -103,5 +114,21 @@ public class SoapResponseImpl implements SoapResponse
   public Element getElement()
   {
     return mElement;
+  }
+
+  public String getAttribute(String name) throws org.openzal.zal.exceptions.ServiceException {
+    try {
+      return getElement().getAttribute(name);
+    } catch (ServiceException e) {
+      throw new org.openzal.zal.exceptions.ServiceException(e);
+    }
+  }
+
+  public String getElementName() {
+    return getElement().getName();
+  }
+
+  public String toJsonString() {
+    return getElement().toString();
   }
 }

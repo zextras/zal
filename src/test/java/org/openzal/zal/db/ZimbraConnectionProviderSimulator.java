@@ -1,5 +1,8 @@
-package com.zimbra.cs.db;
+package org.openzal.zal.db;
 
+import com.zimbra.cs.db.DbConnectionSimulator;
+import com.zimbra.cs.db.DbPool;
+import com.zimbra.cs.db.DbPool.DbConnection;
 import javax.annotation.Nonnull;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.UnableToObtainDBConnectionException;
@@ -13,7 +16,7 @@ public class ZimbraConnectionProviderSimulator implements ZimbraDatabase.Connect
   public org.openzal.zal.Connection getConnection() throws UnableToObtainDBConnectionException
   {
     try {
-      DbPool.DbConnection connection = DbPool.getConnection();
+      DbConnection connection = DbPool.getConnection();
       DbConnectionSimulator connectionSimulator = new DbConnectionSimulator(connection.getConnection());
       return new ZimbraConnectionWrapper(connectionSimulator);
     }

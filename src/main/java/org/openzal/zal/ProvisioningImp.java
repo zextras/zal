@@ -1502,19 +1502,19 @@ public class ProvisioningImp implements Provisioning
 
   @Override
   @Nullable
-  public Account createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
+  public CalendarResource createCalendarResource(String dstAccount, String newPassword, Map<String, Object> attrs)
     throws ZimbraException
   {
     try
     {
-      com.zimbra.cs.account.Account calendar = mProvisioning.createCalendarResource(dstAccount, newPassword, attrs);
+      com.zimbra.cs.account.CalendarResource calendar = mProvisioning.createCalendarResource(dstAccount, newPassword, attrs);
       if (calendar == null)
       {
         return null;
       }
       else
       {
-        return new Account(calendar);
+        return new CalendarResource(calendar);
       }
     }
     catch (com.zimbra.common.service.ServiceException e)

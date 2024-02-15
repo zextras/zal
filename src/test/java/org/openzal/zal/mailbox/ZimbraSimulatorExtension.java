@@ -1,4 +1,4 @@
-package com.zimbra.cs.mailbox;
+package org.openzal.zal.mailbox;
 
 import org.openzal.zal.extension.Zimbra;
 

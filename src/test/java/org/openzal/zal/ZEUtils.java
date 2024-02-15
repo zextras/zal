@@ -1,4 +1,4 @@
-package com.zimbra.cs;
+package org.openzal.zal;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
