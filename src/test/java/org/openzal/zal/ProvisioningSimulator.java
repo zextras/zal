@@ -66,7 +66,6 @@ public class ProvisioningSimulator extends ProvisioningImp
   public ProvisioningSimulator()
   {
     super(null);
-    LC.zimbra_attrs_directory.setDefault("it/data/carbonio/attrs/");
     mDomainMap = new HashMap<String, Domain>();
     mAccountMap = new HashMap<String, Account>();
     mAccountIdMap = new HashMap<String, Account>();
