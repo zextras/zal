@@ -20,56 +20,58 @@
 
 package org.openzal.zal;
 
-import com.zimbra.common.service.ServiceException;
+import com.zimbra.common.account.ZAttrProvisioning;
 import com.zimbra.cs.account.Provisioning;
 import javax.annotation.Nonnull;
-import com.zimbra.common.account.ZAttrProvisioning;
-import org.openzal.zal.exceptions.ExceptionWrapper;
 
-public class AccountStatus
+public enum AccountStatus
 {
+  active(ZAttrProvisioning.AccountStatus.active),
+  maintenance(ZAttrProvisioning.AccountStatus.maintenance),
+  locked(ZAttrProvisioning.AccountStatus.locked),
+  closed(ZAttrProvisioning.AccountStatus.closed),
+  lockout(ZAttrProvisioning.AccountStatus.lockout),
+  pending(ZAttrProvisioning.AccountStatus.pending);
+
+  /**
+   * @Deprecated: use the enum value
+   */
+  @Deprecated
   public static String ACCOUNT_STATUS_MAINTENANCE = Provisioning.ACCOUNT_STATUS_MAINTENANCE;
+  /**
+   * @Deprecated: use the enum value
+   */
+  @Deprecated
   public static String ACCOUNT_STATUS_LOCKED      = Provisioning.ACCOUNT_STATUS_LOCKED;
+  /**
+   * @Deprecated: use the enum value
+   */
+  @Deprecated
   public static String ACCOUNT_STATUS_LOCKOUT     = Provisioning.ACCOUNT_STATUS_LOCKOUT;
+  /**
+   * @Deprecated: use the enum value
+   */
+  @Deprecated
   public static String ACCOUNT_STATUS_ACTIVE      = Provisioning.ACCOUNT_STATUS_ACTIVE;
+  /**
+   * @Deprecated: use the enum value
+   */
+  @Deprecated
   public static String ACCOUNT_STATUS_CLOSED      = Provisioning.ACCOUNT_STATUS_CLOSED;
 
   @Nonnull private final ZAttrProvisioning.AccountStatus mAccountStatus;
 
-  public static AccountStatus maintenance = new AccountStatus(ZAttrProvisioning.AccountStatus.maintenance);
-  public static AccountStatus active = new AccountStatus(ZAttrProvisioning.AccountStatus.active);
-
-  protected AccountStatus(@Nonnull Object accountStatus)
-  {
-    if (accountStatus == null)
-    {
-      throw new NullPointerException();
-    }
-    mAccountStatus = (ZAttrProvisioning.AccountStatus) accountStatus;
-  }
-
-  public AccountStatus(@Nonnull String status)
-  {
-    try
-    {
-      mAccountStatus = ZAttrProvisioning.AccountStatus.fromString(status);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
+  public static AccountStatus of(Object obj) {
+    if (obj instanceof ZAttrProvisioning.AccountStatus) {
+      return valueOf(obj.toString());
+    } else {
+      throw new IllegalArgumentException();
     }
   }
 
-  @Override
-  public int hashCode()
+  AccountStatus(@Nonnull ZAttrProvisioning.AccountStatus accountStatus)
   {
-    return mAccountStatus.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object object)
-  {
-    return mAccountStatus.equals(object);
+    mAccountStatus = accountStatus;
   }
 
   public <T> T toZimbra(@Nonnull Class<T> cls)

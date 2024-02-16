@@ -675,7 +675,7 @@ public class Account extends Entry
       return null;
     }
 
-    return new AccountStatus(accountStatus);
+    return AccountStatus.of(accountStatus);
   }
 
   public void setAccountStatus(AccountStatus status)
