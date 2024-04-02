@@ -163,7 +163,6 @@ pipeline {
       stage('Upload To Devel') {
           when {
             anyOf {
-                branch 'main'
                 branch 'devel'
             }
           }
@@ -178,9 +177,19 @@ pipeline {
                   uploadSpec = '''{
                       "files": [
                           {
-                              "pattern": "artifacts/*.deb",
+                              "pattern": "artifacts/carbonio-zal*.deb",
                               "target": "ubuntu-devel/pool/",
-                              "props": "deb.distribution=focal;deb.component=main;deb.architecture=all"
+                              "props": "deb.distribution=focal;deb.distribution=jammy;deb.component=main;deb.architecture=all"
+                          },
+                          {
+                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).rpm",
+                              "target": "centos8-devel/zextras/{1}/{1}-{2}.rpm",
+                              "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+                          },
+                          {
+                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).rpm",
+                              "target": "rhel9-devel/zextras/{1}/{1}-{2}.rpm",
+                              "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
                           }
                       ]
                   }'''
