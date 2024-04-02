@@ -162,7 +162,10 @@ pipeline {
       }
       stage('Upload To Devel') {
           when {
-            branch 'main'
+            anyOf {
+                branch 'main'
+                branch 'devel'
+            }
           }
           steps {
               unstash 'artifacts-deb'
