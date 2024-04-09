@@ -17,6 +17,9 @@ pipeline {
             label 'zextras-agent-v3'
         }
     }
+    triggers {
+        cron(env.BRANCH_NAME == 'devel' ? 'H 5 * * *' : '')
+    }
     parameters {
         booleanParam defaultValue: false, description: 'Whether to upload the packages in playground repositories', name: 'PLAYGROUND'
         booleanParam defaultValue: false, description: 'Publish artifact to artifactory', name: 'PUBLISH_TO_ARTIFACTORY'
