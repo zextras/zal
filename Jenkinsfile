@@ -14,7 +14,7 @@ def deployJfrog() {
 pipeline {
     agent {
         node {
-            label 'zextras-agent-v4'
+            label 'zextras-agent-v3'
         }
     }
     triggers {
@@ -25,8 +25,6 @@ pipeline {
         booleanParam defaultValue: false, description: 'Publish artifact to artifactory', name: 'PUBLISH_TO_ARTIFACTORY'
     }
     environment {
-        JAVA_HOME='/usr/lib/jvm/java-11-openjdk-amd64'
-        JAVA_PATH='${JAVA_HOME}/bin'
         JAVA_OPTS="-Dfile.encoding=UTF8"
         LC_ALL="C.UTF-8"
         jenkins_build="true"
@@ -57,9 +55,12 @@ pipeline {
         }
         stage('SonarQube') {
             environment {
-                JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'
-                JAVA_PATH='${JAVA_HOME}/bin'
                 SCANNER_HOME = tool 'SonarScanner'
+            }
+            agent {
+                node {
+                    label 'zextras-agent-v4'
+                }
             }
             steps {
                 withSonarQubeEnv(credentialsId: 'sonarqube-user-token', installationName: 'SonarQube instance') {
