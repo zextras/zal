@@ -1,6 +1,19 @@
--- SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
--- SPDX-FileCopyrightText: 2022 Synacor, Inc.
--- SPDX-License-Identifier: GPL-2.0-only
+--
+-- ***** BEGIN LICENSE BLOCK *****
+-- Zimbra Collaboration Suite Server
+-- Copyright (C) 2011, 2013, 2014, 2016 Synacor, Inc.
+--
+-- This program is free software: you can redistribute it and/or modify it under
+-- the terms of the GNU General Public License as published by the Free Software Foundation,
+-- version 2 of the License.
+--
+-- This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+-- without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+-- See the GNU General Public License for more details.
+-- You should have received a copy of the GNU General Public License along with this program.
+-- If not, see <https://www.gnu.org/licenses/>.
+-- ***** END LICENSE BLOCK *****
+--
 
 SET DATABASE REFERENTIAL INTEGRITY FALSE;
 
@@ -43,4 +56,3 @@ INSERT INTO volume (id, type, name, path, file_bits, file_group_bits, mailbox_bi
 INSERT INTO current_volumes (message_volume_id, index_volume_id, next_mailbox_id, secondary_message_volume_id) VALUES (1, 2, 1, 3);
 
 SET DATABASE REFERENTIAL INTEGRITY TRUE;
-
