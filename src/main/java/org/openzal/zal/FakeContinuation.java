@@ -1,6 +1,6 @@
 /*
- * ZAL - The abstraction layer for Zimbra.
- * Copyright (C) 2016 ZeXtras S.r.l.
+ * ZAL - Zextras Abstraction Layer.
+ * Copyright (C) 2023 ZeXtras S.r.l.
  *
  * This file is part of ZAL.
  *
