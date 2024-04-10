@@ -73,6 +73,7 @@ pipeline {
                     expression { deployJfrog() }
                     buildingTag()
                     branch 'main'
+                    branch 'devel'
                 }
             }
             steps {
