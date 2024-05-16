@@ -20,6 +20,7 @@
 
 package org.openzal.zal.extension;
 
+import java.util.Objects;
 import javax.annotation.Nullable;
 import org.openzal.zal.BuildProperties;
 import org.openzal.zal.ZalVersion;
@@ -45,9 +46,6 @@ public class ZalEntrypointImpl implements ZalEntrypoint
   @Nullable
   private WeakReference<ClassLoader> mPreviousExtension;
 
-  private static final String ZAL_FILE     = "/zal.jar";
-  private static final String ZEXTRAS_FILE = "/carbonio.jar";
-
   public ZalEntrypointImpl()
   {
     mExtensionManager = null;
@@ -65,9 +63,12 @@ public class ZalEntrypointImpl implements ZalEntrypoint
     {
       if (mExtensionManager == null)
       {
-        mExtensionManager = (ExtensionManager) this.getClass().getClassLoader().loadClass(
-          "org.openzal.zal.extension.ExtensionManagerImpl"
-        ).newInstance();
+        String carbonioJarDirectory = System.getProperty("carbonioJarDirectory");
+        if (Objects.isNull(carbonioJarDirectory) || carbonioJarDirectory.isEmpty()) {
+          mExtensionManager = new ExtensionManagerImpl();
+        } else {
+          mExtensionManager = new ExtensionManagerImpl(new File(carbonioJarDirectory));
+        }
       }
 
       return mExtensionManager;
