@@ -55,6 +55,14 @@ class ExtensionManagerImpl implements ExtensionManager
     mExtensionDirectory = getCurrentJarDirectory();
   }
 
+  public ExtensionManagerImpl(File parentJarDirectory)
+  {
+    mCustomClassLoader = null;
+    mCustomZalExtensionController = null;
+    mExtension = null;
+    mExtensionDirectory = parentJarDirectory;
+  }
+
   @Override
   public void setCustomClassLoader(ClassLoader classLoader)
   {
