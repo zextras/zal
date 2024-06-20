@@ -43,6 +43,12 @@ pipeline {
                 withCredentials([file(credentialsId: 'jenkins-maven-settings.xml', variable: 'SETTINGS_PATH')]) {
                     sh "cp ${SETTINGS_PATH} settings.xml"
                 }
+                script {
+                    if (BRANCH_NAME == 'devel') {
+                        def timestamp = new Date().format('yyyyMMddHHmmss')
+                        sh "sed -i \"s!pkgrel=.*!pkgrel=${timestamp}!\" packages/PKGBUILD"
+                    }
+                }
             }
         }
         stage('Build') {
