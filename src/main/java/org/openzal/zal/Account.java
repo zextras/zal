@@ -775,6 +775,11 @@ public class Account extends Entry
     return mAccount.isFeatureMobileSyncEnabled();
   }
 
+  public boolean isCarbonioFeatureOTPMgmtEnabled()
+  {
+    return mAccount.isCarbonioFeatureOTPMgmtEnabled();
+  }
+
   public void setPrefExternalSendersType(@Nonnull PrefExternalSendersType zimbraPrefExternalSendersType)
   {
     try
