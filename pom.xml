@@ -397,7 +397,6 @@
       <artifactId>zm-store</artifactId>
       <version>${carbonio.version}</version>
       <scope>compile</scope>
-      <classifier>classes</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.mockito</groupId>
