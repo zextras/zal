@@ -2762,6 +2762,17 @@ public class ProvisioningImp implements Provisioning
   }
 
   @Override
+  public String getAccountToken(Account account, boolean isAdmin)
+  {
+    try {
+      ZimbraAuthToken zAuthToken = new ZimbraAuthToken(account.toZimbra(com.zimbra.cs.account.Account.class), isAdmin, null);
+      return zAuthToken.toZAuthToken().getValue();
+    } catch (ServiceException e) {
+      throw ExceptionWrapper.wrap(e);
+    }
+  }
+
+  @Override
   public void deleteDomainById(String id)
   {
     try

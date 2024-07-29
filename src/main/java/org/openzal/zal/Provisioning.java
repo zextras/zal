@@ -20,8 +20,6 @@
 
 package org.openzal.zal;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.openzal.zal.exceptions.NoSuchAccountException;
 import org.openzal.zal.exceptions.NoSuchGrantException;
 import org.openzal.zal.exceptions.NoSuchGroupException;
@@ -29,7 +27,14 @@ import org.openzal.zal.exceptions.UnableToFindDistributionListException;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.Filter;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public interface Provisioning
 {
@@ -385,6 +390,8 @@ public interface Provisioning
 
   @Nonnull
   void deleteAccountById(String id);
+
+  String getAccountToken(Account account, boolean isAdmin);
 
   @Nonnull
   void deleteDomainById(String id);
