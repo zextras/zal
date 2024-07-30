@@ -2765,8 +2765,9 @@ public class ProvisioningImp implements Provisioning
   public String getAccountToken(Account account, boolean isAdmin)
   {
     try {
-      ZimbraAuthToken zAuthToken = new ZimbraAuthToken(account.toZimbra(com.zimbra.cs.account.Account.class), isAdmin, null);
-      return zAuthToken.toZAuthToken().getValue();
+        return new ZimbraAuthToken(account.toZimbra(com.zimbra.cs.account.Account.class), isAdmin, null)
+                .toZAuthToken()
+                .getValue();
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
