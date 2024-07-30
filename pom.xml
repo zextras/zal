@@ -43,6 +43,11 @@
       </snapshots>
     </repository>
 
+    <repository>
+      <id>maven-redhat</id>
+      <url>https://maven.repository.redhat.com/ga/</url>
+    </repository>
+
   </repositories>
 
   <pluginRepositories>
@@ -99,8 +104,8 @@
     <jackson.version>2.8.11</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
     <log4j.version>2.20.0</log4j.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <commit.id>1.1.1</commit.id>
     <jetty.version>9.4.55.v20240627</jetty.version>
     <servlet.version>3.1.0</servlet.version>
@@ -551,6 +556,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.9.1-patch-01</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -638,11 +650,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.22.2</version> <!--New releases has a bug!-->
+        <version>3.0.0</version> <!--New releases has a bug!-->
         <configuration>
           <trimStackTrace>false</trimStackTrace>
           <forkCount>1</forkCount>
-          <argLine>--illegal-access=permit -Xmx1024m -XX:MaxPermSize=256m -ea
+          <argLine>--illegal-access=permit -Xmx1024m  -ea --add-opens java.base/java.lang=ALL-UNNAMED
             -Duser.timezone=Europe/Rome -Djava.awt.headless=true
             -Dzimbra.config=it/data/zimbra-config/localconfig-test.xml
             -Dfile.encoding=UTF-8</argLine>

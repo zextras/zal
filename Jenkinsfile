@@ -25,8 +25,6 @@ pipeline {
         booleanParam defaultValue: false, description: 'Publish artifact to artifactory', name: 'PUBLISH_TO_ARTIFACTORY'
     }
     environment {
-        JAVA_HOME='/usr/lib/jvm/java-11-openjdk-amd64'
-        JAVA_PATH='${JAVA_HOME}/bin'
         JAVA_OPTS="-Dfile.encoding=UTF8"
         LC_ALL="C.UTF-8"
         jenkins_build="true"
