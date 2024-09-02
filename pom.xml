@@ -99,7 +99,7 @@
   </distributionManagement>
 
   <properties>
-    <carbonio.version>24.9.0</carbonio.version>
+    <carbonio.version>24.9.1</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.8.11</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -702,7 +702,7 @@
                   <Specification-Version>${project.version}</Specification-Version>
                   <Specification-Commit>${git.commit.id.full}</Specification-Commit>
                   <Specification-Vendor>Zextras</Specification-Vendor>
-                  <Implementation-Version>${carbonio.version}</Implementation-Version>
+                  <Implementation-Version>${project.version}</Implementation-Version>
                   <Created-By>Zextras</Created-By>
                   <Zimbra-Extension-Class>org.openzal.zal.extension.ZalEntrypointImpl</Zimbra-Extension-Class>
                 </manifestEntries>
@@ -744,7 +744,7 @@
                 <include>git.dirty</include>
                 <include>git.commit.id.abbrev</include>
                 <include>git.commit.id.full</include>
-                <include>carbonio.version</include>
+                <include>project.version</include>
               </includes>
             </configuration>
           </execution>
