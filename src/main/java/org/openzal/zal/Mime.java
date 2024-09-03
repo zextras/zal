@@ -94,7 +94,7 @@ public class Mime
   }
 
 /*
-  Apply zimbra own modifiers, for example it explode ms-tnef
+  Apply zimbra own modifiers
 */
   public static MimeMessage expandMessage(MimeMessage original) throws MessagingException
   {
