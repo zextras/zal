@@ -17,7 +17,7 @@ public class ZalLogUtils {
         ZimbraLog.perf, ZimbraLog.cache, ZimbraLog.filter, ZimbraLog.session, ZimbraLog.backup, ZimbraLog.system, ZimbraLog.sync, ZimbraLog.synctrace,
         ZimbraLog.syncstate, ZimbraLog.wbxml, ZimbraLog.xsync, ZimbraLog.extensions, ZimbraLog.zimlet, ZimbraLog.doc, ZimbraLog.op, ZimbraLog.dav, ZimbraLog.io,
         ZimbraLog.datasource, ZimbraLog.rmgmt, ZimbraLog.webclient, ZimbraLog.scheduler, ZimbraLog.store, ZimbraLog.fb, ZimbraLog.purge, ZimbraLog.mailop,
-        ZimbraLog.slogger, ZimbraLog.mbxmgr, ZimbraLog.tnef, ZimbraLog.nginxlookup, ZimbraLog.contact, ZimbraLog.share, ZimbraLog.activity, ZimbraLog.ews,
+        ZimbraLog.slogger, ZimbraLog.mbxmgr, ZimbraLog.nginxlookup, ZimbraLog.contact, ZimbraLog.share, ZimbraLog.activity, ZimbraLog.ews,
         ZimbraLog.smime, ZimbraLog.ephemeral, ZimbraLog.contactbackup, ZimbraLog.passwordreset, ZimbraLog.addresslist
     );
     logs.forEach( l -> l.setLevel(Level.error) );
