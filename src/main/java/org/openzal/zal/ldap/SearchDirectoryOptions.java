@@ -1,30 +1,47 @@
 package org.openzal.zal.ldap;
 
-import com.zimbra.common.service.ServiceException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.ldap.ZLdapFilterFactory;
 import org.openzal.zal.Domain;
 
-public class SearchDirectoryOptions extends com.zimbra.cs.account.SearchDirectoryOptions {
+public class SearchDirectoryOptions {
+
+  private com.zimbra.cs.account.SearchDirectoryOptions options;
+
+  public SearchDirectoryOptions() {
+    this.options = new com.zimbra.cs.account.SearchDirectoryOptions();
+  }
 
   public void setSearchBases(List<Domain> multipleBases) {
-    setMultipleBases(multipleBases.stream().map(domain -> getDomain()).collect(Collectors.toList()));
+    options.setMultipleBases(multipleBases.stream()
+            .map((Domain domain) -> domain.toZimbra(com.zimbra.cs.account.Domain.class))
+            .toList());
   }
 
-  public void setType(ObjectType objectType) {
+  public Object toZimbra() {
+    return options;
+  }
+
+  public void setTypeFlagAccounts() throws org.openzal.zal.exceptions.ServiceException {
     try {
-      setTypes(objectType);
-    } catch (ServiceException exception) {
-      exception.printStackTrace();
+      options.setTypes(com.zimbra.cs.account.SearchDirectoryOptions.ObjectType.accounts);
+    } catch (ServiceException e) {
+      throw new org.openzal.zal.exceptions.ServiceException(e);
     }
   }
 
-  public ObjectType setFlag(String flag) {
-    try {
-      return ObjectType.fromString(flag);
-    } catch (ServiceException exception) {
-      exception.printStackTrace();
-    }
-    return ObjectType.accounts;
+  public void setFilterString(String filterId, String filterString) {
+    options.setFilterString(ZLdapFilterFactory.FilterId.valueOf(filterId), filterString);
+  }
+
+  public void setSortAttr(String displayName) {
+    options.setSortAttr(displayName);
+  }
+
+  public void setSortOpt(String displayName) {
+    options.setSortOpt(com.zimbra.cs.account.SearchDirectoryOptions.SortOpt.SORT_ASCENDING.valueOf(displayName));
   }
 }

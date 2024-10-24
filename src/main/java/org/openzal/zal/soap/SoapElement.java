@@ -58,6 +58,18 @@ public class SoapElement
     }
   }
 
+  public String getAttribute(String key, String defaultValue)
+  {
+    try
+    {
+      return mElement.getAttribute(key);
+    }
+    catch(ServiceException e)
+    {
+      return defaultValue;
+    }
+  }
+
   public long getAttributeLong(String key)
   {
     try
@@ -166,6 +178,14 @@ public class SoapElement
   public byte[] toUTF8()
   {
     return mElement.toUTF8();
+  }
+
+  public int getAttributeInt(String key, int defaultValue) throws org.openzal.zal.exceptions.ServiceException {
+    try {
+      return mElement.getAttributeInt(key, defaultValue);
+    } catch (ServiceException e) {
+      throw new org.openzal.zal.exceptions.ServiceException(e);
+    }
   }
 
   public static class Attribute

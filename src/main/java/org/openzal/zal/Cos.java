@@ -36,6 +36,10 @@ public class Cos extends Entry
 {
   @Nonnull private final com.zimbra.cs.account.Cos mCos;
 
+  public static Cos fromZimbra(Object cos) {
+    return new Cos(cos);
+  }
+
   protected Cos(@Nonnull Object cos)
   {
     super(cos);
