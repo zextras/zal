@@ -18,7 +18,7 @@ public class SearchDirectoryOptions {
   public void setSearchBases(List<Domain> multipleBases) {
     options.setMultipleBases(multipleBases.stream()
             .map((Domain domain) -> domain.toZimbra(com.zimbra.cs.account.Domain.class))
-            .toList());
+            .collect(Collectors.toList()));
   }
 
   public Object toZimbra() {
