@@ -20,25 +20,6 @@
 
 package org.openzal.zal;
 
-import com.zimbra.common.account.ZAttrProvisioning.AutoProvAuthMech;
-import com.zimbra.cs.account.auth.AuthContext;
-import com.zimbra.cs.account.auth.AuthMechanism;
-import com.zimbra.cs.account.auth.AuthMechanism.AuthMech;
-import com.zimbra.cs.account.ldap.LdapProv;
-import com.zimbra.cs.ldap.LdapConstants;
-import com.zimbra.cs.mailbox.ACL;
-import com.zimbra.cs.mailbox.Folder;
-import com.zimbra.cs.mailbox.MailItem;
-import com.zimbra.cs.mailbox.MailServiceException;
-import com.zimbra.cs.mailbox.Mailbox;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -48,47 +29,57 @@ import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.SearchScope;
 import com.unboundid.ldap.sdk.controls.SimplePagedResultsControl;
+import com.zimbra.common.account.Key;
+import com.zimbra.common.account.ZAttrProvisioning.AutoProvAuthMech;
+import com.zimbra.common.service.ServiceException;
+import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapProtocol;
 import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
+import com.zimbra.cs.account.*;
 import com.zimbra.cs.account.AuthToken;
+import com.zimbra.cs.account.accesscontrol.*;
+import com.zimbra.cs.account.auth.AuthContext;
+import com.zimbra.cs.account.auth.AuthMechanism;
+import com.zimbra.cs.account.auth.AuthMechanism.AuthMech;
+import com.zimbra.cs.account.ldap.LdapProv;
 import com.zimbra.cs.account.ldap.LdapProvisioning;
+import com.zimbra.cs.gal.GalSearchControl;
+import com.zimbra.cs.gal.GalSearchParams;
+import com.zimbra.cs.gal.GalSearchResultCallback;
 import com.zimbra.cs.ldap.LdapClient;
+import com.zimbra.cs.ldap.LdapConstants;
 import com.zimbra.cs.ldap.LdapException;
 import com.zimbra.cs.ldap.LdapServerType;
 import com.zimbra.cs.ldap.LdapUsage;
 import com.zimbra.cs.ldap.LdapUtil;
 import com.zimbra.cs.ldap.ZLdapContext;
+import com.zimbra.cs.ldap.ZLdapFilter;
+import com.zimbra.cs.ldap.ZLdapFilterFactory;
 import com.zimbra.cs.ldap.ZMutableEntry;
 import com.zimbra.cs.ldap.ZSearchControls;
 import com.zimbra.cs.ldap.ZSearchScope;
 import com.zimbra.cs.ldap.unboundid.UBIDLdapContext;
+import com.zimbra.cs.mailbox.ACL;
+import com.zimbra.cs.mailbox.Contact;
+import com.zimbra.cs.mailbox.Folder;
+import com.zimbra.cs.mailbox.MailItem;
+import com.zimbra.cs.mailbox.MailServiceException;
+import com.zimbra.cs.mailbox.Mailbox;
 import com.zimbra.cs.util.ProxyPurgeUtil;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-
 import com.zimbra.soap.ZimbraSoapContext;
+import com.zimbra.soap.admin.type.GranteeSelector.GranteeBy;
+import com.zimbra.soap.type.GalSearchType;
+import com.zimbra.soap.type.TargetBy;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.dom4j.QName;
 import org.openzal.zal.exceptions.*;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.Filter;
-
-import com.zimbra.cs.account.*;
-import com.zimbra.cs.account.accesscontrol.*;
-import com.zimbra.cs.gal.GalSearchControl;
-import com.zimbra.cs.gal.GalSearchParams;
-import com.zimbra.cs.gal.GalSearchResultCallback;
-import com.zimbra.common.soap.Element;
-import com.zimbra.common.account.Key;
-import com.zimbra.common.service.ServiceException;
-import com.zimbra.cs.ldap.ZLdapFilter;
-import com.zimbra.cs.ldap.ZLdapFilterFactory;
-import com.zimbra.soap.type.GalSearchType;
-import com.zimbra.soap.type.TargetBy;
-import com.zimbra.soap.admin.type.GranteeSelector.GranteeBy;
-
-import com.zimbra.cs.mailbox.Contact;
-
-import javax.annotation.Nullable;
 import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.provisioning.DirectQueryFilterBuilder;
 
@@ -1197,26 +1188,6 @@ public class ProvisioningImp implements Provisioning
     }
   }
 
-  private static final int HEALTH_CHECK_PORT = 8743;
-  private static final int HEALTH_CHECK_TIMEOUT = 1000;
-  private static boolean isReachable(com.zimbra.cs.account.Server server) {
-    Socket socket = null;
-    try {
-      String ipAddress = server.getIPAddress();
-      socket = new Socket();
-      socket.connect(new InetSocketAddress(ipAddress, HEALTH_CHECK_PORT), HEALTH_CHECK_TIMEOUT);
-      return true;
-    } catch (Exception e) {
-      ZimbraLog.extensions.warn(String.format("Address %s:%s is not reachable", server.getHostname(), HEALTH_CHECK_PORT));
-      return false;
-    } finally {
-      try {
-        if (socket != null) socket.close();
-      } catch (IOException e) {
-      }
-    }
-  }
-
   @Override
   public List<Server> getAllServers()
     throws ZimbraException
@@ -1239,24 +1210,6 @@ public class ProvisioningImp implements Provisioning
     try
     {
       List<com.zimbra.cs.account.Server> allServers = mProvisioning.getAllServers(service);
-      return ZimbraListWrapper.wrapServers(allServers);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Override
-  public List<Server> getAllReachableMailboxes()
-      throws ZimbraException
-  {
-    try
-    {
-      List<com.zimbra.cs.account.Server> allServers = mProvisioning.getAllServers(ProvisioningImp.SERVICE_MAILBOX)
-          .stream()
-          .filter(ProvisioningImp::isReachable)
-          .collect(Collectors.toList());
       return ZimbraListWrapper.wrapServers(allServers);
     }
     catch (com.zimbra.common.service.ServiceException e)

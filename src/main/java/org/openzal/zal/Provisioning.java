@@ -178,8 +178,6 @@ public interface Provisioning
   List<Server> getAllServers(String service)
     throws ZimbraException;
 
-  List<Server> getAllReachableMailboxes() throws ZimbraException;;
-
   List<CalendarResource> getAllCalendarResources(@Nonnull Domain domain)
     throws ZimbraException;
 
