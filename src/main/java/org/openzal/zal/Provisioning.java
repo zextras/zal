@@ -25,6 +25,7 @@ import org.openzal.zal.exceptions.NoSuchGrantException;
 import org.openzal.zal.exceptions.NoSuchGroupException;
 import org.openzal.zal.exceptions.UnableToFindDistributionListException;
 import org.openzal.zal.exceptions.ZimbraException;
+import org.openzal.zal.ldap.SearchDirectoryOptions;
 import org.openzal.zal.lib.Filter;
 
 import javax.annotation.Nonnull;
@@ -427,6 +428,10 @@ public interface Provisioning
 
   Account autoProvisioningAndAuthenticate(Domain domain, String account, String password);
 
+  Cos getDefaultCOS(Domain d);
+
+  List<Entry> searchDirectory(SearchDirectoryOptions options);
+
   class CountAccountByCos
   {
     private final com.zimbra.cs.account.Provisioning.CountAccountResult.CountAccountByCos mCountAccountByCos;
@@ -589,4 +594,7 @@ public interface Provisioning
   }
 
   void reloadAccount(Account account);
+
+
+
 }

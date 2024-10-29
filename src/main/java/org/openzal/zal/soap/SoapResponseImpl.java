@@ -25,6 +25,8 @@ import static com.zimbra.common.soap.Element.parseJSON;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapParseException;
+import com.zimbra.common.soap.XmlParseException;
+
 import javax.annotation.Nonnull;
 
 public class SoapResponseImpl implements SoapResponse
@@ -49,6 +51,14 @@ public class SoapResponseImpl implements SoapResponse
           Element.JSONElement.mFactory
       );
     } catch (SoapParseException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static SoapResponseImpl parseXML(String xmlContent) {
+    try {
+      return new SoapResponseImpl(Element.parseXML(xmlContent), null);
+    } catch (XmlParseException e) {
       throw new RuntimeException(e);
     }
   }

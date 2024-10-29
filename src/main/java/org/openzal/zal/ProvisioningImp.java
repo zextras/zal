@@ -3166,4 +3166,23 @@ public class ProvisioningImp implements Provisioning
       }
     }
   }
+
+  @Override
+  public Cos getDefaultCOS(Domain d) {
+    try {
+      com.zimbra.cs.account.Cos zimbraCos = mProvisioning.getDefaultCOS((com.zimbra.cs.account.Domain) d.toZimbra());
+      return Cos.fromZimbra(zimbraCos);
+    } catch (ServiceException e) {
+      return null;
+    }
+  }
+
+  @Override
+  public List<Entry> searchDirectory(org.openzal.zal.ldap.SearchDirectoryOptions options) {
+    try {
+      return mProvisioning.searchDirectory((SearchDirectoryOptions) options.toZimbra()).stream().map(Entry::of).toList();
+    } catch (ServiceException e) {
+      throw ExceptionWrapper.wrap(e);
+    }
+  }
 }

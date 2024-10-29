@@ -307,5 +307,9 @@ public class Domain extends Entry
   public String[] getNotificationRecipients() {
     return mDomain.getCarbonioNotificationRecipients();
   }
+
+  public String[] getCarbonioSearchSpecifiedDomainsByFeature() {
+    return mDomain.getCarbonioSearchSpecifiedDomainsByFeature();
+  }
 }
 

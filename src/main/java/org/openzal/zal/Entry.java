@@ -35,6 +35,11 @@ public abstract class Entry
 {
   private final com.zimbra.cs.account.Entry mEntry;
 
+  public static Entry of(Object object) {
+    return new Entry(object) {
+    };
+  }
+
   Entry(@Nonnull Object entry)
   {
     if (entry == null)
@@ -45,6 +50,11 @@ public abstract class Entry
   }
 
   com.zimbra.cs.account.Entry toZimbra()
+  {
+    return mEntry;
+  }
+
+  public Object toZimbraEntry()
   {
     return mEntry;
   }
