@@ -23,7 +23,7 @@ package org.openzal.zal.soap;
 import org.openzal.zal.Continuation;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.Element;
+import java.util.Map;
 
 public interface ZimbraContext extends SoapNode
 {
@@ -48,4 +48,6 @@ public interface ZimbraContext extends SoapNode
   SoapElement getRequest();
 
   boolean hasParameter(String key);
+
+  Map<String, Object> getContext();
 }
