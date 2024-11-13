@@ -136,6 +136,11 @@ public class ZimbraContextSimple implements ZimbraContext
   }
 
   @Override
+  public Map<String, Object> getContext() {
+    return Map.of();
+  }
+
+  @Override
   public SoapNode getSubNode(String name)
   {
     throw new UnsupportedOperationException();
