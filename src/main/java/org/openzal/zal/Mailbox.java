@@ -1576,6 +1576,11 @@ public class Mailbox
     mMbox.purge(Item.convertType(Item.TYPE_UNKNOWN));
   }
 
+  public void purgeCache()
+  {
+    mMbox.purgeCache();
+  }
+
   public void clearCache(byte type) throws ZimbraException
   {
    mMbox.purge(Item.convertType(type));
