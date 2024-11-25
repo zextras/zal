@@ -80,7 +80,7 @@ public class InternalOverrideDocumentHandler extends DocumentHandler
   @Override
   public boolean needsAuth(Map<String, Object> context)
   {
-    return mInternalDocumentHelper.needsAdminAuth(context);
+    return mInternalDocumentHelper.needsAuth(context);
   }
 
   public Boolean canAccessAccountCommon(ZimbraSoapContext zsc, Account target, boolean allowSelf) throws ServiceException
