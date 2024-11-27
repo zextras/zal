@@ -3171,6 +3171,9 @@ public class ProvisioningImp implements Provisioning
   public Cos getDefaultCOS(Domain d) {
     try {
       com.zimbra.cs.account.Cos zimbraCos = mProvisioning.getDefaultCOS((com.zimbra.cs.account.Domain) d.toZimbra());
+      if (zimbraCos == null) {
+        return null;
+      }
       return Cos.fromZimbra(zimbraCos);
     } catch (ServiceException e) {
       return null;
