@@ -9,10 +9,12 @@ import org.openzal.zal.Entry;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.zimbra.soap.DocumentHandler.getZimbraSoapContext;
+
 public class SearchUsersByFeatureResponse {
 
   public static SoapResponse buildResponse(ZimbraContext zimbraContext, List<Entry> entries, int total, boolean more) {
-    var zsc = ((ZimbraContextImpl)zimbraContext).getZimbraSoapContext();
+    var zsc = getZimbraSoapContext(zimbraContext.getContext());
     var response = zsc.createElement(AccountConstants.SEARCH_USERS_BY_FEATURE_RESPONSE);
     var attributes = new HashSet<String>();
     attributes.add(ZAttrProvisioning.A_mail);
