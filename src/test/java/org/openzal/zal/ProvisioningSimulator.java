@@ -3,7 +3,7 @@ package org.openzal.zal;
 import java.util.*;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.zimbra.common.localconfig.LC;
+
 import javax.annotation.Nonnull;
 import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.cs.account.*;
@@ -21,7 +21,6 @@ import com.zimbra.common.account.Key;
 import com.zimbra.soap.admin.type.CacheEntryType;
 import com.zimbra.soap.type.TargetBy;
 import org.mockito.Mockito;
-import org.openzal.zal.lib.ZimbraVersion;
 
 public class ProvisioningSimulator extends ProvisioningImp
 {
@@ -426,12 +425,6 @@ public class ProvisioningSimulator extends ProvisioningImp
   }
 
   public List<CalendarResource> getAllCalendarResources(Domain domain)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public List<XMPPComponent> getAllXMPPComponents()
       throws ZimbraException
   {
     throw new RuntimeException("Provisioning method not implemented");

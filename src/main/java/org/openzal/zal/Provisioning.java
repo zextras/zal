@@ -182,9 +182,6 @@ public interface Provisioning
   List<CalendarResource> getAllCalendarResources(@Nonnull Domain domain)
     throws ZimbraException;
 
-  List<XMPPComponent> getAllXMPPComponents()
-    throws ZimbraException;
-
   @Nullable
   GlobalGrant getGlobalGrant()
     throws ZimbraException;

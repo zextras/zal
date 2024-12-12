@@ -17,8 +17,6 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
     }
   }
 
-  /* $if ZimbraVersion >= 8.0.8 $ */
-
   public ZLdapFilter velodromeAllDistributionListsByDomain(String s)
   {
     return new FakeLdapFilter(FilterId.VELODROME_ALL_DISTRIBUTION_LISTS_BY_DOMAIN);
@@ -43,8 +41,6 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   {
     return new FakeLdapFilter(FilterId.ADDRESS_LIST_BY_NAME);
   }
-
-  /* $endif$ */
 
   @Override
   public String encodeValue(String value) {
@@ -507,21 +503,6 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   }
 
   @Override
-  public ZLdapFilter allXMPPComponents() {
-     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
-  }
-
-  @Override
-  public ZLdapFilter imComponentById(String id) {
-     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
-  }
-
-  @Override
-  public ZLdapFilter xmppComponentById(String id) {
-     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
-  }
-
-  @Override
   public ZLdapFilter allZimlets() {
     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class);
     when(filter.toFilterString()).thenReturn("");
@@ -568,19 +549,4 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   public ZLdapFilter dnSubtreeMatch(String... dns) {
      ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
   }
-
-  /* $if ZimbraVersion >= 8.8.10 || ZimbraX == 1 $ */
-  @Override
-  public ZLdapFilter habOrgUnitByName(String s)
-  {
-    ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
-  }
-
-  @Override
-  public ZLdapFilter allHabGroups()
-  {
-    ZLdapFilter filter = Mockito.mock(ZLdapFilter.class); when(filter.toFilterString()).thenReturn(""); return filter;
-  }
-  /* $endif $*/
-
 }

@@ -1235,20 +1235,6 @@ public class ProvisioningImp implements Provisioning
   }
 
   @Override
-  public List<XMPPComponent> getAllXMPPComponents()
-    throws ZimbraException
-  {
-    try
-    {
-      return ZimbraListWrapper.wrapXmppComponents(mProvisioning.getAllXMPPComponents());
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Override
   @Nullable
   public GlobalGrant getGlobalGrant()
     throws ZimbraException
