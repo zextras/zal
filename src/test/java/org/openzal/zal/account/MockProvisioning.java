@@ -24,7 +24,6 @@ import com.zimbra.cs.account.SearchDirectoryOptions;
 import com.zimbra.cs.account.Server;
 import com.zimbra.cs.account.ShareLocator;
 import com.zimbra.cs.account.Signature;
-import com.zimbra.cs.account.XMPPComponent;
 import com.zimbra.cs.account.Zimlet;
 import org.openzal.zal.ZEUtils;
 import org.openzal.zal.ZxPair;
@@ -1231,44 +1230,6 @@ public class MockProvisioning extends Provisioning
   }
 
   public DataSource get(Account account, Key.DataSourceBy keyType, String key)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public XMPPComponent createXMPPComponent(String name, Domain domain, Server server, Map<String, Object> attrs) {
-    throw new UnsupportedOperationException();
-  }
-
-  public XMPPComponent get(Key.XMPPComponentBy keyName, String key)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public List<XMPPComponent> getAllXMPPComponents() {
-    throw new UnsupportedOperationException();
-  }
-
-  public void deleteXMPPComponent(XMPPComponent comp) {
-    throw new UnsupportedOperationException();
-  }
-
-  public Set<String> createHabOrgUnit(Domain domain, String s) throws ServiceException
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public Set<String> listHabOrgUnit(Domain domain)
-    throws ServiceException
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public Set<String> renameHabOrgUnit(Domain domain, String s, String s1) throws ServiceException
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public void deleteHabOrgUnit(Domain domain, String s) throws ServiceException
   {
     throw new UnsupportedOperationException();
   }

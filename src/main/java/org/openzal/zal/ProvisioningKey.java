@@ -34,7 +34,6 @@ import com.zimbra.common.account.Key.IdentityBy;
 import com.zimbra.common.account.Key.ServerBy;
 import com.zimbra.common.account.Key.ShareLocatorBy;
 import com.zimbra.common.account.Key.SignatureBy;
-import com.zimbra.common.account.Key.XMPPComponentBy;
 import com.zimbra.common.account.Key.ZimletBy;
 
 public class ProvisioningKey
@@ -365,39 +364,6 @@ public class ProvisioningKey
       try
       {
         return new ByCalendarResource(CalendarResourceBy.valueOf(s));
-      }
-      catch (IllegalArgumentException e)
-      {
-        throw ExceptionWrapper.wrap(ServiceException.INVALID_REQUEST("unknown key: " + s, e));
-      }
-    }
-  }
-
-  public static class ByXMPPComponent
-  {
-    private final XMPPComponentBy mXMPPComponentBy;
-
-    @Nonnull public static ByXMPPComponent id              = new ByXMPPComponent(XMPPComponentBy.id);
-    @Nonnull public static ByXMPPComponent serviceHostname = new ByXMPPComponent(XMPPComponentBy.serviceHostname);
-    @Nonnull public static ByXMPPComponent name            = new ByXMPPComponent(XMPPComponentBy.name);
-
-    ByXMPPComponent(XMPPComponentBy identityBy)
-    {
-      mXMPPComponentBy = identityBy;
-    }
-
-    XMPPComponentBy toZimbra()
-    {
-      return mXMPPComponentBy;
-    }
-
-    @Nonnull
-    public static ByXMPPComponent fromString(String s)
-      throws ServiceException
-    {
-      try
-      {
-        return new ByXMPPComponent(XMPPComponentBy.valueOf(s));
       }
       catch (IllegalArgumentException e)
       {

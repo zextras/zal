@@ -25,11 +25,6 @@ import com.zimbra.common.util.Constants;
 import com.zimbra.cs.datasource.DataSourceManager;
 import com.zimbra.cs.mailbox.calendar.Util;
 
-import com.zimbra.soap.account.message.GetSMIMEPublicCertsRequest;
-import com.zimbra.soap.account.message.GetSMIMEPublicCertsResponse;
-import com.zimbra.soap.account.type.SMIMEPublicCertInfo;
-import com.zimbra.soap.account.type.SMIMEPublicCertsInfo;
-import com.zimbra.soap.account.type.SMIMEPublicCertsStoreSpec;
 import com.zimbra.soap.type.SourceLookupOpt;
 import com.zimbra.soap.type.StoreLookupOpt;
 import org.openzal.zal.calendar.ICalendarTimezone;
@@ -1212,48 +1207,6 @@ public class Account extends Entry
   public boolean isFeatureSMIMEEnabled()
   {
     return mAccount.isFeatureSMIMEEnabled();
-  }
-
-  public List<String> getCertificates(SoapTransport soapTransport) throws IOException
-  {
-    SMIMEPublicCertsStoreSpec store = new SMIMEPublicCertsStoreSpec();
-    store.addStoreType("CONTACT");
-    store.addStoreType("GAL");
-    store.addStoreType("LDAP");
-    store.setSourceLookupOpt(SourceLookupOpt.ALL);
-    store.setStoreLookupOpt(StoreLookupOpt.ANY);
-
-    GetSMIMEPublicCertsRequest request = new GetSMIMEPublicCertsRequest(store);
-    request.addEmail(getName());
-    GetSMIMEPublicCertsResponse response = soapTransport.invokeWithoutSession( request );
-
-    List<String> certificates = new ArrayList<String>();
-
-    List<SMIMEPublicCertsInfo> certsList;
-
-    certsList = response.getCerts();
-
-    for( SMIMEPublicCertsInfo current : certsList )
-    {
-      if (current != null)
-      {
-        for (SMIMEPublicCertInfo info : current.getCerts())
-        {
-          String cert = new String(Utils.decodeFSSafeBase64(info.getValue()));
-
-          int beginIndex = cert.indexOf(BEGIN_CERT);
-          int endIndex = cert.indexOf(END_CERT);
-
-          if (beginIndex != -1 && endIndex != -1)
-          {
-            cert = cert.substring(beginIndex + BEGIN_CERT.length(), endIndex);
-            cert = cert.replaceAll("((\\r\\n)|(\\n))", "");
-            certificates.add(cert);
-          }
-        }
-      }
-    }
-    return certificates;
   }
 
   public Collection<String> getGroups()
