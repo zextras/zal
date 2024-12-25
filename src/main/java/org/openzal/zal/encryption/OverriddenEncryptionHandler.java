@@ -1,6 +1,6 @@
 /*
  * ZAL - Zextras Abstraction Layer.
- * Copyright (C) 2023 ZeXtras S.r.l.
+ * Copyright (C) 2025 ZeXtras S.r.l.
  *
  * This file is part of ZAL.
  *
@@ -24,6 +24,15 @@ import org.openzal.zal.Mailbox;
 
 import javax.mail.internet.MimeMessage;
 
-public interface OverriddenSmimeHandler {
+public interface OverriddenEncryptionHandler {
+
+    void sign(Mailbox mailbox, MimeMessage mimeMessage, String password);
+
+    void encrypt(Mailbox mailbox, MimeMessage mimeMessage, String password);
+
     MimeMessage decryptMessage(Mailbox mailbox, MimeMessage mimeMessage, int itemId);
+
+    void registerHandler();
+
+    boolean isRegistered();
 }

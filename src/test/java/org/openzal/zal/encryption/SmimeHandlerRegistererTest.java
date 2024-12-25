@@ -6,55 +6,55 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class SmimeHandlerFactoryTest {
+class SmimeHandlerRegistererTest {
 
     @Test
     void test_createSmimeHandler() throws ServiceException {
-        OverriddenSmimeHandler overriddenSmimeHandler = Mockito.mock();
-        SmimeHandler smimeHandler = SmimeHandlerFactory.createSmimeHandler(overriddenSmimeHandler, true);
+        OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
+        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true);
         Assertions.assertNotNull(smimeHandler);
         smimeHandler.decryptMessage(Mockito.mock(), Mockito.mock(), 0);
-        Mockito.verify(overriddenSmimeHandler, Mockito.times(1))
+        Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
         Assertions.assertTrue(smimeHandler.signatureEnabled());
     }
 
     @Test
     void test_registerHandler() {
-        OverriddenSmimeHandler overriddenSmimeHandler = Mockito.mock();
-        SmimeHandler smimeHandler = SmimeHandlerFactory.createSmimeHandler(overriddenSmimeHandler, true);
-        SmimeHandlerFactory.registerHandler(smimeHandler);
+        OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
+        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true);
+        SmimeHandlerRegisterer.registerHandler(smimeHandler);
         Assertions.assertEquals(smimeHandler, SmimeHandler.getHandler());
         SmimeHandler handler = Mockito.mock();
-        SmimeHandlerFactory.registerHandler(handler);
+        SmimeHandlerRegisterer.registerHandler(handler);
         Assertions.assertEquals(handler, SmimeHandler.getHandler());
     }
 
     @Test
     void test_registerHandler_default() {
-        SmimeHandlerFactory.registerHandler();
+        SmimeHandlerRegisterer.registerHandler();
         SmimeHandler handler = SmimeHandler.getHandler();
         Assertions.assertNotNull(handler);
-        SmimeHandlerFactory.registerHandler();
+        SmimeHandlerRegisterer.registerHandler();
         Assertions.assertEquals(handler, SmimeHandler.getHandler());
     }
 
     @Test
     void test_registerHandler_reset_default_one() throws ServiceException {
         SmimeHandler mock = Mockito.mock();
-        SmimeHandlerFactory.registerHandler(mock);
-        SmimeHandlerFactory.registerHandler();
+        SmimeHandlerRegisterer.registerHandler(mock);
+        SmimeHandlerRegisterer.registerHandler();
         Assertions.assertNotEquals(mock, SmimeHandler.getHandler());
     }
 
     @Test
     void test_registerHandler_with_overriden() throws ServiceException {
-        OverriddenSmimeHandler overriddenSmimeHandler = Mockito.mock();
-        SmimeHandlerFactory.registerHandler(overriddenSmimeHandler, true);
+        OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
+        SmimeHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true);
         SmimeHandler smimeHandler = SmimeHandler.getHandler();
         Assertions.assertNotNull(smimeHandler);
         smimeHandler.decryptMessage(Mockito.mock(), Mockito.mock(), 0);
-        Mockito.verify(overriddenSmimeHandler, Mockito.times(1))
+        Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
         Assertions.assertTrue(smimeHandler.signatureEnabled());
     }

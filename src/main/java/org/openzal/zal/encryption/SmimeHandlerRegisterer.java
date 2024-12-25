@@ -1,6 +1,6 @@
 /*
  * ZAL - Zextras Abstraction Layer.
- * Copyright (C) 2023 ZeXtras S.r.l.
+ * Copyright (C) 2025 ZeXtras S.r.l.
  *
  * This file is part of ZAL.
  *
@@ -21,21 +21,21 @@
 package org.openzal.zal.encryption;
 
 import com.zimbra.cs.smime.SmimeHandler;
-import com.zimbra.cs.smime.SmimeHandlerImpl;
+import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
 import org.openzal.zal.Mailbox;
 
 import javax.mail.internet.MimeMessage;
 
-public final class SmimeHandlerFactory {
+public final class SmimeHandlerRegisterer {
 
-    private SmimeHandlerFactory() {}
+    private SmimeHandlerRegisterer() {}
 
-    public static SmimeHandler createSmimeHandler(OverriddenSmimeHandler overriddenSmimeHandler, boolean signatureEnabled) {
+    public static SmimeHandler createSmimeHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
         return new SmimeHandlerImpl() {
 
             @Override
             public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) {
-                return overriddenSmimeHandler.decryptMessage(new Mailbox(mailbox), mimeMessage, itemId);
+                return overriddenEncryptionHandler.decryptMessage(new Mailbox(mailbox), mimeMessage, itemId);
             }
 
             @Override
@@ -47,6 +47,10 @@ public final class SmimeHandlerFactory {
 
     }
 
+    public static void removeHandler() {
+        SmimeHandler.registerHandler(null);
+    }
+
     public static void registerHandler(SmimeHandler smimeHandler) {
         SmimeHandler.registerHandler(smimeHandler);
     }
@@ -55,10 +59,15 @@ public final class SmimeHandlerFactory {
         if (SmimeHandlerImpl.class.getName().equals(SmimeHandler.getHandler().getClass().getName())) {
             return;
         }
-        registerHandler(new SmimeHandlerImpl());
+        removeHandler();
     }
 
-    public static void registerHandler(OverriddenSmimeHandler overriddenSmimeHandler, boolean signatureEnabled) {
-        registerHandler(createSmimeHandler(overriddenSmimeHandler, signatureEnabled));
+    public static Class<?> getRegisteredClass() {
+        SmimeHandler handler = SmimeHandler.getHandler();
+        return handler == null ? null : handler.getClass();
+    }
+
+    public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
+        registerHandler(createSmimeHandler(overriddenEncryptionHandler, signatureEnabled));
     }
 }
