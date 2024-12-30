@@ -26,9 +26,9 @@ import javax.mail.internet.MimeMessage;
 
 public interface OverriddenEncryptionHandler {
 
-    void sign(Mailbox mailbox, MimeMessage mimeMessage, String certificatePassword);
+    void sign(Mailbox mailbox, MimeMessage mimeMessage, String encryptionPassword);
 
-    void encrypt(Mailbox mailbox, MimeMessage mimeMessage, String certificatePassword);
+    void encrypt(Mailbox mailbox, MimeMessage mimeMessage, String encryptionPassword);
 
     MimeMessage decryptMessage(Mailbox mailbox, MimeMessage mimeMessage, int itemId);
 
