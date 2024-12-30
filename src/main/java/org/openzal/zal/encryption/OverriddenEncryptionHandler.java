@@ -22,9 +22,6 @@ package org.openzal.zal.encryption;
 
 import org.openzal.zal.Mailbox;
 
-import javax.mail.Address;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public interface OverriddenEncryptionHandler {
@@ -39,24 +36,4 @@ public interface OverriddenEncryptionHandler {
 
     boolean isRegistered();
 
-    default String getFrom(MimeMessage mimeMessage) {
-        String from = null;
-
-        try {
-
-            Address fromAddress = mimeMessage.getFrom()[0];
-
-            if (fromAddress instanceof InternetAddress fromAddr) {
-                from = fromAddr.getAddress();
-            }
-
-            if (from == null) {
-                throw new RuntimeException("from can not be defined");
-            }
-
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-        return from;
-    }
 }
