@@ -1,5 +1,6 @@
 package org.openzal.zal.encryption;
 
+import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.smime.SmimeHandler;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,7 @@ class SmimeHandlerRegistererTest {
     }
 
     @Test
-    void test_registerHandler_reset_default_one() throws ServiceException {
+    void test_registerHandler_reset_default_one() {
         SmimeHandler mock = Mockito.mock();
         SmimeHandlerRegisterer.registerHandler(mock);
         SmimeHandlerRegisterer.registerHandler();
@@ -57,6 +58,26 @@ class SmimeHandlerRegistererTest {
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
         Assertions.assertTrue(smimeHandler.signatureEnabled());
+    }
+
+    @Test
+    void test_getRegisteredClass_when_no_handler_registered_then_return_SmimeHandlerImpl() {
+        SmimeHandlerRegisterer.removeHandler();
+        Assertions.assertEquals(SmimeHandlerImpl.class, SmimeHandlerRegisterer.getRegisteredClass());
+    }
+
+    @Test
+    void test_getRegisteredClass_when_handler_is_registered_then_return_registered() {
+        SmimeHandler mock = Mockito.mock();
+        SmimeHandlerRegisterer.registerHandler(mock);
+        Assertions.assertEquals(mock.getClass(), SmimeHandlerRegisterer.getRegisteredClass());
+    }
+
+    @Test
+    void test_registerHandler_when_handler_is_registered_then_do_nothing() {
+        SmimeHandlerRegisterer.registerHandler();
+        SmimeHandlerRegisterer.registerHandler();
+        Assertions.assertEquals(SmimeHandlerImpl.class, SmimeHandlerRegisterer.getRegisteredClass());
     }
 
 }

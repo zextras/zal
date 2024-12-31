@@ -47,11 +47,6 @@ public final class PgpHandlerRegisterer {
             }
 
             @Override
-            public void verifyMessageSignature(Element m, MimeMessage mm) {
-                super.verifyMessageSignature(m, mm);
-            }
-
-            @Override
             public boolean signatureEnabled() {
                 return signatureEnabled;
             }

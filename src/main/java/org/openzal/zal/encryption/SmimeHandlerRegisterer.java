@@ -56,15 +56,14 @@ public final class SmimeHandlerRegisterer {
     }
 
     public static void registerHandler() {
-        if (SmimeHandlerImpl.class.getName().equals(SmimeHandler.getHandler().getClass().getName())) {
+        if (SmimeHandlerImpl.class.isAssignableFrom(SmimeHandler.getHandler().getClass())) {
             return;
         }
         removeHandler();
     }
 
     public static Class<?> getRegisteredClass() {
-        SmimeHandler handler = SmimeHandler.getHandler();
-        return handler == null ? null : handler.getClass();
+        return SmimeHandler.getHandler().getClass();
     }
 
     public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
