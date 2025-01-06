@@ -2,6 +2,7 @@ package org.openzal.zal.encryption;
 
 import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
 import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.mailbox.Mailbox;
 import com.zimbra.cs.smime.SmimeHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,9 @@ class SmimeHandlerRegistererTest {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
         SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true);
         Assertions.assertNotNull(smimeHandler);
-        smimeHandler.decryptMessage(Mockito.mock(), Mockito.mock(), 0);
+        Mailbox mailbox = Mockito.mock();
+        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        smimeHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
         Assertions.assertTrue(smimeHandler.signatureEnabled());
@@ -54,7 +57,9 @@ class SmimeHandlerRegistererTest {
         SmimeHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true);
         SmimeHandler smimeHandler = SmimeHandler.getHandler();
         Assertions.assertNotNull(smimeHandler);
-        smimeHandler.decryptMessage(Mockito.mock(), Mockito.mock(), 0);
+        Mailbox mailbox = Mockito.mock();
+        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        smimeHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
         Assertions.assertTrue(smimeHandler.signatureEnabled());
