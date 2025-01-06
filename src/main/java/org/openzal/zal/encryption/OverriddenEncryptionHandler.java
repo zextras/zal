@@ -20,17 +20,17 @@
 
 package org.openzal.zal.encryption;
 
-import org.openzal.zal.Mailbox;
+import org.openzal.zal.Account;
 
 import javax.mail.internet.MimeMessage;
 
 public interface OverriddenEncryptionHandler {
 
-    void sign(Mailbox mailbox, MimeMessage mimeMessage, String encryptionPassword);
+    void sign(Account account, MimeMessage mimeMessage, String encryptionPassword);
 
-    void encrypt(Mailbox mailbox, MimeMessage mimeMessage, String encryptionPassword);
+    void encrypt(Account account, MimeMessage mimeMessage, String encryptionPassword);
 
-    MimeMessage decryptMessage(Mailbox mailbox, MimeMessage mimeMessage, int itemId);
+    MimeMessage decryptMessage(Account account, MimeMessage mimeMessage, int itemId);
 
     void registerHandler();
 

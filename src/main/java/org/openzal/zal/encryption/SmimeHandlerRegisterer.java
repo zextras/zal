@@ -20,9 +20,10 @@
 
 package org.openzal.zal.encryption;
 
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.smime.SmimeHandler;
 import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
-import org.openzal.zal.Mailbox;
+import org.openzal.zal.Account;
 
 import javax.mail.internet.MimeMessage;
 
@@ -34,8 +35,8 @@ public final class SmimeHandlerRegisterer {
         return new SmimeHandlerImpl() {
 
             @Override
-            public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) {
-                return overriddenEncryptionHandler.decryptMessage(new Mailbox(mailbox), mimeMessage, itemId);
+            public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) throws ServiceException {
+                return overriddenEncryptionHandler.decryptMessage(new Account(mailbox.getAccount()), mimeMessage, itemId);
             }
 
             @Override
