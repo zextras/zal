@@ -20,11 +20,12 @@
 
 package org.openzal.zal.encryption;
 
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.cs.mailbox.Message;
 import com.zimbra.cs.mailbox.OperationContext;
 import com.zimbra.cs.pgp.PgpHandler;
-import org.openzal.zal.Mailbox;
+import org.openzal.zal.Account;
 
 import javax.mail.internet.MimeMessage;
 
@@ -37,8 +38,8 @@ public final class PgpHandlerRegisterer {
         return new PgpHandler() {
 
             @Override
-            public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) {
-                return overriddenEncryptionHandler.decryptMessage(new Mailbox(mailbox), mimeMessage, itemId);
+            public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) throws ServiceException {
+                return overriddenEncryptionHandler.decryptMessage(new Account(mailbox.getAccount()), mimeMessage, itemId);
             }
 
             @Override
