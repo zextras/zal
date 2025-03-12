@@ -33,6 +33,15 @@ public class SearchDirectoryOptions {
     }
   }
 
+
+  public void setTypeFlagDomains() throws org.openzal.zal.exceptions.ServiceException {
+    try {
+      options.setTypes(com.zimbra.cs.account.SearchDirectoryOptions.ObjectType.domains);
+    } catch (ServiceException e) {
+      throw new org.openzal.zal.exceptions.ServiceException(e);
+    }
+  }
+
   public void setFilterString(String filterId, String filterString) {
     options.setFilterString(ZLdapFilterFactory.FilterId.valueOf(filterId), filterString);
   }
