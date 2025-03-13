@@ -311,5 +311,9 @@ public class Domain extends Entry
   public String[] getCarbonioSearchSpecifiedDomainsByFeature() {
     return mDomain.getCarbonioSearchSpecifiedDomainsByFeature();
   }
+
+  public static List<Domain> toListDomain(List<Entry> entries) {
+    return ZimbraListWrapper.wrapDomain(entries.stream().map(e -> (com.zimbra.cs.account.Domain) e.toZimbraEntry()).toList());
+  }
 }
 
