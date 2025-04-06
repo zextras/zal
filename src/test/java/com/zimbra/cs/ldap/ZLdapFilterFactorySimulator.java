@@ -85,6 +85,14 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   }
 
   @Override
+  public ZLdapFilter timeLaterOrEqual(String column, String generalizedTime) {
+    ZLdapFilter filter = Mockito.mock(ZLdapFilter.class);
+    when(filter.toFilterString()).thenReturn("");
+
+    return filter;
+  }
+
+  @Override
   public ZLdapFilter anyEntry() {
     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class);
     when(filter.toFilterString()).thenReturn("");
