@@ -25,8 +25,6 @@ import com.zimbra.common.util.Constants;
 import com.zimbra.cs.datasource.DataSourceManager;
 import com.zimbra.cs.mailbox.calendar.Util;
 
-import com.zimbra.soap.type.SourceLookupOpt;
-import com.zimbra.soap.type.StoreLookupOpt;
 import org.openzal.zal.calendar.ICalendarTimezone;
 import org.openzal.zal.exceptions.*;
 import com.zimbra.common.account.ZAttrProvisioning;
@@ -39,9 +37,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.openzal.zal.extension.ConfigZimletStatus;
-import org.openzal.zal.soap.SoapTransport;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1349,14 +1345,6 @@ public class Account extends Entry
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
-  }
-
-  public <A> A readAttribute(LDAPAttributeReader<Account,A> attr) {
-    return attr.read(this);
-  }
-
-  public static <A> LDAPAttributeReader<Account,A> createAttribute(LDAPAttributeReader<Entry, A> attr) {
-    return attr.compose(account ->  account);
   }
 }
 
