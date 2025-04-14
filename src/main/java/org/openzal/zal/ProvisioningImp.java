@@ -283,6 +283,7 @@ public class ProvisioningImp implements Provisioning
   public static final String A_carbonioAdminUiTitle              = com.zimbra.cs.account.Provisioning.A_carbonioAdminUiTitle;
   public static final String A_carbonioAdminUiDescription        = com.zimbra.cs.account.Provisioning.A_carbonioAdminUiDescription;
   public static final String A_carbonioPrefWebUiDarkMode         = com.zimbra.cs.account.Provisioning.A_carbonioPrefWebUiDarkMode;
+  public static final String A_carbonioPrefDarkMode              = com.zimbra.cs.account.Provisioning.A_carbonioPrefDarkMode;
 
   public static final String A_carbonioWebUiPrimaryColor         = com.zimbra.cs.account.Provisioning.A_carbonioWebUiPrimaryColor;
   public static final String A_carbonioWebUiDarkPrimaryColor     = com.zimbra.cs.account.Provisioning.A_carbonioWebUiDarkPrimaryColor;
