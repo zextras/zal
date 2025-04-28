@@ -709,9 +709,6 @@ public class ProvisioningImp implements Provisioning
         case "soap":
           context.put("proto", AuthContext.Protocol.soap);
           break;
-        case "spnego":
-          context.put("proto", AuthContext.Protocol.spnego);
-          break;
         case "zsync":
           context.put("proto", AuthContext.Protocol.zsync);
           break;
