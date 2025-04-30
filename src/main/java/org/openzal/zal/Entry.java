@@ -74,6 +74,11 @@ public abstract class Entry
     return mEntry.getAttr(name, defaultValue);
   }
 
+  public String getAttr(String name)
+  {
+    return mEntry.getAttr(name);
+  }
+
   @Override
   public boolean equals(@Nullable Object o)
   {
@@ -191,6 +196,5 @@ public abstract class Entry
   public Boolean getBooleanAttr(String name, Boolean defaultValue) {
     return mEntry.getBooleanAttr(name, defaultValue);
   }
-
 }
 
