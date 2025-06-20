@@ -2026,7 +2026,7 @@ public class ProvisioningImp implements Provisioning
       mProvisioning.revokeRight(
         targetType,
         targetBy!=null?targetBy.toZimbra(TargetBy.class):null,
-        target!=null?target:null,
+        target,
         granteeType,
         granteeBy.toZimbra(GranteeBy.class),
         grantee,
@@ -2339,15 +2339,6 @@ public class ProvisioningImp implements Provisioning
     }
   }
 
-//  @Override
-//  public void setZimletPriority(String zimletName, int priority)
-//  {
-//    Zimlet zimlet = getZimlet(zimletName);
-//    Map<String, Object> attrs = zimlet.getAttrs(false);
-//    attrs.put(A_zimbraZimletPriority, String.valueOf(priority));
-//    modifyAttrs(zimlet, attrs);
-//  }
-
   @Override
   public List<Account> getAllDelegatedAdminAccounts() throws ZimbraException
   {
@@ -2452,10 +2443,10 @@ public class ProvisioningImp implements Provisioning
     }
   }
 
-  public List<String> getGroups(Account account) {
+  public List<Group> getGroups(Account account) {
     try {
       List<com.zimbra.cs.account.Group> groups = mProvisioning.getGroups(account.toZimbra(com.zimbra.cs.account.Account.class), false, new HashMap<>());
-      return groups.stream().map(NamedEntry::getName).toList();
+      return groups.stream().map(Group::new).toList();
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
