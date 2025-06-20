@@ -2468,6 +2468,15 @@ public class ProvisioningImp implements Provisioning
     }
   }
 
+  public List<String> getGroups(Account account) {
+    try {
+      List<com.zimbra.cs.account.Group> groups = mProvisioning.getGroups(account.toZimbra(com.zimbra.cs.account.Account.class), false, new HashMap<>());
+      return groups.stream().map(NamedEntry::getName).toList();
+    } catch (ServiceException e) {
+      throw ExceptionWrapper.wrap(e);
+    }
+  }
+
   @Override
   public void removeGranteeId(
     String target,

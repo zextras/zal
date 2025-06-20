@@ -595,6 +595,6 @@ public interface Provisioning
 
   void reloadAccount(Account account);
 
-
+  List<String> getGroups(Account account);
 
 }
