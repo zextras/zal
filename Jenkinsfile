@@ -14,7 +14,7 @@ def deployJfrog() {
 pipeline {
     agent {
         node {
-            label 'zextras-agent-v4'
+            label 'zextras-v1'
         }
     }
     triggers {
