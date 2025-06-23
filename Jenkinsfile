@@ -14,7 +14,7 @@ def deployJfrog() {
 pipeline {
     agent {
         node {
-            label 'zextras-agent-v4'
+            label 'zextras-v1'
         }
     }
     triggers {
@@ -52,23 +52,15 @@ pipeline {
         }
         stage('Build') {
             steps {
-                mvnCmd("package")
+                container('jdk-17') {
+                    mvnCmd("package")
+                }
             }
         }
         stage('Tests') {
             steps {
-                runTests()
-            }
-        }
-        stage('SonarQube') {
-            environment {
-                JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'
-                JAVA_PATH='${JAVA_HOME}/bin'
-                SCANNER_HOME = tool 'SonarScanner'
-            }
-            steps {
-                withSonarQubeEnv(credentialsId: 'sonarqube-user-token', installationName: 'SonarQube instance') {
-                    mvnCmd('sonar:sonar')
+                container('jdk-17') {
+                    runTests()
                 }
             }
         }
@@ -82,7 +74,9 @@ pipeline {
                 }
             }
             steps {
-                mvnCmd("deploy -DskipTests")
+                container('jdk-17') {
+                    mvnCmd("deploy -DskipTests")
+                }
             }
         }
         stage('Build deb/rpm') {
