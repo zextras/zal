@@ -14,7 +14,7 @@ def deployJfrog() {
 pipeline {
     agent {
         node {
-            label 'zextras-agent-v4'
+            label 'zextras-v1'
         }
     }
     triggers {
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 checkout scm
                 withCredentials([file(credentialsId: 'jenkins-maven-settings.xml', variable: 'SETTINGS_PATH')]) {
-                    sh "cp ${SETTINGS_PATH} settings.xml"
+                    sh 'cp $SETTINGS_PATH settings.xml'
                 }
                 script {
                     if (BRANCH_NAME == 'devel') {
@@ -52,23 +52,15 @@ pipeline {
         }
         stage('Build') {
             steps {
-                mvnCmd("package")
+                container('jdk-17') {
+                    mvnCmd("package")
+                }
             }
         }
         stage('Tests') {
             steps {
-                runTests()
-            }
-        }
-        stage('SonarQube') {
-            environment {
-                JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'
-                JAVA_PATH='${JAVA_HOME}/bin'
-                SCANNER_HOME = tool 'SonarScanner'
-            }
-            steps {
-                withSonarQubeEnv(credentialsId: 'sonarqube-user-token', installationName: 'SonarQube instance') {
-                    mvnCmd('sonar:sonar')
+                container('jdk-17') {
+                    runTests()
                 }
             }
         }
@@ -82,7 +74,9 @@ pipeline {
                 }
             }
             steps {
-                mvnCmd("deploy -DskipTests")
+                container('jdk-17') {
+                    mvnCmd("deploy -DskipTests")
+                }
             }
         }
         stage('Build deb/rpm') {
@@ -98,13 +92,15 @@ pipeline {
                       stage('Ubuntu') {
                           agent {
                               node {
-                                  label 'yap-agent-ubuntu-20.04-v2'
+                                  label 'yap-ubuntu-20-v1'
                               }
                           }
                           steps {
-                              unstash 'binaries'
-                              sh 'sudo yap build ubuntu .'
-                              stash includes: 'artifacts/', name: 'artifacts-deb'
+                              container('yap') {
+                                  unstash 'binaries'
+                                  sh 'sudo yap build ubuntu .'
+                                  stash includes: 'artifacts/', name: 'artifacts-deb'
+                              }
                           }
                           post {
                               always {
@@ -116,17 +112,19 @@ pipeline {
                       stage('Rocky') {
                           agent {
                               node {
-                                  label 'yap-agent-rocky-8-v2'
+                                  label 'yap-rocky-8-v1'
                               }
                           }
                           steps {
-                              unstash 'binaries'
-                              sh 'sudo yap build rocky .'
-                              stash includes: 'artifacts/x86_64/', name: 'artifacts-rpm'
+                              container('yap') {
+                                  unstash 'binaries'
+                                  sh 'sudo yap build rocky .'
+                                  stash includes: 'artifacts/', name: 'artifacts-rpm'
+                              }
                           }
                           post {
                               always {
-                                  archiveArtifacts artifacts: "artifacts/x86_64/*.rpm", fingerprint: true
+                                  archiveArtifacts artifacts: "artifacts/*.rpm", fingerprint: true
                               }
                           }
                       }
@@ -158,12 +156,12 @@ pipeline {
                               "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
                           },
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "centos8-playground/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           },
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "rhel9-playground/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           }
@@ -196,12 +194,12 @@ pipeline {
                               "props": "deb.distribution=focal;deb.distribution=jammy;deb.distribution=noble;deb.component=main;deb.architecture=amd64;vcs.revision=${env.GIT_COMMIT}"
                           },
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "centos8-devel/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           },
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "rhel9-devel/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           }
@@ -260,7 +258,7 @@ pipeline {
                   uploadSpec= """{
                       "files": [
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "centos8-rc/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           }
@@ -287,7 +285,7 @@ pipeline {
                   uploadSpec= """{
                       "files": [
                           {
-                              "pattern": "artifacts/x86_64/(carbonio-zal)-(*).x86_64.rpm",
+                              "pattern": "artifacts/(carbonio-zal)-(*).x86_64.rpm",
                               "target": "rhel9-rc/zextras/{1}/{1}-{2}.x86_64.rpm",
                               "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras;vcs.revision=${env.GIT_COMMIT}"
                           }
