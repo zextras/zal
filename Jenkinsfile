@@ -96,9 +96,11 @@ pipeline {
                               }
                           }
                           steps {
-                              unstash 'binaries'
-                              sh 'sudo yap build ubuntu .'
-                              stash includes: 'artifacts/', name: 'artifacts-deb'
+                              container('yap') {
+                                  unstash 'binaries'
+                                  sh 'sudo yap build ubuntu .'
+                                  stash includes: 'artifacts/', name: 'artifacts-deb'
+                              }
                           }
                           post {
                               always {
