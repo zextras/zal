@@ -199,22 +199,6 @@ public class ZimbraListWrapper
   }
 
   @Nonnull
-  public static List<XMPPComponent> wrapXmppComponents(@Nullable List<com.zimbra.cs.account.XMPPComponent> xmppComponents)
-  {
-    if (xmppComponents == null || xmppComponents.size() == 0)
-    {
-      return Collections.emptyList();
-    }
-    List<XMPPComponent> list = new ArrayList<XMPPComponent>(xmppComponents.size());
-    for (com.zimbra.cs.account.XMPPComponent xmppComponent : xmppComponents)
-    {
-      list.add(new XMPPComponent(xmppComponent));
-    }
-
-    return list;
-  }
-
-  @Nonnull
   public static List<MPartInfo> wrapMPartInfos(@Nullable List<com.zimbra.cs.mime.MPartInfo> mPartInfos)
   {
     if (mPartInfos == null || mPartInfos.size() == 0)

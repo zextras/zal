@@ -58,10 +58,6 @@ public interface MailboxManager
 
   Mailbox cleanCacheAndGetUpdatedMailboxById(Mailbox mailbox, boolean skipMailhostCheck);
 
-  void registerAdditionalQuotaProvider(AdditionalQuotaProvider additionalQuotaProvider);
-
-  void removeAdditionalQuotaProvider(AdditionalQuotaProvider additionalQuotaProvider);
-
   MailboxData getMailboxData(long mailboxId);
 
   void forceDeleteMailbox(@Nonnull MailboxData data);
