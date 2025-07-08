@@ -335,18 +335,6 @@ public class MailboxManagerImp implements MailboxManager
     return getMailboxById(mailbox.getId(), skipMailhostCheck);
   }
 
-  @Override
-  public void registerAdditionalQuotaProvider(final AdditionalQuotaProvider additionalQuotaProvider)
-  {
-    mMailboxManager.addAdditionalQuotaProvider(new ZALAdditionalQuotaProvider(additionalQuotaProvider));
-  }
-
-  @Override
-  public void removeAdditionalQuotaProvider(final AdditionalQuotaProvider additionalQuotaProvider)
-  {
-    mMailboxManager.removeAdditionalQuotaProvider(new ZALAdditionalQuotaProvider(additionalQuotaProvider));
-  }
-
   private interface ZalProxyObject
   {
     Object getProxiedObject();
@@ -499,41 +487,4 @@ public class MailboxManagerImp implements MailboxManager
     }
   }
 
-  class ZALAdditionalQuotaProvider
-    implements com.zimbra.cs.mailbox.AdditionalQuotaProvider
-  {
-    private AdditionalQuotaProvider mAdditionalQuotaProvider;
-
-    ZALAdditionalQuotaProvider(AdditionalQuotaProvider mAdditionalQuotaProvider)
-    {
-      this.mAdditionalQuotaProvider = mAdditionalQuotaProvider;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-      if (this == o)
-      {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass())
-      {
-        return false;
-      }
-      ZALAdditionalQuotaProvider that = (ZALAdditionalQuotaProvider) o;
-      return Objects.equals(mAdditionalQuotaProvider, that.mAdditionalQuotaProvider);
-    }
-
-    @Override
-    public int hashCode()
-    {
-      return Objects.hash(mAdditionalQuotaProvider);
-    }
-
-    @Override
-    public long getAdditionalQuota(com.zimbra.cs.mailbox.Mailbox mailbox)
-    {
-      return mAdditionalQuotaProvider.getAdditionalQuota(new org.openzal.zal.Mailbox(mailbox));
-    }
-  }
 }
