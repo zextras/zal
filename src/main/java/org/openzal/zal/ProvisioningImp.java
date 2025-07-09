@@ -31,6 +31,7 @@ import com.unboundid.ldap.sdk.SearchScope;
 import com.unboundid.ldap.sdk.controls.SimplePagedResultsControl;
 import com.zimbra.common.account.Key;
 import com.zimbra.common.account.ZAttrProvisioning.AutoProvAuthMech;
+import com.zimbra.common.cli.CommandExitException;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapProtocol;
@@ -2891,8 +2892,12 @@ public class ProvisioningImp implements Provisioning
   {
     try
     {
-      ProxyPurgeUtil.purgeAccounts((List)null,accounts,true,(String)null);
-      List<com.zimbra.cs.account.Server> memcachedServers = mProvisioning.getAllServers("memcached");
+			try {
+				ProxyPurgeUtil.purgeAccounts((List)null,accounts,true,(String)null);
+			} catch (CommandExitException e) {
+				System.exit(e.getExitCode());
+			}
+			List<com.zimbra.cs.account.Server> memcachedServers = mProvisioning.getAllServers("memcached");
       List<String> routes = new ArrayList<>(accounts.size());
       for (String account : accounts)
       {
