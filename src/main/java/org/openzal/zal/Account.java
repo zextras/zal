@@ -1200,11 +1200,6 @@ public class Account extends Entry
     return new ICalendarTimezone(accountTimeZone);
   }
 
-  public boolean isFeatureSMIMEEnabled()
-  {
-    return mAccount.isFeatureSMIMEEnabled();
-  }
-
   public Collection<String> getGroups()
   {
     try
