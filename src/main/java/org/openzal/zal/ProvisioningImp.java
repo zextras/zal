@@ -98,7 +98,6 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraFeatureTasksEnabled                                  = com.zimbra.cs.account.Provisioning.A_zimbraFeatureTasksEnabled;
   public static String A_zimbraFeatureCalendarEnabled                               = com.zimbra.cs.account.Provisioning.A_zimbraFeatureCalendarEnabled;
   public static String A_zimbraFeatureContactsEnabled                               = com.zimbra.cs.account.Provisioning.A_zimbraFeatureContactsEnabled;
-  public static String A_zimbraFeatureEmailEnabled                                  = com.zimbra.cs.account.Provisioning.A_zimbraFeatureMailEnabled;
   public static String A_zimbraIsACLGroup                                           = com.zimbra.cs.account.Provisioning.A_zimbraIsACLGroup;
   public static String A_memberURL                                                  = com.zimbra.cs.account.Provisioning.A_memberURL;
   public static String A_zimbraMailDomainQuota                                      = com.zimbra.cs.account.Provisioning.A_zimbraMailDomainQuota;
@@ -115,8 +114,6 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraMobilePolicyAllowIrDA                                = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowIrDA;
   public static String A_zimbraMobilePolicyAllowPOPIMAPEmail                        = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowPOPIMAPEmail;
   public static String A_zimbraMobilePolicyAllowRemoteDesktop                       = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowRemoteDesktop;
-  public static String A_zimbraMobilePolicyAllowSMIMEEncryptionAlgorithmNegotiation = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowSMIMEEncryptionAlgorithmNegotiation;
-  public static String A_zimbraMobilePolicyAllowSMIMESoftCerts                      = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowSMIMESoftCerts;
   public static String A_zimbraMobilePolicyAllowStorageCard                         = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowStorageCard;
   public static String A_zimbraMobilePolicyAllowTextMessaging                       = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowTextMessaging;
   public static String A_zimbraMobilePolicyAllowUnsignedApplications                = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyAllowUnsignedApplications;
@@ -127,11 +124,7 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraMobilePolicyMaxEmailBodyTruncationSize               = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyMaxEmailBodyTruncationSize;
   public static String A_zimbraMobilePolicyMaxEmailHTMLBodyTruncationSize           = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyMaxEmailHTMLBodyTruncationSize;
   public static String A_zimbraMobilePolicyRequireDeviceEncryption                  = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireDeviceEncryption;
-  public static String A_zimbraMobilePolicyRequireEncryptedSMIMEMessages            = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireEncryptedSMIMEMessages;
-  public static String A_zimbraMobilePolicyRequireEncryptionSMIMEAlgorithm          = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireEncryptionSMIMEAlgorithm;
   public static String A_zimbraMobilePolicyRequireManualSyncWhenRoaming             = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireManualSyncWhenRoaming;
-  public static String A_zimbraMobilePolicyRequireSignedSMIMEAlgorithm              = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireSignedSMIMEAlgorithm;
-  public static String A_zimbraMobilePolicyRequireSignedSMIMEMessages               = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicyRequireSignedSMIMEMessages;
   public static String A_zimbraMobilePolicySuppressDeviceEncryption                 = com.zimbra.cs.account.Provisioning.A_zimbraMobilePolicySuppressDeviceEncryption;
   public static String A_zimbraMailOutgoingSieveScript                              = com.zimbra.cs.account.Provisioning.A_zimbraMailOutgoingSieveScript;
   public static String A_zimbraMailTrustedSenderListMaxNumEntries                   = com.zimbra.cs.account.Provisioning.A_zimbraMailTrustedSenderListMaxNumEntries;

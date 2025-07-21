@@ -51,11 +51,6 @@ public class Config extends Entry
     );
   }
 
-  public String getVersionCheckNotificationEmail()
-  {
-    return mConfig.getVersionCheckNotificationEmail();
-  }
-
   @Nonnull
   public Set<String> getMultiAttrSet(String name)
   {
