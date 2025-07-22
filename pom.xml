@@ -594,31 +594,113 @@
     </extensions>
 
     <plugins>
+      <!-- JaCoCo Configuration -->
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <!-- attached to Maven test phase -->
-          <execution>
-            <id>report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.8</version>
+          <executions>
+              <!-- Unit Test Coverage -->
+              <execution>
+                  <id>prepare-agent-ut</id>
+                  <phase>initialize</phase>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+                  <configuration>
+                      <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
+                      <propertyName>surefire.argLine</propertyName>
+                  </configuration>
+              </execution>
+
+              <!-- Integration Test Coverage -->
+              <execution>
+                  <id>prepare-agent-it</id>
+                  <phase>pre-integration-test</phase>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+                  <configuration>
+                      <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                      <propertyName>failsafe.argLine</propertyName>
+                  </configuration>
+              </execution>
+
+              <!-- Merge Reports -->
+              <execution>
+                  <id>merge-results</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>merge</goal>
+                  </goals>
+                  <configuration>
+                      <fileSets>
+                          <fileSet>
+                              <directory>${project.build.directory}</directory>
+                              <includes>
+                                  <include>jacoco-*.exec</include>
+                              </includes>
+                          </fileSet>
+                      </fileSets>
+                      <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+                  </configuration>
+              </execution>
+
+              <!-- Generate Report -->
+              <execution>
+                  <id>generate-report</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+                  <configuration>
+                      <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                      <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                  </configuration>
+              </execution>
+          </executions>
       </plugin>
+
+      <!-- Unit Test Configuration -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.2</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.2</version>
+          <configuration>
+              <argLine>${surefire.argLine}</argLine>
+          </configuration>
       </plugin>
+
+      <!-- Integration Test Configuration -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.0.0</version>
+          <configuration>
+              <trimStackTrace>false</trimStackTrace>
+              <forkCount>1</forkCount>
+              <argLine>
+                  ${failsafe.argLine}
+                  --illegal-access=permit
+                  -Xmx1024m
+                  -ea
+                  --add-opens java.base/java.lang=ALL-UNNAMED
+                  -Duser.timezone=Europe/Rome
+                  -Djava.awt.headless=true
+                  -Dzimbra.config=it/data/zimbra-config/localconfig-test.xml
+                  -Dfile.encoding=UTF-8
+              </argLine>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>integration-test</goal>
+                      <goal>verify</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -668,27 +750,6 @@
               <destinationFile>
                 ${project.build.directory}/classes/com/zimbra/cs/store/file/VolumeBlobProxy</destinationFile>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0</version> <!--New releases has a bug!-->
-        <configuration>
-          <trimStackTrace>false</trimStackTrace>
-          <forkCount>1</forkCount>
-          <argLine>--illegal-access=permit -Xmx1024m  -ea --add-opens java.base/java.lang=ALL-UNNAMED
-            -Duser.timezone=Europe/Rome -Djava.awt.headless=true
-            -Dzimbra.config=it/data/zimbra-config/localconfig-test.xml
-            -Dfile.encoding=UTF-8</argLine>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
