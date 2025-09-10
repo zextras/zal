@@ -20,6 +20,7 @@
 
 package org.openzal.zal;
 
+import com.zimbra.cs.account.LdapAttributeInfo;
 import javax.annotation.Nullable;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import com.zimbra.common.service.ServiceException;
@@ -37,7 +38,7 @@ public class AttributeInfo
   {
     try
     {
-      mAttributeInfo.checkValue(value, checkImmutable, null);
+      LdapAttributeInfo.get(mAttributeInfo).checkValue(value, checkImmutable, null);
     }
     catch (ServiceException e)
     {
