@@ -2460,7 +2460,7 @@ public class ProvisioningImp implements Provisioning
       com.zimbra.cs.account.Entry targetEntry = null;
       try
       {
-        targetEntry = com.zimbra.cs.account.accesscontrol.TargetType.lookupTarget(
+        targetEntry = com.zimbra.cs.account.accesscontrol.TargetTypeLookup.lookupTarget(
           mProvisioning,
           TargetType.account,
           com.zimbra.soap.type.TargetBy.name,
@@ -2471,7 +2471,7 @@ public class ProvisioningImp implements Provisioning
 
       if( targetEntry == null )
       {
-        targetEntry = com.zimbra.cs.account.accesscontrol.TargetType.lookupTarget(
+        targetEntry = com.zimbra.cs.account.accesscontrol.TargetTypeLookup.lookupTarget(
           mProvisioning,
           TargetType.dl,
           com.zimbra.soap.type.TargetBy.name,
