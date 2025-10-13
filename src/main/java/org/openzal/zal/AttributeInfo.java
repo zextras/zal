@@ -57,7 +57,7 @@ public class AttributeInfo
     try
     {
       com.zimbra.cs.account.AttributeInfo attributeInfo =
-        com.zimbra.cs.account.AttributeManager.getInstance().getAttributeInfo(key);
+        com.zimbra.cs.account.StoreAttributeManager.getInstance().getAttributeInfo(key);
       if (attributeInfo == null)
       {
         return null;
