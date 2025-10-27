@@ -1,5 +1,6 @@
 def mvnCmd(String cmd) {
-  sh 'mvn --settings settings.xml -B ' + cmd
+    def buildOptions = (env.TAG_NAME != null) ? '-Dchangelist="" -Pproduction' : '';
+    sh "mvn --settings settings.xml -B -Djooq.codegen.logging=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn ${buildOptions} ${cmd}";
 }
 
 def runTests() {
