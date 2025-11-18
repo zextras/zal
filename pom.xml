@@ -169,19 +169,6 @@
 
     <dependency>
       <groupId>zextras</groupId>
-      <artifactId>zm-native</artifactId>
-      <version>${carbonio.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-
-    <dependency>
-      <groupId>zextras</groupId>
       <artifactId>zm-soap</artifactId>
       <version>${carbonio.version}</version>
       <exclusions>
