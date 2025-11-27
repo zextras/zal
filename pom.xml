@@ -650,21 +650,19 @@
           </executions>
       </plugin>
 
-      <!-- Unit Test Configuration -->
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.4</version>
           <configuration>
               <argLine>${surefire.argLine}</argLine>
           </configuration>
       </plugin>
 
-      <!-- Integration Test Configuration -->
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.5.4</version>
           <configuration>
               <trimStackTrace>false</trimStackTrace>
               <forkCount>1</forkCount>
