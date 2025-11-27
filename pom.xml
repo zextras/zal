@@ -106,8 +106,8 @@
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
     <log4j.version>2.20.0</log4j.version>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <commit.id>1.1.1</commit.id>
     <jetty.version>9.4.55.v20240627</jetty.version>
     <servlet.version>3.1.0</servlet.version>
@@ -587,7 +587,7 @@
       <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.8</version>
+          <version>0.8.14</version>
           <executions>
               <!-- Unit Test Coverage -->
               <execution>
@@ -598,7 +598,6 @@
                   </goals>
                   <configuration>
                       <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-                      <propertyName>surefire.argLine</propertyName>
                   </configuration>
               </execution>
 
@@ -611,7 +610,6 @@
                   </goals>
                   <configuration>
                       <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-                      <propertyName>failsafe.argLine</propertyName>
                   </configuration>
               </execution>
 
@@ -650,26 +648,24 @@
           </executions>
       </plugin>
 
-      <!-- Unit Test Configuration -->
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.4</version>
           <configuration>
-              <argLine>${surefire.argLine}</argLine>
+              <argLine>${argLine}</argLine>
           </configuration>
       </plugin>
 
-      <!-- Integration Test Configuration -->
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.5.4</version>
           <configuration>
               <trimStackTrace>false</trimStackTrace>
               <forkCount>1</forkCount>
               <argLine>
-                  ${failsafe.argLine}
+                  ${argLine}
                   --illegal-access=permit
                   -Xmx1024m
                   -ea

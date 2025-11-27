@@ -53,14 +53,14 @@ pipeline {
         }
         stage('Build') {
             steps {
-                container('jdk-17') {
+                container('jdk-21') {
                     mvnCmd("package")
                 }
             }
         }
         stage('Tests') {
             steps {
-                container('jdk-17') {
+                container('jdk-21') {
                     runTests()
                 }
             }
@@ -70,7 +70,7 @@ pipeline {
                 SCANNER_HOME = tool 'SonarScanner'
             }
             steps {
-                container('jdk-17') {
+                container('jdk-21') {
                     withSonarQubeEnv(credentialsId: 'sonarqube-user-token', installationName: 'SonarQube instance') {
                         mvnCmd('sonar:sonar')
                     }
@@ -87,7 +87,7 @@ pipeline {
                 }
             }
             steps {
-                container('jdk-17') {
+                container('jdk-21') {
                     mvnCmd("deploy -DskipTests")
                 }
             }
