@@ -598,7 +598,6 @@
                   </goals>
                   <configuration>
                       <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-                      <propertyName>surefire.argLine</propertyName>
                   </configuration>
               </execution>
 
@@ -611,7 +610,6 @@
                   </goals>
                   <configuration>
                       <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-                      <propertyName>failsafe.argLine</propertyName>
                   </configuration>
               </execution>
 
@@ -655,7 +653,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.5.4</version>
           <configuration>
-              <argLine>${surefire.argLine}</argLine>
+              <argLine>${argLine}</argLine>
           </configuration>
       </plugin>
 
@@ -667,7 +665,7 @@
               <trimStackTrace>false</trimStackTrace>
               <forkCount>1</forkCount>
               <argLine>
-                  ${failsafe.argLine}
+                  ${argLine}
                   --illegal-access=permit
                   -Xmx1024m
                   -ea
