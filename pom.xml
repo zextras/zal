@@ -101,7 +101,8 @@
   <properties>
     <revision>26.3.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio.version>${revision}${changelist}</carbonio.version>
+    <carbonio-revision>4.23.3</carbonio-revision>
+    <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -144,7 +145,7 @@
     </dependency>
 
     <dependency>
-      <groupId>zextras</groupId>
+      <groupId>com.zextras</groupId>
       <artifactId>zm-common</artifactId>
       <version>${carbonio.version}</version>
       <exclusions>
@@ -156,7 +157,7 @@
     </dependency>
 
     <dependency>
-      <groupId>zextras</groupId>
+      <groupId>com.zextras</groupId>
       <artifactId>zm-client</artifactId>
       <version>${carbonio.version}</version>
       <exclusions>
@@ -168,7 +169,7 @@
     </dependency>
 
     <dependency>
-      <groupId>zextras</groupId>
+      <groupId>com.zextras</groupId>
       <artifactId>zm-soap</artifactId>
       <version>${carbonio.version}</version>
       <exclusions>
@@ -408,7 +409,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>zextras</groupId>
+      <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
       <classifier>tests</classifier>
       <version>${carbonio.version}</version>
@@ -417,7 +418,7 @@
     </dependency>
 
     <dependency>
-      <groupId>zextras</groupId>
+      <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
       <version>${carbonio.version}</version>
       <scope>compile</scope>
