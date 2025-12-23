@@ -304,6 +304,8 @@ public class ProvisioningImp implements Provisioning
   public static final String A_zimbraPasswordLockoutMaxFailures = com.zimbra.cs.account.Provisioning.A_zimbraPasswordLockoutMaxFailures;
   public static final String A_zimbraPasswordLockoutFailureLifetime = com.zimbra.cs.account.Provisioning.A_zimbraPasswordLockoutFailureLifetime;
   public static final String A_zimbraPasswordLockoutLockedTime = com.zimbra.cs.account.Provisioning.A_zimbraPasswordLockoutLockedTime;
+
+  public static final String A_carbonioAdminProxyPort = com.zimbra.cs.account.Provisioning.A_carbonioAdminProxyPort;
   @Nonnull
   public final com.zimbra.cs.account.Provisioning mProvisioning;
 

@@ -55,6 +55,19 @@ public class AuthProvider
     }
   }
 
+  public static String createAdminToken(Account requester) {
+    if (requester.isIsAdminAccount()) {
+      try {
+        return com.zimbra.cs.service.AuthProvider
+                .getAuthToken(requester.toZimbra(com.zimbra.cs.account.Account.class), true).getEncoded();
+      } catch (Exception e) {
+        throw ExceptionWrapper.wrap(e);
+      }
+    } else {
+      throw new AuthTokenException("Account %s is not an admin account".formatted(requester.getName()));
+    }
+  }
+
   /**
    * Parse the provided encoded token in a zal token.
    * The token will be validated before being returned.
