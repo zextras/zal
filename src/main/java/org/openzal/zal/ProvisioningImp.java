@@ -20,6 +20,7 @@
 
 package org.openzal.zal;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -324,6 +325,11 @@ public class ProvisioningImp implements Provisioning
 
   private final AuthProvider mAuthProvider = new AuthProvider();
 
+  @VisibleForTesting
+  public static void initProvisioning()
+  {
+    com.zimbra.cs.account.Provisioning.setInstance(null);
+  }
   public ProvisioningImp()
   {
     this(com.zimbra.cs.account.Provisioning.getInstance());
