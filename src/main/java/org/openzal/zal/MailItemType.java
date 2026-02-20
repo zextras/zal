@@ -41,7 +41,7 @@ public class MailItemType
   private final com.zimbra.cs.mailbox.MailItem.Type mType;
 
 
-  MailItemType(com.zimbra.cs.mailbox.MailItem.Type type)
+  public MailItemType(com.zimbra.cs.mailbox.MailItem.Type type)
   {
     mType = type;
   }
