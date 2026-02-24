@@ -101,7 +101,7 @@
   <properties>
     <revision>26.3.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio-revision>4.23.5</carbonio-revision>
+    <carbonio-revision>4.24.0</carbonio-revision>
     <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
