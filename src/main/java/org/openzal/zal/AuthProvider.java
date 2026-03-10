@@ -56,7 +56,7 @@ public class AuthProvider
   }
 
   public static String createAdminToken(Account requester) {
-    if (requester.isIsAdminAccount()) {
+    if (requester.isIsAdminAccount() || requester.isIsDelegatedAdminAccount()) {
       try {
         return com.zimbra.cs.service.AuthProvider
                 .getAuthToken(requester.toZimbra(com.zimbra.cs.account.Account.class), true).getEncoded();
