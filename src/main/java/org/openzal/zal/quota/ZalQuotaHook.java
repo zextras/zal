@@ -2,6 +2,7 @@ package org.openzal.zal.quota;
 
 import com.zextras.mailbox.quota.IsOverQuota;
 import com.zextras.mailbox.quota.QuotaHook;
+import com.zextras.mailbox.quota.QuotaHookSingleton;
 import com.zimbra.cs.account.Account;
 import io.vavr.Function2;
 import io.vavr.control.Try;
@@ -14,7 +15,16 @@ public class ZalQuotaHook implements QuotaHook {
 	private final Function2<org.openzal.zal.Account, Long, Try<Void>> addMessageFunction;
 	private final BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction;
 
-	public ZalQuotaHook(Function<org.openzal.zal.Account, Boolean> overQuotaFunction,
+	public static synchronized void setInstance(
+			Function<org.openzal.zal.Account, Boolean> overQuotaFunction,
+			Function2<org.openzal.zal.Account, Long, Try<Void>> addMessageFunction,
+			BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction
+	) {
+		var hook = new ZalQuotaHook(overQuotaFunction, addMessageFunction, deleteMessageFunction);
+		QuotaHookSingleton.setInstance(hook);
+	}
+
+	private ZalQuotaHook(Function<org.openzal.zal.Account, Boolean> overQuotaFunction,
 			Function2<org.openzal.zal.Account, Long, Try<Void>> addMessageFunction,
 			BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction) {
 		this.overQuotaFunction = overQuotaFunction;
