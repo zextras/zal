@@ -94,6 +94,10 @@ public class Account extends Entry
     }
   }
 
+  public Boolean isMailAllowReceiveButNotSendWhenOverQuota() {
+    return mAccount.isMailAllowReceiveButNotSendWhenOverQuota();
+  }
+
   public void setLastLogonTime(String time)
   {
     try

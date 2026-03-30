@@ -1,59 +1,48 @@
 package org.openzal.zal.quota;
 
-import com.zextras.mailbox.quota.IsOverQuota;
 import com.zextras.mailbox.quota.QuotaHook;
 import com.zextras.mailbox.quota.QuotaHookSingleton;
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Account;
-
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import com.zimbra.cs.mailbox.MailServiceException;
 
 public class ZalQuotaHook implements QuotaHook {
 
-	private final Function<org.openzal.zal.Account, Boolean> overQuotaFunction;
-	private final BiFunction<org.openzal.zal.Account, Long, Result> addMessageFunction;
-	private final BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction;
+	private final ZalQuotaAdapter zalQuotaAdapter;
 
-	public static synchronized void setInstance(
-			Function<org.openzal.zal.Account, Boolean> overQuotaFunction,
-			BiFunction<org.openzal.zal.Account, Long, Result> addMessageFunction,
-			BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction
-	) {
-		var hook = new ZalQuotaHook(overQuotaFunction, addMessageFunction, deleteMessageFunction);
+	public static synchronized void setInstance(ZalQuotaAdapter zalQuotaAdapter) {
+		var hook = new ZalQuotaHook(zalQuotaAdapter);
 		QuotaHookSingleton.setInstance(hook);
 	}
 
-	private ZalQuotaHook(Function<org.openzal.zal.Account, Boolean> overQuotaFunction,
-			BiFunction<org.openzal.zal.Account, Long, Result> addMessageFunction,
-			BiConsumer<org.openzal.zal.Account, Long> deleteMessageFunction) {
-		this.overQuotaFunction = overQuotaFunction;
-		this.addMessageFunction = addMessageFunction;
-		this.deleteMessageFunction = deleteMessageFunction;
+	private ZalQuotaHook(ZalQuotaAdapter zalQuotaAdapter) {
+		this.zalQuotaAdapter = zalQuotaAdapter;
 	}
 
 
 	@Override
-	public IsOverQuota getQuota(Account acct) {
+	public void onSendMessage(Account acct) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		return new IsOverQuota(overQuotaFunction.apply(zalAccount));
-	}
-
-	@Override
-	public IsOverQuota addMessage(Account acct, long newTotalMailboxUsage) {
-		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final Result result = addMessageFunction.apply(zalAccount, newTotalMailboxUsage);
-		if (!result.isSuccess()) {
-			return new IsOverQuota(true);
+		final Boolean isOverQuota = this.zalQuotaAdapter.onSendMessage(zalAccount);
+		if (isOverQuota) {
+			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
-		return new IsOverQuota(false);
 	}
 
 	@Override
-	public void deleteMessage(Account acct, long size) {
+	public void onAddMessage(Account acct, long newTotalMailboxUsage) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		deleteMessageFunction.accept(zalAccount, size);
+		final Result result = this.zalQuotaAdapter.onAddMessage(zalAccount, newTotalMailboxUsage);
+		if (!result.isSuccess()) {
+			// TODO: retrieve limit from storages?
+			throw MailServiceException.QUOTA_EXCEEDED(0);
+		}
 	}
 
-	public record Result(boolean isSuccess) {}
+	@Override
+	public void onDeleteMessage(Account acct, long size) {
+		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
+		this.zalQuotaAdapter.onDeleteMessage(zalAccount, size);
+	}
+
 }
