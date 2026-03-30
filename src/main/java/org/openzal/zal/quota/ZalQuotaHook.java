@@ -8,23 +8,23 @@ import com.zimbra.cs.mailbox.MailServiceException;
 
 public class ZalQuotaHook implements QuotaHook {
 
-	private final ZalQuotaAdapter zalQuotaAdapter;
+	private final QuotaCheckAdapter quotaCheckAdapter;
 
-	public static synchronized void setInstance(ZalQuotaAdapter zalQuotaAdapter) {
+	public static synchronized void setInstance(QuotaCheckAdapter zalQuotaAdapter) {
 		var hook = new ZalQuotaHook(zalQuotaAdapter);
 		QuotaHookSingleton.setInstance(hook);
 	}
 
-	private ZalQuotaHook(ZalQuotaAdapter zalQuotaAdapter) {
-		this.zalQuotaAdapter = zalQuotaAdapter;
+	private ZalQuotaHook(QuotaCheckAdapter quotaCheckAdapter) {
+		this.quotaCheckAdapter = quotaCheckAdapter;
 	}
 
 
 	@Override
 	public void onSendMessage(Account acct) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final Boolean isOverQuota = this.zalQuotaAdapter.onSendMessage(zalAccount);
-		if (isOverQuota) {
+		final QuotaResult result = this.quotaCheckAdapter.onSendMessage(zalAccount);
+		if (result instanceof QuotaResult.OverQuota) {
 			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
 	}
@@ -32,8 +32,8 @@ public class ZalQuotaHook implements QuotaHook {
 	@Override
 	public void onAddMessage(Account acct, long newTotalMailboxUsage) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final Result result = this.zalQuotaAdapter.onAddMessage(zalAccount, newTotalMailboxUsage);
-		if (!result.isSuccess()) {
+		final QuotaResult result = this.quotaCheckAdapter.onAddMessage(zalAccount, newTotalMailboxUsage);
+		if (result instanceof QuotaResult.OverQuota) {
 			// TODO: retrieve limit from storages?
 			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
@@ -42,7 +42,7 @@ public class ZalQuotaHook implements QuotaHook {
 	@Override
 	public void onDeleteMessage(Account acct, long size) {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		this.zalQuotaAdapter.onDeleteMessage(zalAccount, size);
+		this.quotaCheckAdapter.onDeleteMessage(zalAccount, size);
 	}
 
 }
