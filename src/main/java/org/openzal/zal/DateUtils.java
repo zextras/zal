@@ -3,6 +3,9 @@ package org.openzal.zal;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.util.DateUtil;
 import com.zimbra.cs.ldap.LdapDateUtil;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 public class DateUtils {
@@ -25,5 +28,13 @@ public class DateUtils {
 
   public static Date parseGeneralizedTime(String time) {
     return LdapDateUtil.parseGeneralizedTime(time);
+  }
+
+  public static OffsetDateTime parseGeneralizedTimeAsOffsetDateTime(String time) {
+    return toOffsetDateTime(parseGeneralizedTime(time));
+  }
+
+  private static OffsetDateTime toOffsetDateTime(Date date) {
+    return date.toInstant().atOffset(ZoneOffset.UTC);
   }
 }
