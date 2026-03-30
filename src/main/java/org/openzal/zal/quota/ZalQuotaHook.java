@@ -1,18 +1,18 @@
 package org.openzal.zal.quota;
 
-import com.zextras.mailbox.quota.QuotaHook;
-import com.zextras.mailbox.quota.QuotaHookSingleton;
+import com.zextras.mailbox.quota.QuotaCheck;
+import com.zextras.mailbox.quota.QuotaCheckSingleton;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Account;
 import com.zimbra.cs.mailbox.MailServiceException;
 
-public class ZalQuotaHook implements QuotaHook {
+public class ZalQuotaHook implements QuotaCheck {
 
 	private final QuotaCheckAdapter quotaCheckAdapter;
 
 	public static synchronized void setInstance(QuotaCheckAdapter zalQuotaAdapter) {
 		var hook = new ZalQuotaHook(zalQuotaAdapter);
-		QuotaHookSingleton.setInstance(hook);
+		QuotaCheckSingleton.setInstance(hook);
 	}
 
 	private ZalQuotaHook(QuotaCheckAdapter quotaCheckAdapter) {
