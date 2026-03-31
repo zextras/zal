@@ -2840,7 +2840,7 @@ public class Mailbox
   {
     try
     {
-      mMbox.checkSizeChange(newSize);
+      mMbox.checkSizeChangeOnAddOperation(newSize);
     }
     catch (ServiceException e)
     {
