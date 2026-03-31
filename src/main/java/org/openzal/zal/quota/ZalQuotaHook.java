@@ -35,7 +35,6 @@ public class ZalQuotaHook implements QuotaCheck {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
 		final QuotaResult result = this.quotaCheckAdapter.onAddMessage(zalAccount, newTotalMailboxUsage);
 		if (result instanceof QuotaResult.OverQuota) {
-			// TODO: retrieve limit from storages?
 			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
 	}
