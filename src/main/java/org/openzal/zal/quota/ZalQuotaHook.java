@@ -5,6 +5,7 @@ import com.zextras.mailbox.quota.QuotaCheckSingleton;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Account;
 import com.zimbra.cs.mailbox.MailServiceException;
+import org.openzal.zal.quota.DeleteResult.DeleteFailure;
 
 public class ZalQuotaHook implements QuotaCheck {
 
@@ -40,9 +41,12 @@ public class ZalQuotaHook implements QuotaCheck {
 	}
 
 	@Override
-	public void onDeleteMessage(Account acct, long size) {
+	public void onDeleteMessage(Account acct, long size) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		this.quotaCheckAdapter.onDeleteMessage(zalAccount, size);
+		var result = this.quotaCheckAdapter.onDeleteMessage(zalAccount, size);
+		if (result instanceof DeleteFailure) {
+			throw ServiceException.FAILURE("Delete failed");
+		}
 	}
 
 }
