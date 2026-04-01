@@ -10,6 +10,7 @@ import org.openzal.zal.quota.DeleteResult.DeleteFailure;
 public class ZalQuotaHook implements QuotaCheck {
 
 	private final QuotaCheckAdapter quotaCheckAdapter;
+	private final QuotaCheckAdapter legacyCheck;
 
 	public static synchronized void setInstance(QuotaCheckAdapter zalQuotaAdapter) {
 		var hook = new ZalQuotaHook(zalQuotaAdapter);
@@ -18,13 +19,14 @@ public class ZalQuotaHook implements QuotaCheck {
 
 	private ZalQuotaHook(QuotaCheckAdapter quotaCheckAdapter) {
 		this.quotaCheckAdapter = quotaCheckAdapter;
+		this.legacyCheck = new LegacyQuotaCheckAdapter();
 	}
 
 
 	@Override
 	public void onSendMessage(Account acct) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final QuotaResult result = this.quotaCheckAdapter.onSendMessage(zalAccount);
+		final QuotaResult result = this.getCurrentCheck().onSendMessage(zalAccount);
 		if (result instanceof QuotaResult.OverQuota) {
 			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
@@ -33,7 +35,7 @@ public class ZalQuotaHook implements QuotaCheck {
 	@Override
 	public void onAddMessage(Account acct, long newTotalMailboxUsage) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final QuotaResult result = this.quotaCheckAdapter.onAddMessage(zalAccount, newTotalMailboxUsage);
+		final QuotaResult result = this.getCurrentCheck().onAddMessage(zalAccount, newTotalMailboxUsage);
 		if (result instanceof QuotaResult.OverQuota) {
 			throw MailServiceException.QUOTA_EXCEEDED(0);
 		}
@@ -42,10 +44,17 @@ public class ZalQuotaHook implements QuotaCheck {
 	@Override
 	public void onDeleteMessage(Account acct, long size) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		var result = this.quotaCheckAdapter.onDeleteMessage(zalAccount, size);
+		var result = this.getCurrentCheck().onDeleteMessage(zalAccount, size);
 		if (result instanceof DeleteFailure) {
 			throw ServiceException.FAILURE("Delete failed");
 		}
+	}
+
+	private QuotaCheckAdapter getCurrentCheck() {
+		if (this.quotaCheckAdapter.doLegacyCheck()) {
+			return this.legacyCheck;
+		}
+		return this.quotaCheckAdapter;
 	}
 
 }
