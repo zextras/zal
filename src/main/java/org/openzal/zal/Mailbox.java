@@ -2836,18 +2836,6 @@ public class Mailbox
     return maintenace != null;
   }
 
-  public void checkSizeChange(long newSize) throws ZimbraException
-  {
-    try
-    {
-      mMbox.checkSizeChangeOnAddOperation(newSize);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public void createDefaultFlags()  throws ZimbraException
   {
     try
