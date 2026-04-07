@@ -288,6 +288,10 @@ public class ProvisioningImp implements Provisioning
   public static final String A_carbonioFeatureFilesEnabled       = com.zimbra.cs.account.Provisioning.A_carbonioFeatureFilesEnabled;
   public static final String A_carbonioFeatureMailsAppEnabled    = com.zimbra.cs.account.Provisioning.A_carbonioFeatureMailsAppEnabled;
   public static final String A_carbonioFeatureWscEnabled    = com.zimbra.cs.account.Provisioning.A_carbonioFeatureWscEnabled;
+  public static final String A_carbonioWscVideoCallEnabled    = com.zimbra.cs.account.Provisioning.A_carbonioWscVideoCallEnabled;
+  public static final String A_carbonioWscShowMessageReads    = com.zimbra.cs.account.Provisioning.A_carbonioWscShowMessageReads;
+  public static final String A_carbonioWscMessageEditTimeLimit    = com.zimbra.cs.account.Provisioning.A_carbonioWscMessageEditTimeLimit;
+  public static final String A_carbonioWscMessageDeleteTimeLimit    = com.zimbra.cs.account.Provisioning.A_carbonioWscMessageDeleteTimeLimit;
 
   public static final String A_carbonioNotificationFrom    = com.zimbra.cs.account.Provisioning.A_carbonioNotificationFrom;
   public static final String A_carbonioNotificationRecipients    = com.zimbra.cs.account.Provisioning.A_carbonioNotificationRecipients;
