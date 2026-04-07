@@ -16,3 +16,6 @@ openzal-*.rpm
 .idea/
 *.iml
 .tool-versions
+.vscode
+/artifacts
+/packages/zal.jar
