@@ -311,6 +311,9 @@ public class ProvisioningImp implements Provisioning
   public static final String A_carbonioFeatureOTPMgmtEnabled = com.zimbra.cs.account.Provisioning.A_carbonioFeatureOTPMgmtEnabled;
   public static final String A_carbonioOtpWizardFromUntrusted = com.zimbra.cs.account.Provisioning.A_carbonioOtpWizardFromUntrusted;
 
+  public static final String A_carbonioOtpGracePeriodEnabled = com.zimbra.cs.account.Provisioning.A_carbonioOtpGracePeriodEnabled;
+  public static final String A_carbonioOtpGracePeriodEndingTime = com.zimbra.cs.account.Provisioning.A_carbonioOtpGracePeriodEndingTime;
+
   public static final String A_carbonioAdminProxyPort = com.zimbra.cs.account.Provisioning.A_carbonioAdminProxyPort;
   @Nonnull
   public final com.zimbra.cs.account.Provisioning mProvisioning;
