@@ -8,15 +8,19 @@ import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.db.DbMailbox;
 import com.zimbra.cs.db.DbPool;
 import com.zimbra.cs.db.HSQLDB;
+import org.hsqldb.cmdline.SqlFile;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-import org.hsqldb.cmdline.SqlFile;
 
 public final class HSQLZimbraDatabase extends HSQLDB
 {
@@ -43,7 +47,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
       if (rs.next() && rs.getInt(1) > 0) {
         return;  // already exists
       }
-      execute(conn, basePath + "/db.sql");
+      executeFromClasspath(conn, basePath + "/db.sql");
       executeForAllGroups(conn, basePath + "/create_database.sql");
     } finally {
       DbPool.closeResults(rs);
@@ -53,7 +57,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
   }
 
   public static void createDatabase() throws Exception {
-    createDatabase("it/data/carbonio/sql/");
+    createDatabase("/dbsetup");
   }
 
   //
@@ -63,7 +67,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
   //
   public static void clearDatabase() throws Exception
   {
-    clearDatabase("it/data/carbonio/sql/clear.sql");
+    clearDatabase("/dbsetup/clear.sql");
   }
 
   /**
@@ -71,7 +75,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
    * @param clearSqlScript sql script containing clear instructions
    * @throws Exception
    */
-  public static void clearDatabase(String clearSqlScript) throws Exception
+  private static void clearDatabase(String clearSqlScript) throws Exception
   {
     com.zimbra.cs.db.DbPool.DbConnection conn = DbPool.getConnection();
     try {
@@ -84,12 +88,42 @@ public final class HSQLZimbraDatabase extends HSQLDB
     }
   }
 
-  public static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String file) throws Exception
+  private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String classpathFile) throws Exception
   {
-    for( int i=1; i <= 100; ++i ) execute(conn, file, i);
+    for( int i=1; i <= 100; ++i ) executeFromClasspath(conn, classpathFile, i);
   }
 
-  public static void execute(DbPool.DbConnection conn, String file, int mboxId) throws Exception
+  private static File createTempFileWithContent(String content) throws IOException {
+    Path tempFile = Files.createTempFile("zal-dbsetup", ".tmp");
+    Files.writeString(tempFile, content);
+    return tempFile.toFile();
+  }
+
+  private static String readResource(String path) throws IOException {
+    try (InputStream is = HSQLZimbraDatabase.class.getResourceAsStream(path)) {
+      if (is == null) {
+        throw new IOException("Resource not found on classpath: " + path);
+      }
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }
+  }
+
+  private static void executeFromClasspath(DbPool.DbConnection conn, String classpathFile, int mboxId) throws Exception
+  {
+    Map<String, String> vars = Collections.singletonMap("DATABASE_NAME", DbMailbox.getDatabaseName(mboxId));
+    SqlFile sql = new SqlFile(createTempFileWithContent(readResource(classpathFile)));
+    sql.addUserVars(vars);
+    sql.setConnection(conn.getConnection());
+    sql.execute();
+    conn.commit();
+  }
+
+  public static void executeFromClasspath(DbPool.DbConnection conn, String classpathFile) throws Exception
+  {
+    executeFromClasspath(conn,classpathFile,1);
+  }
+
+  private static void execute(DbPool.DbConnection conn, String file, int mboxId) throws Exception
   {
     Map<String, String> vars = Collections.singletonMap("DATABASE_NAME", DbMailbox.getDatabaseName(mboxId));
     SqlFile sql = new SqlFile(new File(file));
@@ -103,7 +137,6 @@ public final class HSQLZimbraDatabase extends HSQLDB
   {
     execute(conn,file,1);
   }
-
 
   public static void useMVCC() throws ServiceException, SQLException {
     //tell HSQLDB to use multiversion so our asserts can read while write is open
