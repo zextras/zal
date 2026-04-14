@@ -93,10 +93,23 @@ public final class HSQLZimbraDatabase extends HSQLDB
     for( int i=1; i <= 100; ++i ) executeFromClasspath(conn, classpathFile, i);
   }
 
-  private static File createTempFileWithContent(String content) throws IOException {
-    Path tempFile = Files.createTempFile("zal-dbsetup", ".tmp");
-    Files.writeString(tempFile, content);
-    return tempFile.toFile();
+  interface TempFileRunner {
+    void run(File file) throws Exception;
+  }
+
+  private static void withTempFile(String classpathFile, TempFileRunner runner) throws Exception {
+    File f = null;
+    try {
+      String content = readResource(classpathFile);
+      Path tempFile = Files.createTempFile("zal-dbsetup", ".tmp");
+      Files.writeString(tempFile, content);
+      f = tempFile.toFile();
+      runner.run(f);
+    } finally {
+      if (f != null && f.exists() && !f.delete()) {
+        f.deleteOnExit();
+      }
+    }
   }
 
   private static String readResource(String path) throws IOException {
@@ -110,12 +123,14 @@ public final class HSQLZimbraDatabase extends HSQLDB
 
   private static void executeFromClasspath(DbPool.DbConnection conn, String classpathFile, int mboxId) throws Exception
   {
-    Map<String, String> vars = Collections.singletonMap("DATABASE_NAME", DbMailbox.getDatabaseName(mboxId));
-    SqlFile sql = new SqlFile(createTempFileWithContent(readResource(classpathFile)));
-    sql.addUserVars(vars);
-    sql.setConnection(conn.getConnection());
-    sql.execute();
-    conn.commit();
+    withTempFile(classpathFile, file -> {
+      Map<String, String> vars = Collections.singletonMap("DATABASE_NAME", DbMailbox.getDatabaseName(mboxId));
+      SqlFile sql = new SqlFile(file);
+      sql.addUserVars(vars);
+      sql.setConnection(conn.getConnection());
+      sql.execute();
+      conn.commit();
+    });
   }
 
   public static void executeFromClasspath(DbPool.DbConnection conn, String classpathFile) throws Exception
