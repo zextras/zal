@@ -684,7 +684,6 @@
               <argLine>
                   ${argLine}
                   --enable-preview
-                  --illegal-access=permit
                   -Xmx1024m
                   -ea
                   --add-opens java.base/java.lang=ALL-UNNAMED
