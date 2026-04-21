@@ -656,10 +656,21 @@
 
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+              <compilerArgs>
+                  <arg>--enable-preview</arg>
+              </compilerArgs>
+          </configuration>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.5.4</version>
           <configuration>
-              <argLine>${argLine}</argLine>
+              <argLine>${argLine} --enable-preview</argLine>
           </configuration>
       </plugin>
 
@@ -672,7 +683,7 @@
               <forkCount>1</forkCount>
               <argLine>
                   ${argLine}
-                  --illegal-access=permit
+                  --enable-preview
                   -Xmx1024m
                   -ea
                   --add-opens java.base/java.lang=ALL-UNNAMED
