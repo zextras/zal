@@ -49,6 +49,13 @@ pipeline {
                 }
             }
         }
+        stage('Bump version') {
+            steps {
+                script {
+                    dt2_semanticRelease()
+                }
+            }
+        }
         stage('Build deb/rpm') {
           stages {
               stage('Stash') {
