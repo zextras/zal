@@ -35,13 +35,7 @@ pipeline {
         stage('Setup') {
             steps {
                 checkout scm
-                script {
-                    if (BRANCH_NAME == 'devel') {
-                        def timestamp = new Date().format('yyyyMMddHHmmss')
-                        sh "sed -i \"s!pkgrel=.*!pkgrel=${timestamp}!\" packages/PKGBUILD"
-                    }
-                    gitMetadata()
-                }
+                gitMetadata()
             }
         }
         stage('Maven') {
