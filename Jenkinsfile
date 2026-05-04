@@ -1,16 +1,13 @@
-def mvnCmd(String cmd) {
-    def buildOptions = (env.TAG_NAME != null) ? '-Dchangelist="" -Pproduction' : '';
-    sh "mvn --settings settings.xml -B -Djooq.codegen.logging=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn ${buildOptions} ${cmd}";
-}
+library(
+        identifier: 'jenkins-lib-common@1.7.0',
+        retriever: modernSCM([
+                $class: 'GitSCMSource',
+                credentialsId: 'jenkins-integration-with-github-account',
+                remote: 'git@github.com:zextras/jenkins-lib-common.git',
+        ])
+)
 
-def runTests() {
-    mvnCmd("verify")
-}
-
-def deployJfrog() {
-    def result = sh (script: "git log -1 | grep '.*\\[deploy jfrog\\].*'", returnStatus: true)
-    return (result == 0) || (params.PUBLISH_TO_ARTIFACTORY == true)
-}
+properties(defaultPipelineProperties())
 
 pipeline {
     agent {
@@ -23,7 +20,6 @@ pipeline {
     }
     parameters {
         booleanParam defaultValue: false, description: 'Whether to upload the packages in playground repositories', name: 'PLAYGROUND'
-        booleanParam defaultValue: false, description: 'Publish artifact to artifactory', name: 'PUBLISH_TO_ARTIFACTORY'
     }
     environment {
         JAVA_OPTS="-Dfile.encoding=UTF8"
@@ -32,63 +28,30 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '25'))
-        timeout(time: 2, unit: 'HOURS')
+        timeout(time: 15, unit: 'MINUTES')
         skipDefaultCheckout()
     }
     stages {
         stage('Setup') {
             steps {
                 checkout scm
-                withCredentials([file(credentialsId: 'jenkins-maven-settings.xml', variable: 'SETTINGS_PATH')]) {
-                    sh 'cp $SETTINGS_PATH settings.xml'
-                }
                 script {
                     if (BRANCH_NAME == 'devel') {
                         def timestamp = new Date().format('yyyyMMddHHmmss')
                         sh "sed -i \"s!pkgrel=.*!pkgrel=${timestamp}!\" packages/PKGBUILD"
                     }
-                    env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    gitMetadata()
                 }
             }
         }
-        stage('Build') {
+        stage('Maven') {
             steps {
-                container('jdk-21') {
-                    mvnCmd("package")
-                }
-            }
-        }
-        stage('Tests') {
-            steps {
-                container('jdk-21') {
-                    runTests()
-                }
-            }
-        }
-        stage('SonarQube') {
-            environment {
-                SCANNER_HOME = tool 'SonarScanner'
-            }
-            steps {
-                container('jdk-21') {
-                    withSonarQubeEnv(credentialsId: 'sonarqube-user-token', installationName: 'SonarQube instance') {
-                        mvnCmd('sonar:sonar')
-                    }
-                }
-            }
-        }
-        stage('Publish') {
-            when {
-                anyOf {
-                    expression { deployJfrog() }
-                    buildingTag()
-                    branch 'main'
-                    branch 'devel'
-                }
-            }
-            steps {
-                container('jdk-21') {
-                    mvnCmd("deploy -DskipTests")
+                script {
+                    mavenStage(
+                        profile: env.TAG_NAME ? '-Dchangelist="" -Pproduction' : '',
+                        deployArtifacts: true,
+                        extraDeployArgs: env.TAG_NAME ? '-Dchangelist=' : ''
+                    )
                 }
             }
         }
