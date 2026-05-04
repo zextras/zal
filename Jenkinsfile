@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     mavenStage(
-                        profile: env.TAG_NAME ? '-Dchangelist="" -Pproduction' : '',
+                        profile: env.TAG_NAME ? '-Pproduction' : '',
                         deployArtifacts: true,
                         extraDeployArgs: env.TAG_NAME ? '-Dchangelist=' : ''
                     )
