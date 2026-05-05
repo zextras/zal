@@ -99,7 +99,7 @@
   </distributionManagement>
 
   <properties>
-    <revision>26.4.0</revision>
+    <revision>4.29.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <carbonio-revision>4.25.2</carbonio-revision>
     <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
