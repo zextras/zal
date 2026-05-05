@@ -91,6 +91,11 @@
   </pluginRepositories>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>artifactory</id>
+      <name>Zextras snapshots</name>
+      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
+    </snapshotRepository>
     <repository>
       <id>artifactory</id>
       <name>Zextras releases</name>
