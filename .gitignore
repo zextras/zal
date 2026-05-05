@@ -19,3 +19,4 @@ openzal-*.rpm
 .vscode
 /artifacts
 /packages/zal.jar
+.metals
