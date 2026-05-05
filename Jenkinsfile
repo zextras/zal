@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     mavenStage(
-                        profile: ' ',
+                        profile: '',
                         deployArtifacts: true,
                         extraDeployArgs: env.TAG_NAME ? '-Dchangelist=' : ''
                     )
