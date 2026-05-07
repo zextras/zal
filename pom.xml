@@ -9,6 +9,32 @@
   <version>${revision}${changelist}</version>
   <packaging>jar</packaging>
 
+  <properties>
+    <revision>4.30.0</revision>
+    <changelist>-SNAPSHOT</changelist>
+    <carbonio-revision>4.26.0</carbonio-revision>
+    <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jackson.version>2.15.4</jackson.version>
+    <jfreechart.version>1.0.15</jfreechart.version>
+    <log4j.version>2.20.0</log4j.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <commit.id>1.1.1</commit.id>
+    <jetty.version>9.4.55.v20240627</jetty.version>
+    <servlet.version>3.1.0</servlet.version>
+    <junit.version>4.13.1</junit.version>
+    <junit5.version>5.11.4</junit5.version>
+    <mockito.version>5.4.0</mockito.version>
+    <httpcomponents.version>4.5.13</httpcomponents.version>
+    <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
+    <zextras-public-repo.url>s3://zextras-public-repositories</zextras-public-repo.url>
+    <execute.fast.compatibility>true</execute.fast.compatibility>
+    <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+    <build.version>${project.version}</build.version>
+    <build.timestamp>${maven.build.timestamp}</build.timestamp>
+  </properties>
+
   <repositories>
     <repository>
       <id>artifactory</id>
@@ -102,32 +128,6 @@
       <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
     </repository>
   </distributionManagement>
-
-  <properties>
-    <revision>4.30.0</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <carbonio-revision>4.25.2</carbonio-revision>
-    <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.15.4</jackson.version>
-    <jfreechart.version>1.0.15</jfreechart.version>
-    <log4j.version>2.20.0</log4j.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <commit.id>1.1.1</commit.id>
-    <jetty.version>9.4.55.v20240627</jetty.version>
-    <servlet.version>3.1.0</servlet.version>
-    <junit.version>4.13.1</junit.version>
-    <junit5.version>5.11.4</junit5.version>
-    <mockito.version>5.4.0</mockito.version>
-    <httpcomponents.version>4.5.13</httpcomponents.version>
-    <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
-    <zextras-public-repo.url>s3://zextras-public-repositories</zextras-public-repo.url>
-    <execute.fast.compatibility>true</execute.fast.compatibility>
-    <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
-    <build.version>${project.version}</build.version>
-    <build.timestamp>${maven.build.timestamp}</build.timestamp>
-  </properties>
 
   <dependencies>
     <dependency>
