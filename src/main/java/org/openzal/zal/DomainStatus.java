@@ -20,6 +20,7 @@
 
 package org.openzal.zal;
 
+import com.zextras.entry.IServiceException;
 import com.zimbra.common.account.ZAttrProvisioning;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Provisioning;
@@ -48,7 +49,7 @@ public class DomainStatus
   public DomainStatus(@Nonnull String domainStatusString) {
     try {
       this.domainStatus = ZAttrProvisioning.DomainStatus.fromString(domainStatusString);
-    } catch (ServiceException e) {
+    } catch (IServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
   }

@@ -12,8 +12,9 @@
   <properties>
     <revision>4.31.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio-revision>4.26.0</carbonio-revision>
+    <carbonio-revision>4.27.1</carbonio-revision>
     <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
+    <directory-server.version>4.32.0-SNAPSHOT</directory-server.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -176,6 +177,42 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-soap</artifactId>
+      <version>${carbonio.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>mailbox-attribute-manager</artifactId>
+      <version>${directory-server.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zattr</artifactId>
+      <version>${directory-server.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>right-manager</artifactId>
       <version>${carbonio.version}</version>
       <exclusions>
         <exclusion>
@@ -422,6 +459,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-store</artifactId>
+      <version>${carbonio.version}</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
