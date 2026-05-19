@@ -12,7 +12,7 @@
   <properties>
     <revision>4.31.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio-revision>4.26.0</carbonio-revision>
+    <carbonio-revision>4.27.3</carbonio-revision>
     <carbonio.version>${carbonio-revision}${changelist}</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
