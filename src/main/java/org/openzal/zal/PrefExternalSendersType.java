@@ -20,6 +20,7 @@
 
 package org.openzal.zal;
 
+import com.zextras.entry.IServiceException;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.common.account.ZAttrProvisioning;
@@ -57,7 +58,7 @@ public class PrefExternalSendersType
     {
       return new PrefExternalSendersType(ZAttrProvisioning.PrefExternalSendersType.fromString(s));
     }
-    catch (ServiceException e)
+    catch (IServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
