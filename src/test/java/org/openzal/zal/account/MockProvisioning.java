@@ -1384,7 +1384,8 @@ class MockZAttributes
 
   public MockZAttributes(Map<String, Object> attrs)
   {
-    mAttrs = attrs;
+		super(null);
+		mAttrs = attrs;
   }
 
   public Map<String, Object> getAttrs(Set<String> set)

@@ -66,7 +66,7 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   {
     protected FakeLdapFilter(FilterId filterId)
     {
-      super(filterId);
+      super(filterId, null);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   @Override
   public ZLdapFilter allAccountsOnly()
   {
-    return new ZLdapFilter(FilterId.ALL_ACCOUNTS) {
+    return new ZLdapFilter(FilterId.ALL_ACCOUNTS, null) {
       @Override
       public String toFilterString() {
         return "";
