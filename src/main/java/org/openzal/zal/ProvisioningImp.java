@@ -1606,8 +1606,8 @@ public class ProvisioningImp implements Provisioning
     try
     {
       final LdapClient ldapClient = ldapProvisioning.getLdapClient();
-      zlc = ldapClient.getInstanceContext(LdapServerType.MASTER, LdapUsage.CREATE_ACCOUNT);
-      entry = ldapClient.createInstanceMutableEntry();
+      zlc = ldapClient.getContext(LdapServerType.MASTER, LdapUsage.CREATE_ACCOUNT);
+      entry = ldapClient.createMutableEntry();
       entry.mapToAttrs(attrs);
       //dn = "cn="+LdapUtil.escapeRDNValue(attributes.get("cn").toString())+",cn=cos,cn=zimbra";
 
@@ -1646,7 +1646,7 @@ public class ProvisioningImp implements Provisioning
     }
     finally
     {
-      ldapProvisioning.getLdapClient().closeInstanceContext(zlc);
+      ldapProvisioning.getLdapClient().closeContext(zlc);
     }
   }
 
@@ -1716,8 +1716,8 @@ public class ProvisioningImp implements Provisioning
     String dn = null;
     try
     {
-      zlc = getLdapClient().getInstanceContext(LdapServerType.MASTER, LdapUsage.CREATE_COS);
-      entry = getLdapClient().createInstanceMutableEntry();
+      zlc = getLdapClient().getContext(LdapServerType.MASTER, LdapUsage.CREATE_COS);
+      entry = getLdapClient().createMutableEntry();
       entry.mapToAttrs(attributes);
       dn = "cn="+LdapUtil.escapeRDNValue(attributes.get("cn").toString())+",cn=cos,cn=zimbra";
       entry.setDN(dn);
@@ -1744,7 +1744,7 @@ public class ProvisioningImp implements Provisioning
     }
     finally
     {
-      getLdapClient().closeInstanceContext(zlc);
+      getLdapClient().closeContext(zlc);
     }
   }
 
@@ -1821,7 +1821,7 @@ public class ProvisioningImp implements Provisioning
       }
       dn = stringBuffer.substring(0, stringBuffer.length()-1);
 
-      zlc = getLdapClient().getInstanceContext(LdapServerType.MASTER, LdapUsage.CREATE_DOMAIN);
+      zlc = getLdapClient().getContext(LdapServerType.MASTER, LdapUsage.CREATE_DOMAIN);
 
       LdapProvisioning provisioning = (LdapProvisioning)mProvisioning;
 
@@ -1831,7 +1831,7 @@ public class ProvisioningImp implements Provisioning
         createParentDomains(zlc, parts, dns);
       }
 
-      entry = getLdapClient().createInstanceMutableEntry();
+      entry = getLdapClient().createMutableEntry();
       entry.mapToAttrs(attributes);
       entry.setDN(dn);
       ZimbraLog.mailbox.info("Restoring domain "+dn);
@@ -1864,7 +1864,7 @@ public class ProvisioningImp implements Provisioning
     }
     finally
     {
-      getLdapClient().closeInstanceContext(zlc);
+      getLdapClient().closeContext(zlc);
     }
   }
 
@@ -1886,8 +1886,8 @@ public class ProvisioningImp implements Provisioning
       }
 
       dn = "uid="+LdapUtil.escapeRDNValue(local)+",ou=people"+dc;
-      zlc = getLdapClient().getInstanceContext(LdapServerType.MASTER, LdapUsage.CREATE_DISTRIBUTIONLIST);
-      entry = getLdapClient().createInstanceMutableEntry();
+      zlc = getLdapClient().getContext(LdapServerType.MASTER, LdapUsage.CREATE_DISTRIBUTIONLIST);
+      entry = getLdapClient().createMutableEntry();
       entry.mapToAttrs(attributes);
       entry.setDN(dn);
       ZimbraLog.mailbox.info("Restoring distribution list "+dn);
@@ -1913,7 +1913,7 @@ public class ProvisioningImp implements Provisioning
     }
     finally
     {
-      getLdapClient().closeInstanceContext(zlc);
+      getLdapClient().closeContext(zlc);
     }
   }
 
@@ -2996,7 +2996,7 @@ public class ProvisioningImp implements Provisioning
   {
     ZLdapContext zlc = null;
     try {
-      zlc = getLdapClient().getInstanceContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
+      zlc = getLdapClient().getContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
       LDAPConnection connection = zlc.getNative();
 
 
@@ -3059,7 +3059,7 @@ public class ProvisioningImp implements Provisioning
       throw ExceptionWrapper.wrap(ex);
     }
     finally {
-      getLdapClient().closeInstanceContext(zlc);
+      getLdapClient().closeContext(zlc);
     }
   }
 
@@ -3075,7 +3075,7 @@ public class ProvisioningImp implements Provisioning
         (String[]) null
       );
 
-      zlc = getLdapClient().getInstanceContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
+      zlc = getLdapClient().getContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
       return (int)zlc.countEntries(
         base,
         DirectQueryFilterBuilder.create(query),
@@ -3092,7 +3092,7 @@ public class ProvisioningImp implements Provisioning
     }
     finally
     {
-      getLdapClient().closeInstanceContext(zlc);
+      getLdapClient().closeContext(zlc);
     }
   }
 
