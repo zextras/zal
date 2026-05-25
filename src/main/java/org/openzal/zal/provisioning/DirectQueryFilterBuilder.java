@@ -22,13 +22,11 @@ package org.openzal.zal.provisioning;
 
 import com.unboundid.ldap.sdk.Filter;
 import com.unboundid.ldap.sdk.LDAPException;
+import com.zimbra.cs.ldap.ZLdapFilter;
 import com.zimbra.cs.ldap.ZLdapFilterFactory;
-import com.zimbra.cs.ldap.unboundid.UBIDLdapFilter;
-import org.openzal.zal.Utils;
-import org.openzal.zal.exceptions.ExceptionWrapper;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import org.openzal.zal.exceptions.ExceptionWrapper;
 
 public abstract class DirectQueryFilterBuilder
 {
@@ -36,15 +34,15 @@ public abstract class DirectQueryFilterBuilder
 
   static
   {
-    mConstructor = UBIDLdapFilter.class.getDeclaredConstructors()[0];
+    mConstructor = ZLdapFilter.class.getDeclaredConstructors()[0];
     mConstructor.setAccessible(true);
   }
 
-  public static UBIDLdapFilter create(String query) throws LDAPException
+  public static ZLdapFilter create(String query) throws LDAPException
   {
     try
     {
-      return (UBIDLdapFilter)mConstructor.newInstance(
+      return (ZLdapFilter)mConstructor.newInstance(
         ZLdapFilterFactory.FilterId.TODO,
         Filter.create(query)
       );

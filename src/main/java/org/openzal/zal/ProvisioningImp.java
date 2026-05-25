@@ -59,7 +59,6 @@ import com.zimbra.cs.ldap.ZLdapFilterFactory;
 import com.zimbra.cs.ldap.ZMutableEntry;
 import com.zimbra.cs.ldap.ZSearchControls;
 import com.zimbra.cs.ldap.ZSearchScope;
-import com.zimbra.cs.ldap.unboundid.UBIDLdapContext;
 import com.zimbra.cs.mailbox.ACL;
 import com.zimbra.cs.mailbox.Contact;
 import com.zimbra.cs.mailbox.Folder;
@@ -2989,9 +2988,9 @@ public class ProvisioningImp implements Provisioning
   @Override
   public void rawQuery(String base, final String query, LdapVisitor visitor, String[] fields)
   {
-    UBIDLdapContext zlc = null;
+    ZLdapContext zlc = null;
     try {
-      zlc = ((UBIDLdapContext) LdapClient.getContext(LdapServerType.REPLICA, LdapUsage.GENERIC));
+      zlc = LdapClient.getContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
       LDAPConnection connection = zlc.getNative();
 
 
