@@ -70,8 +70,6 @@ import com.zimbra.soap.ZimbraSoapContext;
 import com.zimbra.soap.admin.type.GranteeSelector.GranteeBy;
 import com.zimbra.soap.type.GalSearchType;
 import com.zimbra.soap.type.TargetBy;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -82,7 +80,7 @@ import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.Filter;
 import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.provisioning.DirectQueryFilterBuilder;
-import org.openzal.zal.provisioning.TargetType;
+
 
 public class ProvisioningImp implements Provisioning
 {
