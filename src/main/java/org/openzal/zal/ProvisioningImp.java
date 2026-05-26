@@ -82,6 +82,7 @@ import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.Filter;
 import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.provisioning.DirectQueryFilterBuilder;
+import org.openzal.zal.provisioning.TargetType;
 
 public class ProvisioningImp implements Provisioning
 {
@@ -1748,56 +1749,10 @@ public class ProvisioningImp implements Provisioning
     }
   }
 
-  private final static Method sCreateParentDomains;
-  static
-  {
-    try
-    {
-      sCreateParentDomains = com.zimbra.cs.account.ldap.LdapProvisioning.class.getDeclaredMethod(
-        "createParentDomains",
-        ZLdapContext.class,
-        String[].class,
-        String[].class
-      );
-      sCreateParentDomains.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
 
   private void createParentDomains(ZLdapContext zlc, String[] parts, String[] dns) throws ServiceException
   {
-    try
-    {
-      sCreateParentDomains.invoke(mProvisioning,zlc,parts,dns);
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
-    catch (InvocationTargetException e)
-    {
-      try
-      {
-        throw e.getCause();
-      }
-      catch (RuntimeException ex)
-      {
-        throw ex;
-      }
-      catch (ServiceException ex)
-      {
-        throw ex;
-      }
-      catch (Throwable throwable)
-      {
-        throw new RuntimeException(throwable);
-      }
-    }
+    ((LdapProvisioning) mProvisioning).createParentDomains(zlc, parts, dns);
   }
 
   @Override
