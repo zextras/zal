@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@1.7.5',
+        identifier: 'jenkins-lib-common@v2.8.8',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
@@ -79,14 +79,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            def yapFiles = [
-                                'yap.json'
-                            ] as Set
-                            def packages = yapHelper.getPackageNamesFromFiles(yapFiles)
-
-                            uploadStage([
-                                packages: packages,
-                            ])
+                            uploadStage()
                         }
                     }
                 }
