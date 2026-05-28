@@ -22,35 +22,63 @@ package org.openzal.zal;
 
 import javax.annotation.Nullable;
 
-import org.eclipse.jetty.continuation.ContinuationSupport;
-
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ContinuationJetty implements Continuation
 {
-  org.eclipse.jetty.continuation.Continuation mContinuation;
+  private static final String CONTINUATION_ATTR = "org.openzal.zal.ContinuationJetty";
 
-  public ContinuationJetty(HttpServletRequest req)
+  private final HttpServletRequest mReq;
+  private AsyncContext mAsyncContext;
+  private final AtomicBoolean mSuspended;
+  private volatile boolean mExpired;
+  private boolean mIsInitial;
+
+  public static Continuation getOrCreateContinuation(HttpServletRequest req)
   {
-    mContinuation = ContinuationSupport.getContinuation(req);
+    ContinuationJetty cont = (ContinuationJetty) req.getAttribute(CONTINUATION_ATTR);
+    if (cont == null)
+    {
+      cont = new ContinuationJetty(req);
+      req.setAttribute(CONTINUATION_ATTR, cont);
+    }
+    return cont;
+  }
+
+  private ContinuationJetty(HttpServletRequest req)
+  {
+    mReq = req;
+    mSuspended = new AtomicBoolean(false);
+    mExpired = false;
+    mAsyncContext = null;
+    mIsInitial = !req.isAsyncStarted();
   }
 
   @Override
   public boolean isSuspended()
   {
-    return mContinuation.isSuspended();
+    return mSuspended.get();
   }
 
   @Override
   public void resume()
   {
-    mContinuation.resume();
+    if (mAsyncContext != null)
+    {
+      mSuspended.set(false);
+      mAsyncContext.dispatch();
+    }
   }
 
   @Override
   public boolean isInitial()
   {
-    return mContinuation.isInitial();
+    return mIsInitial;
   }
 
   @Override
@@ -59,14 +87,50 @@ public class ContinuationJetty implements Continuation
     suspend(0);
   }
 
+  private static final String sAttributeKey = "ZAL";
+
   @Override
   public void suspend(long timeoutMs) throws Error
   {
     try
     {
-      mContinuation.setTimeout(timeoutMs);
-      mContinuation.suspend();
-      mContinuation.undispatch();
+      if (mAsyncContext == null)
+      {
+        mAsyncContext = mReq.startAsync();
+        mAsyncContext.addListener(new AsyncListener()
+        {
+          @Override
+          public void onComplete(AsyncEvent event)
+          {
+            mSuspended.set(false);
+          }
+
+          @Override
+          public void onTimeout(AsyncEvent event)
+          {
+            mSuspended.set(false);
+            mExpired = true;
+          }
+
+          @Override
+          public void onError(AsyncEvent event)
+          {
+            mSuspended.set(false);
+          }
+
+          @Override
+          public void onStartAsync(AsyncEvent event)
+          {
+          }
+        });
+      }
+      mExpired = false;
+      mIsInitial = false;
+      mSuspended.set(true);
+      if (timeoutMs > 0)
+      {
+        mAsyncContext.setTimeout(timeoutMs);
+      }
     }
     catch (Throwable ex)
     {
@@ -77,27 +141,29 @@ public class ContinuationJetty implements Continuation
   @Override
   public boolean isExpired()
   {
-    return mContinuation.isExpired();
+    return mExpired;
   }
-
-  private static final String sAttributeKey = "ZAL";
 
   @Override
   public void setObject(Object obj)
   {
-    mContinuation.setAttribute(sAttributeKey, obj);
+    mReq.setAttribute(sAttributeKey, obj);
   }
 
   @Override
   public Object getObject()
   {
-    return mContinuation.getAttribute(sAttributeKey);
+    return mReq.getAttribute(sAttributeKey);
   }
 
   @Override
   public String toString()
   {
-    return mContinuation.toString();
+    if (mAsyncContext != null)
+    {
+      return mAsyncContext.toString();
+    }
+    return super.toString();
   }
 
   @Override
@@ -114,7 +180,7 @@ public class ContinuationJetty implements Continuation
 
     ContinuationJetty that = (ContinuationJetty) o;
 
-    if (!mContinuation.equals(that.mContinuation))
+    if (mReq != that.mReq)
     {
       return false;
     }
@@ -125,6 +191,6 @@ public class ContinuationJetty implements Continuation
   @Override
   public int hashCode()
   {
-    return mContinuation.hashCode();
+    return mReq.hashCode();
   }
 }

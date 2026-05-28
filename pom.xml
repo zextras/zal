@@ -10,9 +10,9 @@
   <packaging>jar</packaging>
 
   <properties>
-    <revision>4.31.7</revision>
+    <revision>4.31.8</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio.version>4.27.14</carbonio.version>
+    <carbonio.version>4.27.22</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -197,11 +197,6 @@
       <version>${jetty.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-continuation</artifactId>
-      <version>${jetty.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>

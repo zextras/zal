@@ -4,6 +4,6 @@ public class MimeTypes
 {
   public String getCharsetEncoding(String contentType)
   {
-    return org.eclipse.jetty.http.MimeTypes.inferCharsetFromContentType(contentType);
+    return org.eclipse.jetty.http.MimeTypes.getCharsetFromContentType(contentType);
   }
 }
