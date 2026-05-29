@@ -208,7 +208,7 @@ public class ZalZimbraSimulator extends ExternalResource
   public void initHSQLDatabase() throws Exception
   {
     LC.zimbra_class_database.setDefault(HSQLZimbraDatabase.class.getName());
-    DbPool.startup();
+    DbPool.global();
     HSQLZimbraDatabase.createDatabase();
     useMVCC();
   }
