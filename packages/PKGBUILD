@@ -1,5 +1,5 @@
 pkgname="carbonio-zal"
-epoch="1"
+epoch="2"
 pkgver="4.31.5"
 pkgrel="1"
 pkgdesc="Abstraction Layer for Carbonio"
