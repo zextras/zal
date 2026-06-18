@@ -26,6 +26,20 @@
     <junit5.version>5.11.4</junit5.version>
     <mockito.version>5.4.0</mockito.version>
     <httpcomponents.version>4.5.13</httpcomponents.version>
+    <jsr305.version>3.0.2</jsr305.version>
+    <javax.activation.version>1.2.0</javax.activation.version>
+    <guava.version>28.1-jre</guava.version>
+    <commons-io.version>2.21.0</commons-io.version>
+    <commons-dbutils.version>1.7</commons-dbutils.version>
+    <commons-net.version>3.12.0</commons-net.version>
+    <httpcore.version>4.4.5</httpcore.version>
+    <dom4j.version>1.5.2</dom4j.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <lucene.version>3.5.0</lucene.version>
+    <javax.mail-api.version>1.4.7</javax.mail-api.version>
+    <unboundid.version>5.0.1</unboundid.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
+    <bom.deploy.url>https://zextras.jfrog.io/artifactory/maven-snapshot</bom.deploy.url>
     <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
     <zextras-public-repo.url>s3://zextras-public-repositories</zextras-public-repo.url>
     <execute.fast.compatibility>true</execute.fast.compatibility>
@@ -132,7 +146,7 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
+      <version>${jsr305.version}</version>
     </dependency>
 
     <dependency>
@@ -144,7 +158,7 @@
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>javax.activation-api</artifactId>
-      <version>1.2.0</version>
+      <version>${javax.activation.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -206,31 +220,31 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>28.1-jre</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.21.0</version>
+      <version>${commons-io.version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-dbutils</groupId>
       <artifactId>commons-dbutils</artifactId>
-      <version>1.7</version>
+      <version>${commons-dbutils.version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
-      <version>3.12.0</version>
+      <version>${commons-net.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.5</version>
+      <version>${httpcore.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -257,7 +271,7 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.5.2</version>
+      <version>${dom4j.version}</version>
       <exclusions>
         <exclusion>
           <groupId>jaxme</groupId>
@@ -293,26 +307,26 @@
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
+      <version>${jaxb-api.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
-      <version>3.5.0</version>
+      <version>${lucene.version}</version>
     </dependency>
 
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>javax.mail-api</artifactId>
-      <version>1.4.7</version>
+      <version>${javax.mail-api.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.unboundid</groupId>
       <artifactId>unboundid-ldapsdk</artifactId>
-      <version>5.0.1</version>
+      <version>${unboundid.version}</version>
     </dependency>
 
     <dependency>
@@ -323,7 +337,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.28.0</version>
+      <version>${commons-compress.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -846,6 +860,84 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>generate-bom-pom</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}</directory>
+                  <includes>
+                    <include>bom-pom.xml</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>install-bom</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.directory}/bom-pom.xml</file>
+              <pomFile>${project.build.directory}/bom-pom.xml</pomFile>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>zal-bom</artifactId>
+              <version>${project.version}</version>
+              <packaging>pom</packaging>
+              <generatePom>false</generatePom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>deploy-bom</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.directory}/bom-pom.xml</file>
+              <pomFile>${project.build.directory}/bom-pom.xml</pomFile>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>zal-bom</artifactId>
+              <version>${project.version}</version>
+              <packaging>pom</packaging>
+              <generatePom>false</generatePom>
+              <repositoryId>artifactory</repositoryId>
+              <url>${bom.deploy.url}</url>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
