@@ -100,46 +100,9 @@ public Zimbra(Zimbra zimbra)
     }
   }
 
-  private static final Field sIsMailboxd;
-
-  static
-  {
-    try
-    {
-      sIsMailboxd = com.zimbra.cs.util.Zimbra.class.getDeclaredField("sIsMailboxd");
-      sIsMailboxd.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  public void forceMailboxd()
-  {
-    try
-    {
-      sIsMailboxd.set(null, true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   public boolean isMailboxd()
   {
-    try
-    {
-      return sIsMailboxd.getBoolean(null);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
+    return com.zimbra.cs.util.Zimbra.isMailboxd();
   }
 
   @Nonnull
