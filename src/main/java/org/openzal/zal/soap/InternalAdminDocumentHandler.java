@@ -72,7 +72,7 @@ class InternalAdminDocumentHandler extends AdminDocumentHandler
 
   @Nullable
   @Override
-  protected Element proxyIfNecessary(Element request, Map<String, Object> context) throws ZimbraException
+  public Element proxyIfNecessary(Element request, Map<String, Object> context) throws ZimbraException
   {
     return null;
   }

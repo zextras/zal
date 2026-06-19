@@ -137,7 +137,7 @@ public class InternalOverrideDocumentHandler extends DocumentHandler
   }
 
 
-  protected Element proxyIfNecessary(Element request, Map<String, Object> context) throws ServiceException
+  public Element proxyIfNecessary(Element request, Map<String, Object> context) throws ServiceException
   {
     try
     {
