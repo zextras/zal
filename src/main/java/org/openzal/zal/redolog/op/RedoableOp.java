@@ -20,26 +20,19 @@
 
 package org.openzal.zal.redolog.op;
 
-import com.zimbra.cs.mailbox.OperationContext;
 import com.zimbra.cs.redolog.op.DataExtractor;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
-import org.openzal.zal.Operation;
-import org.openzal.zal.Utils;
 import org.openzal.zal.extension.BootstrapClassLoader;
 import org.openzal.zal.lib.Version;
-import org.openzal.zal.log.ZimbraLog;
-import org.openzal.zal.redolog.*;
+import org.openzal.zal.redolog.RedoLogOutput;
+import org.openzal.zal.redolog.TransactionId;
 
+import javax.annotation.Nonnull;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import org.openzal.zal.redolog.RedoLogOutput.Reader;
+import java.util.Arrays;
 
 
 public class RedoableOp
@@ -50,22 +43,22 @@ public class RedoableOp
 
   private final com.zimbra.cs.redolog.op.RedoableOp mRedoableOp;
 
-
-  @Nullable private static Method sGetVersionMethod = null;
-
-  static
-  {
-    try
-    {
-      sGetVersionMethod = com.zimbra.cs.redolog.op.RedoableOp.class.getDeclaredMethod("getVersion");
-      sGetVersionMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
+//
+//  @Nullable private static Method sGetVersionMethod = null;
+//
+//  static
+//  {
+//    try
+//    {
+//      sGetVersionMethod = com.zimbra.cs.redolog.op.RedoableOp.class.getDeclaredMethod("getVersion");
+//      sGetVersionMethod.setAccessible(true);
+//    }
+//    catch (Throwable ex)
+//    {
+//      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
+//      throw new RuntimeException(ex);
+//    }
+//  }
 
   public RedoableOp(@Nonnull Object redoableOp)
   {
@@ -96,9 +89,8 @@ public class RedoableOp
 
   @Nonnull
   public Version getVersion()
-    throws Exception
   {
-    return Version.parse(sGetVersionMethod.invoke(mRedoableOp).toString());
+    return Version.parse(mRedoableOp.getVersion().toString());
   }
 
   public String toString()
