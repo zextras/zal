@@ -30,10 +30,8 @@ import com.zimbra.cs.store.MailboxBlob;
 import com.zimbra.cs.store.MailboxBlob.MailboxBlobInfo;
 import com.zimbra.cs.store.StagedBlob;
 import com.zimbra.cs.store.StoreManager;
-import com.zimbra.cs.store.file.VolumeStagedBlob;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import org.openzal.zal.BlobWrap;
 import org.openzal.zal.MailboxBlobWrap;
@@ -128,19 +126,19 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     return true;
   }
 
-  public BlobBuilder getBlobBuilder() throws IOException, ServiceException
+  public BlobBuilder getBlobBuilder() throws IOException
   {
     return mStoreManager.getPrimaryStore().getBlobBuilder().toZimbra(BlobBuilder.class);
   }
 
   public Blob storeIncoming(InputStream data, boolean storeAsIs)
-    throws IOException, ServiceException
+    throws IOException
   {
     return mStoreManager.getPrimaryStore().storeIncoming(data, storeAsIs).toZimbra(Blob.class);
   }
 
   public StagedBlob stage(InputStream data, long actualSize, Mailbox mbox)
-    throws IOException, ServiceException
+    throws IOException
   {
     return mStoreManager.getPrimaryStore().stage(
       mStoreManager.getPrimaryStore().storeIncoming(data, false),
@@ -148,7 +146,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     ).toZimbra(StagedBlob.class);
   }
 
-  public StagedBlob stage(Blob blob, Mailbox mbox) throws IOException, ServiceException
+  public StagedBlob stage(Blob blob, Mailbox mbox) throws IOException
   {
     return mStoreManager.getPrimaryStore().stage(
       BlobWrap.wrapZimbraBlob(blob),
@@ -239,26 +237,6 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     );
   }
 
-  private static final Method mVolumeStagedBlobWasStagedDirectlyMethod;
-  //private static final Method mExternalStagedBlobIsInsertedMethod;
-
-  static
-  {
-    try
-    {
-      mVolumeStagedBlobWasStagedDirectlyMethod = VolumeStagedBlob.class.getDeclaredMethod("wasStagedDirectly");
-
-      //mExternalStagedBlobIsInsertedMethod = ExternalStagedBlob.class.getDeclaredMethod("isInserted");
-
-      mVolumeStagedBlobWasStagedDirectlyMethod.setAccessible(true);
-      //mExternalStagedBlobIsInsertedMethod.setAccessible(true);
-    }
-    catch (NoSuchMethodException e)
-    {
-      throw new RuntimeException("ZAL reflection error " + Utils.exceptionToString(e));
-    }
-  }
-
   public boolean delete(StagedBlob staged) throws IOException
   {
     if (staged == null)
@@ -279,7 +257,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   @Nullable
-  public MailboxBlob getMailboxBlob(Mailbox mbox, int itemId, int revision, String locator) throws ServiceException
+  public MailboxBlob getMailboxBlob(Mailbox mbox, int itemId, int revision, String locator)
   {
     try
     {
@@ -303,14 +281,12 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   public MailboxBlob getMailboxBlob(Mailbox mailbox, int itemId, int revision, String locator, boolean validate)
-    throws ServiceException
   {
     return getMailboxBlob(mailbox, itemId, revision, locator);
   }
 
   @Nullable
-  public MailboxBlob getMailboxBlob(MailItem mailItem) throws ServiceException
-  {
+  public MailboxBlob getMailboxBlob(MailItem mailItem) {
     MailboxBlob blob = getMailboxBlob(
       mailItem.getMailbox(), mailItem.getId(), mailItem.getSavedSequence(), mailItem.getLocator()
     );
