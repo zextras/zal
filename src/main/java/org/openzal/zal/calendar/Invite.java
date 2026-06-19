@@ -33,11 +33,23 @@ import com.zimbra.cs.mailbox.calendar.Recurrence;
 import com.zimbra.cs.mailbox.calendar.ZAttendee;
 import com.zimbra.cs.mailbox.calendar.ZOrganizer;
 import com.zimbra.cs.mailbox.calendar.ZRecur;
+import org.openzal.zal.Account;
+import org.openzal.zal.Item;
+import org.openzal.zal.Provisioning;
+import org.openzal.zal.ProvisioningImp;
+import org.openzal.zal.ZimbraListWrapper;
+import org.openzal.zal.exceptions.ExceptionWrapper;
+import org.openzal.zal.exceptions.ZimbraException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,27 +62,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import org.openzal.zal.Account;
-import org.openzal.zal.Item;
-import org.openzal.zal.Provisioning;
-import org.openzal.zal.ProvisioningImp;
-import org.openzal.zal.Utils;
-import org.openzal.zal.ZimbraListWrapper;
-import org.openzal.zal.exceptions.ExceptionWrapper;
-import org.openzal.zal.exceptions.ZimbraException;
-import org.openzal.zal.log.ZimbraLog;
 
 public class Invite
 {
-  private static String TRIGGER_TYPE_FIELD    = "mTriggerType";
-  private static String TRIGGER_RELATED_FIELD = "mTriggerRelated";
   public static int TYPE_EXCEPTION = Recurrence.TYPE_EXCEPTION;
-  public static int TYPE_CANCELLATION = Recurrence.TYPE_CANCELLATION;
 
   @Nullable
   public MimeMessage getAttachment()
@@ -80,26 +75,6 @@ public class Invite
 
   private final MimeMessage                           mMimeMessage;
   private final com.zimbra.cs.mailbox.calendar.Invite mInvite;
-
-  private static Field sTriggerTypeField    = null;
-  private static Field sTriggerRelatedField = null;
-
-  static
-  {
-    try
-    {
-      sTriggerTypeField = Alarm.class.getDeclaredField(TRIGGER_TYPE_FIELD);
-      sTriggerRelatedField = Alarm.class.getDeclaredField(TRIGGER_RELATED_FIELD);
-
-      sTriggerTypeField.setAccessible(true);
-      sTriggerRelatedField.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
 
   public Invite(Object invite)
   {
@@ -213,28 +188,13 @@ public class Invite
     return false;
   }
 
-  private Alarm.TriggerType getTriggerType(Alarm alarm)
-  {
-    try
-    {
-      return (Alarm.TriggerType) sTriggerTypeField.get(alarm);
-    }
-    catch (Throwable e)
-    {
-      throw new RuntimeException(e);
-    }
+  private Alarm.TriggerType getTriggerType(Alarm alarm) {
+      return alarm.getTriggerType();
   }
 
   private Alarm.TriggerRelated getTriggerRelated(Alarm alarm)
   {
-    try
-    {
-      return (Alarm.TriggerRelated) sTriggerRelatedField.get(alarm);
-    }
-    catch (Throwable e)
-    {
-      throw new RuntimeException(e);
-    }
+    return alarm.getTriggerRelated();
   }
 
   private Alarm getDisplayAlarm()
