@@ -66,6 +66,7 @@ import java.util.Objects;
 public class Invite
 {
   public static int TYPE_EXCEPTION = Recurrence.TYPE_EXCEPTION;
+  public static int TYPE_CANCELLATION = Recurrence.TYPE_CANCELLATION;
 
   @Nullable
   public MimeMessage getAttachment()
