@@ -20,7 +20,8 @@
 
 package org.openzal.zal;
 
-import com.zimbra.cs.store.file.VolumeBlobProxy;
+import com.zimbra.cs.store.file.VolumeBlob;
+
 import javax.annotation.Nonnull;
 
 import java.io.File;
@@ -59,7 +60,7 @@ public class StagedBlobWrap<S extends Blob> implements StagedBlob
   @Override
   public InputStream getInputStream() throws IOException
   {
-    return new VolumeBlobProxy(mStagedBlob.getLocalBlob()).getInputStream();
+    return new VolumeBlob(mStagedBlob.getLocalBlob()).getInputStream();
   }
 
   @Override

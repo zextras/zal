@@ -18,27 +18,16 @@
  * along with ZAL. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.zimbra.cs.store.file;
+package org.openzal.zal;
+
+import com.zimbra.cs.store.file.VolumeBlob;
 
 import java.io.File;
 
-public class VolumeBlobProxy extends VolumeBlob
+public class VolumeBlobUtils
 {
-  public VolumeBlobProxy()
-  {
-    super(new File("/tmp/fakeblob"), (short) 0);
-  }
-
-  public VolumeBlobProxy(Object blob)
-  {
-    super(((VolumeBlob)blob).getFile(), ((VolumeBlob)blob).getVolumeId());
-  }
-
-  @Override
-  public short getVolumeId()
-  {
-    return super.getVolumeId();
-  }
+  public static final File VOLUME_BLOB_DEFAULT_FILE = new File("/tmp/fakeblob");
+  public static final short VOLUME_BLOB_DEFAULT_VOLUME_ID = (short) 0;
 
   public static boolean isVolumeBlob(Object blob)
   {

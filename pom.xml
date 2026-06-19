@@ -714,19 +714,6 @@
                 ${project.build.directory}/classes/com/zimbra/cs/redolog/op/DataExtractor</destinationFile>
             </configuration>
           </execution>
-          <execution>
-            <id>rename-VolumeBlobProxy</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <sourceFile>
-                ${project.build.directory}/classes/com/zimbra/cs/store/file/VolumeBlobProxy.class</sourceFile>
-              <destinationFile>
-                ${project.build.directory}/classes/com/zimbra/cs/store/file/VolumeBlobProxy</destinationFile>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -770,7 +757,6 @@
               </archive>
               <excludes>
                 <exclude>com/zimbra/cs/redolog/op/DataExtractor.class</exclude>
-                <exclude>com/zimbra/cs/store/file/VolumeBlobProxy.class</exclude>
               </excludes>
             </configuration>
           </execution>

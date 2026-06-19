@@ -28,14 +28,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-class InternalOverrideBlobWithMailboxInfo extends com.zimbra.cs.store.file.VolumeBlobProxy
+import static org.openzal.zal.VolumeBlobUtils.VOLUME_BLOB_DEFAULT_FILE;
+import static org.openzal.zal.VolumeBlobUtils.VOLUME_BLOB_DEFAULT_VOLUME_ID;
+
+class InternalOverrideBlobWithMailboxInfo extends com.zimbra.cs.store.file.VolumeBlob
 {
   private final Blob   mBlob;
   private final String mVolumeId;
 
   public InternalOverrideBlobWithMailboxInfo(Blob blob)
   {
-    super();
+    super(VOLUME_BLOB_DEFAULT_FILE, VOLUME_BLOB_DEFAULT_VOLUME_ID);
     mBlob = blob;
     mVolumeId = blob.getVolumeId();
   }

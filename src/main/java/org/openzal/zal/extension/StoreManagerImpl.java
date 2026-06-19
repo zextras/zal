@@ -21,10 +21,7 @@
 package org.openzal.zal.extension;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.apache.commons.io.IOUtils;
 import org.openzal.zal.CacheableStoreBuilder;
 import org.openzal.zal.FileBlobPrimaryStore;
 import org.openzal.zal.FileBlobStoreWrap;
@@ -54,51 +50,51 @@ public class StoreManagerImpl implements StoreManager
 
   private PrimaryStoreBuilder mPrimaryStoreBuilder;
 
-  static
-  {
-    try
-    {
-      Method defineClassMethod = ClassLoader.class.getDeclaredMethod(
-        "defineClass", byte[].class, int.class, int.class
-      );
-      defineClassMethod.setAccessible(true);
-
-      InputStream is = null;
-      try
-      {
-        Class<?> parentClass = Class.forName("com.zimbra.cs.store.file.VolumeBlob");
-        ClassLoader parentClassLoader = parentClass.getClassLoader();
-
-        is = BootstrapClassLoader.class.getResourceAsStream("/com/zimbra/cs/store/file/VolumeBlobProxy");
-        byte[] buffer = new byte[6 * 1024];
-        int idx = 0;
-        int read = 0;
-        while (read > -1)
-        {
-          idx += read;
-          if (buffer.length == idx)
-          {
-            buffer = Arrays.copyOf(buffer, buffer.length * 2);
-          }
-          read = is.read(buffer, idx, buffer.length - idx);
-        }
-
-        defineClassMethod.invoke(
-          parentClassLoader,
-          buffer, 0, idx
-        );
-      }
-      catch (Exception ignore) {}
-      finally
-      {
-        IOUtils.closeQuietly(is);
-      }
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
+//  static
+//  {
+//    try
+//    {
+//      Method defineClassMethod = ClassLoader.class.getDeclaredMethod(
+//        "defineClass", byte[].class, int.class, int.class
+//      );
+//      defineClassMethod.setAccessible(true);
+//
+//      InputStream is = null;
+//      try
+//      {
+//        Class<?> parentClass = Class.forName("com.zimbra.cs.store.file.VolumeBlob");
+//        ClassLoader parentClassLoader = parentClass.getClassLoader();
+//
+//        is = BootstrapClassLoader.class.getResourceAsStream("/com/zimbra/cs/store/file/VolumeBlobProxy");
+//        byte[] buffer = new byte[6 * 1024];
+//        int idx = 0;
+//        int read = 0;
+//        while (read > -1)
+//        {
+//          idx += read;
+//          if (buffer.length == idx)
+//          {
+//            buffer = Arrays.copyOf(buffer, buffer.length * 2);
+//          }
+//          read = is.read(buffer, idx, buffer.length - idx);
+//        }
+//
+//        defineClassMethod.invoke(
+//          parentClassLoader,
+//          buffer, 0, idx
+//        );
+//      }
+//      catch (Exception ignore) {}
+//      finally
+//      {
+//        IOUtils.closeQuietly(is);
+//      }
+//    }
+//    catch (Exception e)
+//    {
+//      throw new RuntimeException(e);
+//    }
+//  }
 
   public StoreManagerImpl(
     final FileBlobStoreWrap fileBlobStore,
