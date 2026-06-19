@@ -22,8 +22,6 @@ package org.openzal.zal.redolog.op;
 
 import org.openzal.zal.MailItemType;
 
-import java.lang.reflect.Field;
-
 public class ColorItem {
   private final int[] ids;
   private final MailItemType type;
@@ -38,24 +36,10 @@ public class ColorItem {
   }
 
   public ColorItem(RedoableOp op) {
-    Field field;
-    try {
-      field = com.zimbra.cs.redolog.op.ColorItem.class.getDeclaredField("mIds");
-      field.setAccessible(true);
-      com.zimbra.cs.redolog.op.RedoableOp proxiedObject = op.getProxiedObject();
-      ids = (int[]) field.get(proxiedObject);
-
-      field = com.zimbra.cs.redolog.op.ColorItem.class.getDeclaredField("type");
-      field.setAccessible(true);
-      com.zimbra.cs.mailbox.MailItem.Type type = (com.zimbra.cs.mailbox.MailItem.Type) field.get(proxiedObject);
-      this.type = new MailItemType(type);
-      field = com.zimbra.cs.redolog.op.ColorItem.class.getDeclaredField("mColor");
-      field.setAccessible(true);
-      color = field.getLong(proxiedObject);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new ColorItemInitializationException(e);
-    }
-
+    com.zimbra.cs.redolog.op.ColorItem colorItem = (com.zimbra.cs.redolog.op.ColorItem) op.getProxiedObject();
+    this.ids = colorItem.getIds();
+    this.type = new MailItemType(colorItem.getType());
+    this.color = colorItem.getColor();
   }
 
   public int[] getIds() {
