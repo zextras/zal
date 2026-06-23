@@ -24,16 +24,12 @@ import com.zimbra.common.soap.AdminConstants;
 import javax.annotation.Nullable;
 import org.openzal.zal.Continuation;
 import org.openzal.zal.Jetty;
-import org.openzal.zal.Utils;
 import com.zimbra.common.soap.Element;
 import com.zimbra.soap.SoapEngine;
 import com.zimbra.soap.SoapServlet;
 import com.zimbra.soap.ZimbraSoapContext;
-import org.openzal.zal.log.ZimbraLog;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -225,47 +221,12 @@ class ZimbraContextImpl implements ZimbraContext
     return (ip != null) ? ip.toString() : "";
   }
 
-  private static Method sDispatchRequest = null;
-
-  /* Element dispatchRequest(Element request, Map<String, Object> context, ZimbraSoapContext zsc); */
-  static
-  {
-    try
-    {
-      Class partypes[] = {
-        Element.class,
-        Map.class,
-        ZimbraSoapContext.class
-      };
-
-      sDispatchRequest = SoapEngine.class.getDeclaredMethod("dispatchRequest", partypes);
-      sDispatchRequest.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   @Override
   public SoapResponse execLocalRequest()
   {
     SoapEngine soapEngine = (SoapEngine) mContext.get(SoapEngine.ZIMBRA_ENGINE);
     ZimbraSoapContext zimbraSoapContext = (ZimbraSoapContext) mContext.get(SoapEngine.ZIMBRA_CONTEXT);
-    try
-    {
-      Element response = (Element)sDispatchRequest.invoke(soapEngine, mRequest, mContext, mZimbraSoapContext );
-      return new SoapResponseImpl(response, new InternalDocumentHelper.ElementFactory(zimbraSoapContext));
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
-    catch (InvocationTargetException e)
-    {
-      throw new RuntimeException(e.getCause());
-    }
+    return new SoapResponseImpl(soapEngine.dispatchRequest(mRequest, mContext, mZimbraSoapContext), new InternalDocumentHelper.ElementFactory(zimbraSoapContext));
   }
 
   @Override
