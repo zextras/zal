@@ -43,23 +43,6 @@ public class RedoableOp
 
   private final com.zimbra.cs.redolog.op.RedoableOp mRedoableOp;
 
-//
-//  @Nullable private static Method sGetVersionMethod = null;
-//
-//  static
-//  {
-//    try
-//    {
-//      sGetVersionMethod = com.zimbra.cs.redolog.op.RedoableOp.class.getDeclaredMethod("getVersion");
-//      sGetVersionMethod.setAccessible(true);
-//    }
-//    catch (Throwable ex)
-//    {
-//      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-//      throw new RuntimeException(ex);
-//    }
-//  }
-
   public RedoableOp(@Nonnull Object redoableOp)
   {
     mRedoableOp = (com.zimbra.cs.redolog.op.RedoableOp) redoableOp;

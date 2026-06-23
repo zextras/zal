@@ -1157,7 +1157,7 @@ public class Mailbox
         seqNo,
         dtStamp);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1744,7 +1744,7 @@ public class Mailbox
         true
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1766,7 +1766,7 @@ public class Mailbox
         true
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
