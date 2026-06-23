@@ -54,7 +54,7 @@ public class ZimbraExceptionFactory
   }
 
   protected static ZimbraException wrapServiceException(
-    ServiceException serviceException
+    com.zimbra.common.service.ServiceException serviceException
   )
   {
     String code = serviceException.getCode();
