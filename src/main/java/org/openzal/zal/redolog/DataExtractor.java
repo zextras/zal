@@ -18,10 +18,12 @@
  * along with ZAL. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.zimbra.cs.redolog.op;
+package org.openzal.zal.redolog;
 
 
 import com.zimbra.cs.redolog.RedoLogOutput;
+import com.zimbra.cs.redolog.op.RedoableOp;
+
 import java.io.IOException;
 
 public class DataExtractor

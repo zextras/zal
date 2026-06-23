@@ -697,26 +697,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.coderplus.maven.plugins</groupId>
-        <artifactId>copy-rename-maven-plugin</artifactId>
-        <version>1.0.1</version>
-        <executions>
-          <execution>
-            <id>rename-DataExtractor</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <sourceFile>
-                ${project.build.directory}/classes/com/zimbra/cs/redolog/op/DataExtractor.class</sourceFile>
-              <destinationFile>
-                ${project.build.directory}/classes/com/zimbra/cs/redolog/op/DataExtractor</destinationFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.2.1</version>
@@ -755,9 +735,6 @@
                   <Zimbra-Extension-Class>org.openzal.zal.extension.ZalEntrypointImpl</Zimbra-Extension-Class>
                 </manifestEntries>
               </archive>
-              <excludes>
-                <exclude>com/zimbra/cs/redolog/op/DataExtractor.class</exclude>
-              </excludes>
             </configuration>
           </execution>
           <execution>

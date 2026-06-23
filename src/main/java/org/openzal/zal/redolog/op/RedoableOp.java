@@ -20,9 +20,7 @@
 
 package org.openzal.zal.redolog.op;
 
-import com.zimbra.cs.redolog.op.DataExtractor;
-import org.apache.commons.io.IOUtils;
-import org.openzal.zal.extension.BootstrapClassLoader;
+import org.openzal.zal.redolog.DataExtractor;
 import org.openzal.zal.lib.Version;
 import org.openzal.zal.redolog.RedoLogOutput;
 import org.openzal.zal.redolog.TransactionId;
@@ -30,9 +28,6 @@ import org.openzal.zal.redolog.TransactionId;
 import javax.annotation.Nonnull;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 
 
 public class RedoableOp
@@ -135,51 +130,5 @@ public class RedoableOp
 
   public org.openzal.zal.OperationContext getOperationContext() {
     return org.openzal.zal.OperationContext.buildFromZimbra(mRedoableOp.getOperationContext());
-  }
-
-  static
-  {
-    try
-    {
-      Method defineClassMethod = ClassLoader.class.getDeclaredMethod(
-          "defineClass", byte[].class, int.class, int.class
-      );
-      defineClassMethod.setAccessible(true);
-
-      InputStream is = null;
-      try
-      {
-        Class<?> parentClass = Class.forName("com.zimbra.cs.redolog.op.RedoableOp");
-        ClassLoader parentClassLoader = parentClass.getClassLoader();
-
-        is = BootstrapClassLoader.class.getResourceAsStream("/com/zimbra/cs/redolog/op/DataExtractor");
-        byte[] buffer = new byte[6 * 1024];
-        int idx = 0;
-        int read = 0;
-        while (read > -1)
-        {
-          idx += read;
-          if (buffer.length == idx)
-          {
-            buffer = Arrays.copyOf(buffer, buffer.length * 2);
-          }
-          read = is.read(buffer, idx, buffer.length - idx);
-        }
-
-        defineClassMethod.invoke(
-            parentClassLoader,
-            buffer, 0, idx
-        );
-      }
-      catch (Exception ignore) {}
-      finally
-      {
-        IOUtils.closeQuietly(is);
-      }
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e);
-    }
   }
 }
