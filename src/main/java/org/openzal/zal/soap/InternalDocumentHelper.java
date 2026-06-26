@@ -22,7 +22,6 @@ package org.openzal.zal.soap;
 
 import com.zimbra.common.service.ServiceException;
 import javax.annotation.Nonnull;
-import org.openzal.zal.ContinuationThrowable;
 import org.openzal.zal.Utils;
 import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.common.soap.Element;
@@ -70,14 +69,7 @@ public class InternalDocumentHelper
     SoapResponseImpl soapResponse = new SoapResponseImpl(element, new ElementFactory(zimbraSoapContext));
     ZimbraExceptionContainer container = new ZimbraExceptionContainer();
 
-    try
-    {
-      mSoapHandler.handleRequest(zimbraContext, soapResponse, container);
-    }
-    catch( ContinuationThrowable continuationThrowable )
-    {
-      continuationThrowable.throwJettyException();
-    }
+    mSoapHandler.handleRequest(zimbraContext, soapResponse, container);
 
     Throwable exception = container.getException();
 

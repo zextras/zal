@@ -35,7 +35,7 @@ public final class Jetty
     }
     else
     {
-      return new ContinuationJetty(req);
+      return ContinuationJetty.getOrCreateContinuation(req);
     }
   }
 }

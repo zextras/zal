@@ -12,7 +12,7 @@
   <properties>
     <revision>4.31.7</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio.version>4.27.14</carbonio.version>
+    <carbonio.version>4.28.0</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -20,8 +20,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <commit.id>1.1.1</commit.id>
-    <jetty.version>9.4.55.v20240627</jetty.version>
-    <servlet.version>3.1.0</servlet.version>
+    <jetty.version>12.1.10</jetty.version>
     <junit.version>4.13.1</junit.version>
     <junit5.version>5.11.4</junit5.version>
     <mockito.version>5.4.0</mockito.version>
@@ -185,23 +184,11 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
       <version>${jetty.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-continuation</artifactId>
-      <version>${jetty.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
