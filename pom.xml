@@ -134,10 +134,15 @@
       <version>3.0.2</version>
     </dependency>
 
+    <!-- provided: zal is meant to run against whatever jackson version the
+         host process (carbonio-mailbox) already has loaded; bundling our
+         own copy just duplicates it in every consumer's extension jar.
+         Matches the javax.activation-api/javax.mail-api pattern below. -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
