@@ -31,18 +31,13 @@ import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.NoSuchMailboxException;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.ZimbraDatabase;
-import org.openzal.zal.log.ZimbraLog;
 
-//import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"StaticVariableOfConcreteClass", "StaticNonFinalField", "Singleton"})
 public class MailboxManagerImp implements MailboxManager
