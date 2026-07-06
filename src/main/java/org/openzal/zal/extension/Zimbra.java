@@ -146,22 +146,6 @@ public Zimbra(Zimbra zimbra)
     return false;
   }
 
-  private static Field sStoreManagerInstance;
-
-  static
-  {
-    try
-    {
-      sStoreManagerInstance = com.zimbra.cs.store.StoreManager.class.getDeclaredField("sInstance");
-      sStoreManagerInstance.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   private static Field sRedoLogProviderInstance;
 
   static
@@ -218,27 +202,12 @@ public Zimbra(Zimbra zimbra)
     }
     mInternalOverrideStoreManager = new InternalOverrideStoreManager(storeManager, mVolumeManager);
     ZimbraLog.extensions.info("ZAL override Zimbra StoreManager");
-    try
-    {
-      sStoreManagerInstance.set(null, mInternalOverrideStoreManager);
-      mStoreManager = storeManager;
-    }
-    catch( IllegalAccessException e )
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(e));
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.store.StoreManager.setInstance(mInternalOverrideStoreManager);
+    mStoreManager = storeManager;
   }
 
   public void restoreZimbraStoreManager()
   {
-    try
-    {
-      sStoreManagerInstance.set(null, mZimbraStoreManager);
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.store.StoreManager.setInstance(mZimbraStoreManager);
   }
 }
