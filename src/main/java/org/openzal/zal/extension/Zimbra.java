@@ -23,14 +23,12 @@ package org.openzal.zal.extension;
 import com.zimbra.cs.extension.ExtensionUtil;
 import com.zimbra.cs.extension.ZimbraExtension;
 import com.zimbra.cs.store.file.FileBlobStore;
-import java.lang.reflect.Field;
 import org.openzal.zal.FileBlobStoreWrapImpl;
 import org.openzal.zal.MailboxManager;
 import org.openzal.zal.MailboxManagerImp;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.ProvisioningImp;
 import org.openzal.zal.StoreManager;
-import org.openzal.zal.Utils;
 import org.openzal.zal.VolumeManager;
 import org.openzal.zal.lib.ZimbraDatabase;
 import org.openzal.zal.log.ZimbraLog;
@@ -146,22 +144,6 @@ public Zimbra(Zimbra zimbra)
     return false;
   }
 
-  private static Field sRedoLogProviderInstance;
-
-  static
-  {
-    try
-    {
-      sRedoLogProviderInstance = com.zimbra.cs.redolog.RedoLogProvider.class.getDeclaredField("theInstance");
-      sRedoLogProviderInstance.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   public boolean removeExtension(String extensionName)
   {
     return ExtensionUtil.removeExtension(extensionName);
@@ -182,15 +164,7 @@ public Zimbra(Zimbra zimbra)
   public void overrideZimbraRedoLogProvider(RedoLogProvider redoLogProvider)
   {
     ZimbraLog.extensions.info("ZAL override Zimbra RedoLog");
-    try
-    {
-      sRedoLogProviderInstance.set(null, redoLogProvider);
-    }
-    catch( IllegalAccessException e )
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(e));
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.redolog.RedoLogProvider.setInstance(redoLogProvider);
   }
 
   public void overrideZimbraStoreManager(StoreManager storeManager)
