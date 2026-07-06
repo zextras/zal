@@ -12,7 +12,7 @@
   <properties>
     <revision>4.32.1</revision>
     <changelist>-SNAPSHOT</changelist>
-      <carbonio.version>4.28.1.avoid-reflection-in-zal-SNAPSHOT</carbonio.version>
+    <carbonio.version>4.29.0</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>

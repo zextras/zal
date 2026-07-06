@@ -24,7 +24,6 @@ import com.zimbra.cs.extension.ExtensionUtil;
 import com.zimbra.cs.extension.ZimbraExtension;
 import com.zimbra.cs.store.file.FileBlobStore;
 import java.lang.reflect.Field;
-import java.util.Map;
 import org.openzal.zal.FileBlobStoreWrapImpl;
 import org.openzal.zal.MailboxManager;
 import org.openzal.zal.MailboxManagerImp;
@@ -33,7 +32,6 @@ import org.openzal.zal.ProvisioningImp;
 import org.openzal.zal.StoreManager;
 import org.openzal.zal.Utils;
 import org.openzal.zal.VolumeManager;
-import org.openzal.zal.lib.PermissiveMap;
 import org.openzal.zal.lib.ZimbraDatabase;
 import org.openzal.zal.log.ZimbraLog;
 
@@ -148,23 +146,6 @@ public Zimbra(Zimbra zimbra)
     return false;
   }
 
-  private static Field sInitializedExtensions;
-
-  static
-  {
-    try
-    {
-      Class cls = com.zimbra.cs.extension.ExtensionUtil.class;
-      sInitializedExtensions = cls.getDeclaredField("sInitializedExtensions");
-      sInitializedExtensions.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   private static Field sStoreManagerInstance;
 
   static
@@ -199,36 +180,12 @@ public Zimbra(Zimbra zimbra)
 
   public boolean removeExtension(String extensionName)
   {
-    try
-    {
-      return ((Map) sInitializedExtensions.get(null)).remove(extensionName) != null;
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    return ExtensionUtil.removeExtension(extensionName);
   }
 
   public static void overrideExtensionMap()
   {
-/*
-  ZX-3303
-  avoid concurrent modification exception when disabling an extension
-  during extension postInit
-*/
-
-    try
-    {
-      Map map = (Map)sInitializedExtensions.get(null);
-      sInitializedExtensions.set(
-        null,
-        new PermissiveMap<String,String>(map)
-      );
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    ExtensionUtil.clearExtensions();
   }
 
   public void overrideZimbraStoreManager()
