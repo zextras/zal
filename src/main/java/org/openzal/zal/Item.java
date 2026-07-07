@@ -286,7 +286,7 @@ public class Item implements Comparable<Item>
 
   public static class CustomMetadata
   {
-    private MailItem.CustomMetadata mCustomMetadata;
+    private final MailItem.CustomMetadata mCustomMetadata;
 
     public CustomMetadata(Object meta)
     {
@@ -376,7 +376,7 @@ public class Item implements Comparable<Item>
     public static final String FN_MOD_CONTENT  = "modc";
     public static final String FN_DATE_CHANGED = "dc";
 
-    private MailItem.UnderlyingData mUnderlyingData;
+    private final MailItem.UnderlyingData mUnderlyingData;
 
     public UnderlyingData()
     {
@@ -544,7 +544,7 @@ public class Item implements Comparable<Item>
     public static final Color RED    = new Color(0xFF0000L);
     public static final Color YELLOW = new Color(0xFFFF00L);
 
-    private com.zimbra.common.mailbox.Color mColor;
+    private final com.zimbra.common.mailbox.Color mColor;
 
     public Color(Object color)
     {

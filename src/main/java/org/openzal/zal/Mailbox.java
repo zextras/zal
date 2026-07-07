@@ -1809,7 +1809,7 @@ public class Mailbox
     beginTransaction(name, context.getOperationContext());
   }
 
-  private final void beginTransaction(String name, com.zimbra.cs.mailbox.OperationContext zContext)
+  private void beginTransaction(String name, com.zimbra.cs.mailbox.OperationContext zContext)
           throws ZimbraException
   {
     try
@@ -1839,7 +1839,7 @@ public class Mailbox
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final Item rawGetItem(@Nonnull Item.UnderlyingData data)
+  private Item rawGetItem(@Nonnull Item.UnderlyingData data)
           throws InternalServerException
   {
     try
@@ -1864,7 +1864,7 @@ public class Mailbox
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final List<com.zimbra.cs.mailbox.Flag> getAllFlags()
+  private List<com.zimbra.cs.mailbox.Flag> getAllFlags()
           throws ZimbraException
   {
     try {
@@ -1874,7 +1874,7 @@ public class Mailbox
     }
   }
 
-  public final static boolean ACLIsEmpty(@Nullable Acl acl)
+  public static boolean ACLIsEmpty(@Nullable Acl acl)
   {
     if (acl == null)
     {
@@ -1887,7 +1887,7 @@ public class Mailbox
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final Map<Object, com.zimbra.cs.mailbox.Tag> getTagCache()
+  private Map<Object, com.zimbra.cs.mailbox.Tag> getTagCache()
   {
     return mMbox.getTagCache();
   }
@@ -1896,7 +1896,7 @@ public class Mailbox
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final Collection<Folder> getFolderCache()
+  private Collection<Folder> getFolderCache()
   {
     try
     {

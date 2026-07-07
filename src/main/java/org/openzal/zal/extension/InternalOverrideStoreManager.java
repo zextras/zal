@@ -302,8 +302,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   @Nullable
-  public InputStream getContent(MailboxBlob mboxBlob) throws IOException
-  {
+  public InputStream getContent(MailboxBlob mboxBlob) {
     org.openzal.zal.MailboxBlob zalMailboxBlob = MailboxBlobWrap.wrapZimbraObject(mboxBlob);
     try
     {
@@ -335,8 +334,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     }
   }
 
-  public InputStream getContent(Blob blob) throws IOException
-  {
+  public InputStream getContent(Blob blob) {
     org.openzal.zal.Blob zalBlob = BlobWrap.wrapZimbraBlob(blob);
     if (zalBlob.hasMailboxInfo())
     {

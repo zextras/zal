@@ -1,6 +1,6 @@
 package org.openzal.zal.index;
 
-import com.zimbra.cs.mime.MimeHandler;
+import com.zimbra.cs.mime.MimeHandlerManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

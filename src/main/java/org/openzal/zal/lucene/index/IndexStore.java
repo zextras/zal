@@ -35,7 +35,7 @@ public class IndexStore
   }
 
   public Indexer openIndexer()
-    throws IOException, ZimbraException
+    throws ZimbraException
   {
     try
     {
@@ -47,9 +47,7 @@ public class IndexStore
     }
   }
 
-  public IndexSearcher openSearcher()
-    throws IOException
-  {
+  public IndexSearcher openSearcher() {
     try
     {
       return new IndexSearcher(mIndex.openSearcher());

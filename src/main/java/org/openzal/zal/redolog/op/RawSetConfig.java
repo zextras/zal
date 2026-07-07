@@ -31,7 +31,7 @@ public class RawSetConfig extends RedoableOp {
   }
 
   @Override
-  public void redo() throws Exception {
+  public void redo() {
     throw new UnsupportedOperationException();
   }
 

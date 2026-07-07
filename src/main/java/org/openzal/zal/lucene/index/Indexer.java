@@ -22,7 +22,7 @@ public class Indexer
 {
   private final LuceneIndex.LuceneIndexerImpl mIndexer;
 
-  private IndexWriter mIndexWriter;
+  private final IndexWriter mIndexWriter;
 
   public Indexer(@Nonnull Object zObject)
   {

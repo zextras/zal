@@ -65,7 +65,7 @@ import java.util.Objects;
 
 public class Invite
 {
-  public static int TYPE_EXCEPTION = Recurrence.TYPE_EXCEPTION;
+  public static final int TYPE_EXCEPTION = Recurrence.TYPE_EXCEPTION;
   public static int TYPE_CANCELLATION = Recurrence.TYPE_CANCELLATION;
 
   @Nullable
@@ -938,8 +938,7 @@ public class Invite
     }
   }
 
-   public void updateMyPartStat(Account acct, String partStat) throws ServiceException
-   {
+   public void updateMyPartStat(Account acct, String partStat) {
      try
      {
        mInvite.updateMyPartStat(acct.toZimbra(com.zimbra.cs.account.Account.class), partStat);
