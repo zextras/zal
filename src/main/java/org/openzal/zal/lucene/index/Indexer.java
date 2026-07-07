@@ -3,11 +3,11 @@ package org.openzal.zal.lucene.index;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+
+import com.zimbra.cs.index.LuceneIndex;
 import org.openzal.zal.Folder;
 import org.openzal.zal.Item;
 import org.openzal.zal.exceptions.ExceptionWrapper;
@@ -20,41 +20,14 @@ import javax.annotation.Nonnull;
 public class Indexer
   implements Closeable
 {
-  private final IndexStore                  mIndexStore;
-  private final com.zimbra.cs.index.Indexer mIndexer;
-
-  private Object mIndexWriterRef;
-  private Method mIndexWriterRefGet;
+  private final LuceneIndex.LuceneIndexerImpl mIndexer;
 
   private IndexWriter mIndexWriter;
 
   public Indexer(@Nonnull Object zObject)
   {
-    this(null, zObject);
-  }
-
-  public Indexer(IndexStore indexStore, @Nonnull Object zObject)
-  {
-    mIndexStore = indexStore;
-    mIndexer = (com.zimbra.cs.index.Indexer) zObject;
-
-    try
-    {
-      Field writer = zObject.getClass().getDeclaredField("writer");
-      writer.setAccessible(true);
-
-      mIndexWriterRef = writer.get(zObject);
-
-      Class target = com.zimbra.cs.index.LuceneIndex.class.getClassLoader().loadClass("com.zimbra.cs.index.LuceneIndex$IndexWriterRef");
-      mIndexWriterRefGet = target.getDeclaredMethod("get");
-      mIndexWriterRefGet.setAccessible(true);
-
-      mIndexWriter = getIndexWriter();
-    }
-    catch( Exception e )
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
+    mIndexer = (LuceneIndex.LuceneIndexerImpl) zObject;
+    mIndexWriter = getIndexWriter();
   }
 
   public void addDocument(Document document, Object... idParts)
@@ -159,7 +132,7 @@ public class Indexer
   {
     try
     {
-      return new IndexWriter(mIndexWriterRefGet.invoke(mIndexWriterRef));
+      return new IndexWriter(mIndexer.getWriter().get());
     }
     catch( Exception e )
     {

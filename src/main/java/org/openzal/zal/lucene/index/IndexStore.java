@@ -39,7 +39,7 @@ public class IndexStore
   {
     try
     {
-      return new Indexer(this, mIndex.openIndexer());
+      return new Indexer(mIndex.openIndexer());
     }
     catch( Exception e )
     {
