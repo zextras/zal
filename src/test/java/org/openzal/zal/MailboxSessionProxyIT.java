@@ -2,15 +2,14 @@ package org.openzal.zal;
 
 import com.zimbra.cs.session.Session;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openzal.zal.lib.ZimbraVersion;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailboxSessionProxyIT
 {
@@ -46,7 +45,7 @@ public class MailboxSessionProxyIT
         listenerObject = listenerSession;
       }
     }
-    assertNotNull("Map should contain a Session with getSessionId() = \"listener\"", listenerObject);
+    assertNotNull(listenerObject, "Map should contain a Session with getSessionId() = \"listener\"");
 
     listeners.remove(new MailboxSessionProxy(listenerObject).toZimbra(Session.class));
 

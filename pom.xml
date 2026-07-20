@@ -21,7 +21,6 @@
     <maven.compiler.target>21</maven.compiler.target>
     <commit.id>1.1.1</commit.id>
     <jetty.version>12.1.10</jetty.version>
-    <junit.version>4.13.1</junit.version>
     <junit5.version>5.11.4</junit5.version>
     <mockito.version>5.4.0</mockito.version>
     <httpcomponents.version>4.5.13</httpcomponents.version>
@@ -312,13 +311,6 @@
       <version>1.28.0</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit5.version}</version>
@@ -336,13 +328,6 @@
       <version>${junit5.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junit5.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>

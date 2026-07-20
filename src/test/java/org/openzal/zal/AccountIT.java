@@ -9,15 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openzal.zal.extension.ConfigZimletStatus;
 import org.openzal.zal.soap.SoapTransport;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -32,7 +32,7 @@ public class AccountIT
   private Account         mAccount;
   private Domain          mMainDomain;
 
-  @Before
+  @BeforeEach
   public void setup() throws Exception
   {
     mZimbraSimulator = new ZalZimbraSimulator();
@@ -41,7 +41,7 @@ public class AccountIT
     mAccount = mProvisioning.createAccount("test@example.com","",new HashMap<String, Object>());
   }
 
-  @After
+  @AfterEach
   public void cleanup() throws Exception
   {
     mZimbraSimulator.cleanup();

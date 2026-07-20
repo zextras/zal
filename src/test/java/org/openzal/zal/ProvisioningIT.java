@@ -1,19 +1,18 @@
 package org.openzal.zal;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openzal.zal.lib.ZimbraVersion;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProvisioningIT
 {
   private Provisioning mProvisioning;
 
-  @Before
+  @BeforeEach
   public void setup()
   {
     mProvisioning = new ProvisioningImp(null);

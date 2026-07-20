@@ -1,8 +1,8 @@
 package org.openzal.zal.extension;
 import org.openzal.zal.mailbox.ZalZimbraSimulator;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openzal.zal.lib.PermissiveMap;
 
 import java.util.Arrays;
@@ -10,12 +10,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZimbraIT
 {
-  @Rule
+  @RegisterExtension
   public ZalZimbraSimulator mZimbraSimulator = new ZalZimbraSimulator();
 
   @Test

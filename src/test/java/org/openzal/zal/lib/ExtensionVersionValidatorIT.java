@@ -1,7 +1,7 @@
 package org.openzal.zal.lib;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,7 +11,7 @@ public class ExtensionVersionValidatorIT
   private ExtensionVersionValidator mValidator;
   private JarAccessor               mJar;
 
-  @Before
+  @BeforeEach
   public void setup() throws Exception
   {
     mJar = mock(JarAccessor.class);
