@@ -1,6 +1,6 @@
 package org.openzal.zal.lib;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.singleton;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
   Copied from google guice testing (MapInterfaceTest.java).

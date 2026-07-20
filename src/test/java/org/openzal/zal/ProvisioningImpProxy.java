@@ -1,12 +1,12 @@
 package org.openzal.zal;
 
 import javax.annotation.Nonnull;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openzal.zal.exceptions.ZimbraException;
 
 import java.util.Map;
 
-@Ignore
+@Disabled
 public class ProvisioningImpProxy extends ProvisioningImp
 {
   public ProvisioningImpProxy()

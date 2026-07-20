@@ -1,12 +1,12 @@
 package org.openzal.zal.index;
 
 import com.zimbra.cs.mime.MimeHandler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,7 @@ public class IndexerProxyMapIT {
     private MimeHandler mMimeHandler1;
     private MimeHandler mMimeHandler2;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mMimeHandler1 = mock(MimeHandler.class);
         mMimeHandler2 = mock(MimeHandler.class);

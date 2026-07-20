@@ -1,9 +1,9 @@
 package org.openzal.zal.index;
 
 import org.openzal.zal.mailbox.ZalZimbraSimulator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openzal.zal.ParsedMessage;
 import org.openzal.zal.TemporaryIndexingError;
 
@@ -28,7 +28,7 @@ public class IndexerManagerIT {
     private Indexer mIndexer;
     private ZalZimbraSimulator mZimbraSimulator;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         mZimbraSimulator = new ZalZimbraSimulator();
         mIndexerManager = new IndexerManager();
@@ -59,7 +59,7 @@ public class IndexerManagerIT {
         return message;
     }
 
-    @After
+    @AfterEach
     public void cleanup() throws Exception {
         mIndexerManager.detach();
         mZimbraSimulator.cleanup();

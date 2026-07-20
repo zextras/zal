@@ -16,14 +16,16 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openzal.zal.MailboxManagerImp;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.ProvisioningImpProxy;
 import org.openzal.zal.extension.Zimbra;
 
 // for testing purpose only
-public class ZalZimbraSimulator extends ExternalResource
+public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 {
   static Logger logger = LogManager.getLogger(ZalZimbraSimulator.class);
 
@@ -60,14 +62,13 @@ public class ZalZimbraSimulator extends ExternalResource
   }
 
 
-  /*
-    junit @Rule implementation
-   */
-  protected void before() throws Throwable
+  @Override
+  public void beforeEach(ExtensionContext context) throws Exception
   {
   }
 
-  protected void after()
+  @Override
+  public void afterEach(ExtensionContext context)
   {
     try
     {
