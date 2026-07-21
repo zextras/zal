@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@v2.8.8',
+        identifier: 'jenkins-lib-common@breaking-change/maven-stage',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
@@ -42,9 +42,7 @@ pipeline {
             steps {
                 script {
                     mavenStage(
-                        profile: '',
-                        deployArtifacts: true,
-                        extraDeployArgs: '-Dchangelist=-SNAPSHOT'
+                       mvnOpts: '-Dchangelist='
                     )
                 }
             }
