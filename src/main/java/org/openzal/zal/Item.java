@@ -25,7 +25,6 @@ import com.zimbra.cs.mailbox.ACL;
 import com.zimbra.cs.mailbox.MailItem;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.NoSuchFolderException;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.ZimbraVersion;
-import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.lucene.document.Document;
 
 import javax.annotation.Nonnull;
@@ -59,9 +57,6 @@ public class Item implements Comparable<Item>
   public static final byte TYPE_VIRTUAL_CONVERSATION = 12;
   public static final byte TYPE_MOUNTPOINT           = 13;
   public static final byte TYPE_CHAT                 = 16;
-
-  // FIXME clone of Item.UnderlyingData.FIELD_INDEX_ID
-  public static final String FN_INDEX_ID = "idx";
 
   public Item(Object item)
   {
@@ -115,10 +110,10 @@ public class Item implements Comparable<Item>
     try
     {
       return new Item(
-        MailItem.constructItem(
-          mbox.toZimbra(com.zimbra.cs.mailbox.Mailbox.class),
-          data.toZimbra(MailItem.UnderlyingData.class)
-        )
+              MailItem.constructItem(
+                      mbox.toZimbra(com.zimbra.cs.mailbox.Mailbox.class),
+                      data.toZimbra(MailItem.UnderlyingData.class)
+              )
       );
     }
     catch (com.zimbra.common.service.ServiceException e)
@@ -129,16 +124,16 @@ public class Item implements Comparable<Item>
 
   @Nonnull
   public static Item constructItem(@Nonnull Mailbox mbox, @Nonnull UnderlyingData data, boolean skipCache)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       return new Item(
-        MailItem.constructItem(
-          mbox.toZimbra(com.zimbra.cs.mailbox.Mailbox.class),
-          data.toZimbra(MailItem.UnderlyingData.class),
-          skipCache
-        )
+              MailItem.constructItem(
+                      mbox.toZimbra(com.zimbra.cs.mailbox.Mailbox.class),
+                      data.toZimbra(MailItem.UnderlyingData.class),
+                      skipCache
+              )
       );
     }
     catch( com.zimbra.common.service.ServiceException e )
@@ -155,7 +150,7 @@ public class Item implements Comparable<Item>
 
   public int getMailboxId()
   {
-    return (int) mMailItem.getMailboxId();
+    return mMailItem.getMailboxId();
   }
 
   public String getDigest()
@@ -291,7 +286,7 @@ public class Item implements Comparable<Item>
 
   public static class CustomMetadata
   {
-    private MailItem.CustomMetadata mCustomMetadata;
+    private final MailItem.CustomMetadata mCustomMetadata;
 
     public CustomMetadata(Object meta)
     {
@@ -381,7 +376,7 @@ public class Item implements Comparable<Item>
     public static final String FN_MOD_CONTENT  = "modc";
     public static final String FN_DATE_CHANGED = "dc";
 
-    private MailItem.UnderlyingData mUnderlyingData;
+    private final MailItem.UnderlyingData mUnderlyingData;
 
     public UnderlyingData()
     {
@@ -407,7 +402,7 @@ public class Item implements Comparable<Item>
     }
 
     public void deserialize(Metadata metadata)
-      throws ServiceException
+            throws ServiceException
     {
       mUnderlyingData.deserialize(metadata.toZimbra(com.zimbra.cs.mailbox.Metadata.class));
     }
@@ -549,7 +544,7 @@ public class Item implements Comparable<Item>
     public static final Color RED    = new Color(0xFF0000L);
     public static final Color YELLOW = new Color(0xFFFF00L);
 
-    private com.zimbra.common.mailbox.Color mColor;
+    private final com.zimbra.common.mailbox.Color mColor;
 
     public Color(Object color)
     {
@@ -602,7 +597,7 @@ public class Item implements Comparable<Item>
   }
 
   public String getPath()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -625,7 +620,7 @@ public class Item implements Comparable<Item>
   }
 
   public InputStream getContentStream()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -638,7 +633,7 @@ public class Item implements Comparable<Item>
   }
 
   public byte[] getContent()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -695,7 +690,7 @@ public class Item implements Comparable<Item>
   }
 
   public boolean inTrash()
-    throws NoSuchFolderException
+          throws NoSuchFolderException
   {
     try
     {
@@ -727,121 +722,33 @@ public class Item implements Comparable<Item>
     return mMailItem.isUnread();
   }
 
-  private static Method sDeserializeMethod;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[1];
-      partypes[0] = com.zimbra.cs.mailbox.Metadata.class;
-
-      sDeserializeMethod = MailItem.UnderlyingData.class.getDeclaredMethod("deserialize", partypes);
-      sDeserializeMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   @Nonnull
   public static UnderlyingData decodeZimbraMetadata(@Nullable ZimbraVersion originVersion, final String encodedString)
-    throws ZimbraException
+          throws ZimbraException
   {
-    try
-    {
-      Metadata meta = new Metadata(encodedString);
+    Metadata meta = new Metadata(encodedString);
 
-      UnderlyingData underlyingData = new UnderlyingData();
-      Object parameters[] = new Object[1];
-      parameters[0] = meta.toZimbra(com.zimbra.cs.mailbox.Metadata.class);
-
-      sDeserializeMethod.invoke(
-        underlyingData.toZimbra(MailItem.UnderlyingData.class),
-        parameters
-      );
+    UnderlyingData underlyingData = new UnderlyingData();
+    try {
+      com.zimbra.cs.mailbox.Metadata metadata = meta.toZimbra(com.zimbra.cs.mailbox.Metadata.class);
+      underlyingData.toZimbra(MailItem.UnderlyingData.class).deserialize(metadata);
       return underlyingData;
-    }
-    catch (Throwable ex)
-    {
-      throw new RuntimeException(ex);
-    }
-  }
-
-  private static Method sSerializeMethod;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[0];
-      sSerializeMethod = MailItem.UnderlyingData.class.getDeclaredMethod("serialize", partypes);
-      sSerializeMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
+    } catch (ServiceException e) {
+      throw ExceptionWrapper.wrap(e);
     }
   }
 
   @Nullable
   public String encodeZimbraMetadata()
   {
-    try
-    {
-      UnderlyingData underlyingData = getUnderlyingData();
-      Object parameters[] = new Object[0];
-      com.zimbra.cs.mailbox.Metadata meta = (com.zimbra.cs.mailbox.Metadata) sSerializeMethod.invoke(
-        underlyingData.toZimbra(MailItem.UnderlyingData.class),
-        parameters
-      );
-      return meta.toString();
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.mailbox.warn("Exception: " + Utils.exceptionToString(ex));
-      return null;
-    }
-  }
-
-  private static Method sEncodeMetadata;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = {com.zimbra.cs.mailbox.Metadata.class};
-
-      sEncodeMetadata = MailItem.class.getDeclaredMethod("encodeMetadata", partypes);
-      sEncodeMetadata.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
+    UnderlyingData underlyingData = getUnderlyingData();
+    return underlyingData.toZimbra(MailItem.UnderlyingData.class).serialize().toString();
   }
 
   @Nullable
   public String encodeSubmetadataForItemType()
   {
-    try
-    {
-      Object parameters[] = { new com.zimbra.cs.mailbox.Metadata() };
-      com.zimbra.cs.mailbox.Metadata meta = (com.zimbra.cs.mailbox.Metadata) sEncodeMetadata.invoke(
-        mMailItem,
-        parameters
-      );
-      return meta.toString();
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.mailbox.warn("Exception: " + Utils.exceptionToString(ex));
-      return null;
-    }
+    return mMailItem.encodeMetadata(new com.zimbra.cs.mailbox.Metadata()).toString();
   }
 
   public String[] getTags()

@@ -79,7 +79,6 @@ import org.openzal.zal.exceptions.*;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.Filter;
 import org.openzal.zal.log.ZimbraLog;
-import org.openzal.zal.provisioning.DirectQueryFilterBuilder;
 
 
 public class ProvisioningImp implements Provisioning
@@ -3031,7 +3030,7 @@ public class ProvisioningImp implements Provisioning
       zlc = getLdapClient().getContext(LdapServerType.REPLICA, LdapUsage.GENERIC);
       return (int)zlc.countEntries(
         base,
-        DirectQueryFilterBuilder.create(query),
+        createZLdapFilter(query),
         searchControls
       );
     }
@@ -3047,6 +3046,14 @@ public class ProvisioningImp implements Provisioning
     {
       getLdapClient().closeContext(zlc);
     }
+  }
+
+  private static ZLdapFilter createZLdapFilter(String query) throws LDAPException
+  {
+    return new ZLdapFilter(
+            ZLdapFilterFactory.FilterId.TODO,
+            com.unboundid.ldap.sdk.Filter.create(query)
+    );
   }
 
   @Override

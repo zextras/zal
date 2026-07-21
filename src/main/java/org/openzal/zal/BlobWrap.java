@@ -20,7 +20,7 @@
 
 package org.openzal.zal;
 
-import com.zimbra.cs.store.file.VolumeBlobProxy;
+import com.zimbra.cs.store.file.VolumeBlob;
 import com.zimbra.cs.store.file.VolumeMailboxBlob;
 import com.zimbra.cs.store.file.VolumeStagedBlob;
 import javax.annotation.Nonnull;
@@ -55,9 +55,9 @@ public class BlobWrap implements Blob
     {
       throw new RuntimeException("Cannot handle blob of type " + blob.getClass());
     }
-    if (VolumeBlobProxy.isVolumeBlob(blob))
+    if (VolumeBlobUtils.isVolumeBlob(blob))
     {
-      volumeId = String.valueOf(new VolumeBlobProxy(blob).getVolumeId());
+      volumeId = String.valueOf(new VolumeBlob((VolumeBlob) blob).getVolumeId());
     }
 
     mVolumeId = volumeId;
@@ -133,8 +133,7 @@ public class BlobWrap implements Blob
   }
 
   @Override
-  public long getStoredFileSize() throws IOException
-  {
+  public long getStoredFileSize() {
     return mBlob.getFile().length();
   }
 

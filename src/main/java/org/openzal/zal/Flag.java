@@ -20,9 +20,7 @@
 
 package org.openzal.zal;
 
-import java.lang.reflect.*;
 
-import org.openzal.zal.log.ZimbraLog;
 import javax.annotation.Nonnull;
 
 
@@ -68,40 +66,9 @@ public final class Flag extends Item
   public static int BITMASK_ARCHIVED    = com.zimbra.cs.mailbox.Flag.BITMASK_ARCHIVED;
   public static int BITMASK_IN_DUMPSTER = com.zimbra.cs.mailbox.Flag.BITMASK_IN_DUMPSTER;
 
-  private static Method sFlagOf;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[1];
-      partypes[0] = int.class;
-
-      sFlagOf = com.zimbra.cs.mailbox.Flag.FlagInfo.class.getDeclaredMethod("of", partypes);
-      sFlagOf.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-
   static com.zimbra.cs.mailbox.Flag.FlagInfo of(int id)
   {
-    try
-    {
-      Object parameters[] = new Object[1];
-      parameters[0] = id;
-
-      return (com.zimbra.cs.mailbox.Flag.FlagInfo) sFlagOf.invoke(null, parameters);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
+    return com.zimbra.cs.mailbox.Flag.FlagInfo.of(id);
   }
 
   public static int BITMASK_FROM_ME           = com.zimbra.cs.mailbox.Flag.BITMASK_FROM_ME;

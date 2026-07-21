@@ -20,10 +20,12 @@
 
 package org.openzal.zal.index;
 
+import com.zimbra.cs.mime.MimeHandlerManager;
+
 import javax.annotation.Nullable;
 
 public interface MimeHandlerProvider
 {
   @Nullable
-  Object getMimeHandlerFor(String contentType, String fileExtension);
+  MimeHandlerManager.HandlerInfo getMimeHandlerFor(String contentType, String fileExtension);
 }

@@ -23,17 +23,13 @@ package org.openzal.zal.extension;
 import com.zimbra.cs.extension.ExtensionUtil;
 import com.zimbra.cs.extension.ZimbraExtension;
 import com.zimbra.cs.store.file.FileBlobStore;
-import java.lang.reflect.Field;
-import java.util.Map;
 import org.openzal.zal.FileBlobStoreWrapImpl;
 import org.openzal.zal.MailboxManager;
 import org.openzal.zal.MailboxManagerImp;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.ProvisioningImp;
 import org.openzal.zal.StoreManager;
-import org.openzal.zal.Utils;
 import org.openzal.zal.VolumeManager;
-import org.openzal.zal.lib.PermissiveMap;
 import org.openzal.zal.lib.ZimbraDatabase;
 import org.openzal.zal.log.ZimbraLog;
 
@@ -100,46 +96,9 @@ public Zimbra(Zimbra zimbra)
     }
   }
 
-  private static final Field sIsMailboxd;
-
-  static
-  {
-    try
-    {
-      sIsMailboxd = com.zimbra.cs.util.Zimbra.class.getDeclaredField("sIsMailboxd");
-      sIsMailboxd.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  public void forceMailboxd()
-  {
-    try
-    {
-      sIsMailboxd.set(null, true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   public boolean isMailboxd()
   {
-    try
-    {
-      return sIsMailboxd.getBoolean(null);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
+    return com.zimbra.cs.util.Zimbra.isMailboxd();
   }
 
   @Nonnull
@@ -185,87 +144,14 @@ public Zimbra(Zimbra zimbra)
     return false;
   }
 
-  private static Field sInitializedExtensions;
-
-  static
-  {
-    try
-    {
-      Class cls = com.zimbra.cs.extension.ExtensionUtil.class;
-      sInitializedExtensions = cls.getDeclaredField("sInitializedExtensions");
-      sInitializedExtensions.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  private static Field sStoreManagerInstance;
-
-  static
-  {
-    try
-    {
-      sStoreManagerInstance = com.zimbra.cs.store.StoreManager.class.getDeclaredField("sInstance");
-      sStoreManagerInstance.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  private static Field sRedoLogProviderInstance;
-
-  static
-  {
-    try
-    {
-      sRedoLogProviderInstance = com.zimbra.cs.redolog.RedoLogProvider.class.getDeclaredField("theInstance");
-      sRedoLogProviderInstance.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   public boolean removeExtension(String extensionName)
   {
-    try
-    {
-      return ((Map) sInitializedExtensions.get(null)).remove(extensionName) != null;
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    return ExtensionUtil.removeExtension(extensionName);
   }
 
   public static void overrideExtensionMap()
   {
-/*
-  ZX-3303
-  avoid concurrent modification exception when disabling an extension
-  during extension postInit
-*/
-
-    try
-    {
-      Map map = (Map)sInitializedExtensions.get(null);
-      sInitializedExtensions.set(
-        null,
-        new PermissiveMap<String,String>(map)
-      );
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    ExtensionUtil.clearExtensions();
   }
 
   public void overrideZimbraStoreManager()
@@ -278,15 +164,7 @@ public Zimbra(Zimbra zimbra)
   public void overrideZimbraRedoLogProvider(RedoLogProvider redoLogProvider)
   {
     ZimbraLog.extensions.info("ZAL override Zimbra RedoLog");
-    try
-    {
-      sRedoLogProviderInstance.set(null, redoLogProvider);
-    }
-    catch( IllegalAccessException e )
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(e));
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.redolog.RedoLogProvider.setInstance(redoLogProvider);
   }
 
   public void overrideZimbraStoreManager(StoreManager storeManager)
@@ -298,27 +176,12 @@ public Zimbra(Zimbra zimbra)
     }
     mInternalOverrideStoreManager = new InternalOverrideStoreManager(storeManager, mVolumeManager);
     ZimbraLog.extensions.info("ZAL override Zimbra StoreManager");
-    try
-    {
-      sStoreManagerInstance.set(null, mInternalOverrideStoreManager);
-      mStoreManager = storeManager;
-    }
-    catch( IllegalAccessException e )
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(e));
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.store.StoreManager.setInstance(mInternalOverrideStoreManager);
+    mStoreManager = storeManager;
   }
 
   public void restoreZimbraStoreManager()
   {
-    try
-    {
-      sStoreManagerInstance.set(null, mZimbraStoreManager);
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    com.zimbra.cs.store.StoreManager.setInstance(mZimbraStoreManager);
   }
 }

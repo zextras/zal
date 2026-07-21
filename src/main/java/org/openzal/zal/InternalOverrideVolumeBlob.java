@@ -20,7 +20,7 @@
 
 package org.openzal.zal;
 
-import com.zimbra.cs.store.file.VolumeBlobProxy;
+import com.zimbra.cs.store.file.VolumeBlob;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
@@ -29,14 +29,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-class InternalOverrideVolumeBlob extends VolumeBlobProxy
+import static org.openzal.zal.VolumeBlobUtils.VOLUME_BLOB_DEFAULT_FILE;
+import static org.openzal.zal.VolumeBlobUtils.VOLUME_BLOB_DEFAULT_VOLUME_ID;
+
+class InternalOverrideVolumeBlob extends VolumeBlob
 {
   private final Blob   mBlob;
   private final String mVolumeId;
 
   public InternalOverrideVolumeBlob(Blob blob)
   {
-    super();
+    super(VOLUME_BLOB_DEFAULT_FILE, VOLUME_BLOB_DEFAULT_VOLUME_ID);
     mBlob = blob;
     mVolumeId = blob.getVolumeId();
   }
