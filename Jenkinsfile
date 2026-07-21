@@ -44,7 +44,7 @@ pipeline {
                     mavenStage(
                         profile: '',
                         deployArtifacts: true,
-                        extraDeployArgs: '-Dchangelist=SNAPSHOT'
+                        extraDeployArgs: '-Dchangelist=-SNAPSHOT'
                     )
                 }
             }
