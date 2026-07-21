@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@v2.8.8',
+        identifier: 'jenkins-lib-common@fix/maven-deploy',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
@@ -44,7 +44,7 @@ pipeline {
                     mavenStage(
                         profile: '',
                         deployArtifacts: true,
-                        extraDeployArgs: '-Dchangelist=-SNAPSHOT'
+                        extraDeployArgs: '-Dchangelist=SNAPSHOT'
                     )
                 }
             }
