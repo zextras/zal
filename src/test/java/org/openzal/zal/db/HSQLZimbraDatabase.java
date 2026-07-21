@@ -48,7 +48,8 @@ public final class HSQLZimbraDatabase extends HSQLDB
         return;  // already exists
       }
       executeFromClasspath(conn, basePath + "/db.sql");
-      executeForAllGroups(conn, basePath + "/create_database.sql");
+      // group 1 only; other groups are created on demand by DbMailbox.createMailbox, as the store's own HSQLDB does
+      executeFromClasspath(conn, basePath + "/create_database.sql");
     } finally {
       DbPool.closeResults(rs);
       DbPool.quietCloseStatement(stmt);
@@ -79,18 +80,10 @@ public final class HSQLZimbraDatabase extends HSQLDB
   {
     com.zimbra.cs.db.DbPool.DbConnection conn = DbPool.getConnection();
     try {
-      executeForAllGroups(
-          conn,
-          clearSqlScript
-      );
+      executeFromClasspath(conn, clearSqlScript);
     } finally {
       DbPool.quietClose(conn);
     }
-  }
-
-  private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String classpathFile) throws Exception
-  {
-    for( int i=1; i <= 100; ++i ) executeFromClasspath(conn, classpathFile, i);
   }
 
   interface TempFileRunner {
