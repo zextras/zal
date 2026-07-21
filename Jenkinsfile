@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@fix/maven-deploy',
+        identifier: 'jenkins-lib-common@v2.8.8',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
