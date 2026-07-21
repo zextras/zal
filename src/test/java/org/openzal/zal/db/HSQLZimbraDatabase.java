@@ -4,6 +4,7 @@ package org.openzal.zal.db;
  * Zimbra Collaboration Suite Server
  */
 
+import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.db.DbMailbox;
 import com.zimbra.cs.db.DbPool;
@@ -48,8 +49,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
         return;  // already exists
       }
       executeFromClasspath(conn, basePath + "/db.sql");
-      // group 1 only; other groups are created on demand by DbMailbox.createMailbox, as the store's own HSQLDB does
-      executeFromClasspath(conn, basePath + "/create_database.sql");
+      executeForAllGroups(conn, basePath + "/create_database.sql");
     } finally {
       DbPool.closeResults(rs);
       DbPool.quietCloseStatement(stmt);
@@ -80,10 +80,18 @@ public final class HSQLZimbraDatabase extends HSQLDB
   {
     com.zimbra.cs.db.DbPool.DbConnection conn = DbPool.getConnection();
     try {
-      executeFromClasspath(conn, clearSqlScript);
+      executeForAllGroups(
+          conn,
+          clearSqlScript
+      );
     } finally {
       DbPool.quietClose(conn);
     }
+  }
+
+  private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String classpathFile) throws Exception
+  {
+    for( int i=1; i <= LC.zimbra_mailbox_groups.intValue(); ++i ) executeFromClasspath(conn, classpathFile, i);
   }
 
   interface TempFileRunner {
