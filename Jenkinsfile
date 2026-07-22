@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@breaking-change/maven-stage',
+        identifier: 'jenkins-lib-common@4.0.0',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
