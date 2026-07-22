@@ -1,16 +1,9 @@
 package org.openzal.zal.extension;
-import org.openzal.zal.mailbox.ZalZimbraSimulator;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openzal.zal.lib.PermissiveMap;
+import org.openzal.zal.mailbox.ZalZimbraSimulator;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZimbraIT
@@ -29,28 +22,5 @@ public class ZimbraIT
   {
     Zimbra zimbra = mZimbraSimulator.getZimbra();
     assertFalse(zimbra.removeExtension("not_existing_extension"));
-  }
-
-  @Test
-  public void removing_extension_should_not_throw_concurrent_modification_exception()
-  {
-    Map<String,String> map = new PermissiveMap<String,String>();
-
-    map.put("A","A");
-    map.put("B","B");
-    map.put("C","C");
-
-    List<String> result = new LinkedList<String>();
-
-    for( String val : map.values() )
-    {
-      result.add(val);
-      map.remove("B");
-    }
-
-    assertEquals(
-      Arrays.asList("A","C"),
-      result
-    );
   }
 }

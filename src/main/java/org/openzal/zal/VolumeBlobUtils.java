@@ -18,15 +18,19 @@
  * along with ZAL. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.zimbra.cs.redolog.op;
+package org.openzal.zal;
 
+import com.zimbra.cs.store.file.VolumeBlob;
 
-import com.zimbra.cs.redolog.RedoLogOutput;
-import java.io.IOException;
+import java.io.File;
 
-public class DataExtractor
+public class VolumeBlobUtils
 {
-  public static void extract(RedoableOp redoableOp, RedoLogOutput out) throws IOException {
-    redoableOp.serializeData(out);
+  public static final File VOLUME_BLOB_DEFAULT_FILE = new File("/tmp/fakeblob");
+  public static final short VOLUME_BLOB_DEFAULT_VOLUME_ID = (short) 0;
+
+  public static boolean isVolumeBlob(Object blob)
+  {
+    return blob != null && VolumeBlob.class.isAssignableFrom(blob.getClass());
   }
 }

@@ -22,8 +22,6 @@ package org.openzal.zal;
 
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.SoapProtocol;
-import com.zimbra.common.util.Pair;
-import com.zimbra.cs.db.DbMailItem;
 import com.zimbra.cs.db.DbMailbox;
 import com.zimbra.cs.db.DbPool;
 import com.zimbra.cs.fb.FreeBusyQuery;
@@ -39,17 +37,11 @@ import com.zimbra.cs.mailbox.MailItem.Type;
 import com.zimbra.cs.mailbox.Mailbox.DeleteBlobs;
 import com.zimbra.cs.mailbox.calendar.RecurId;
 import com.zimbra.cs.mailbox.util.TypedIdList;
-import com.zimbra.cs.redolog.RedoLogManager;
-import com.zimbra.cs.redolog.op.SetConfig;
 import com.zimbra.cs.service.FileUploadServlet.Upload;
 import com.zimbra.cs.service.mail.ItemActionHelper;
 import com.zimbra.cs.service.util.ItemId;
 import com.zimbra.cs.session.Session;
-import java.util.Objects;
 import org.apache.commons.dbutils.DbUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.openzal.zal.calendar.CalendarItemData;
 import org.openzal.zal.calendar.Invite;
 import org.openzal.zal.calendar.RecurrenceId;
@@ -67,14 +59,14 @@ import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.lib.ZimbraConnectionWrapper;
 import org.openzal.zal.lib.ZimbraDatabase;
 import org.openzal.zal.log.ZimbraLog;
+import org.openzal.zal.redolog.RedoLogProvider;
+import org.openzal.zal.redolog.op.RawSetConfig;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.internet.MimeMessage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,20 +80,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import org.openzal.zal.redolog.RedoLogProvider;
-import org.openzal.zal.redolog.op.RawSetConfig;
-
-//import com.zimbra.cs.fb.FreeBusy;
-
-
 
 public class Mailbox
 {
   @Nonnull final private com.zimbra.cs.mailbox.Mailbox mMbox;
   @Nonnull private final MailboxIndex mIndex;
 
-  public static final int ID_AUTO_INCREMENT       = com.zimbra.cs.mailbox.Mailbox.ID_AUTO_INCREMENT;
   public static final int ID_FOLDER_USER_ROOT     = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_USER_ROOT;
   public static final int ID_FOLDER_INBOX         = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_INBOX;
   public static final int ID_FOLDER_TRASH         = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_TRASH;
@@ -117,33 +103,11 @@ public class Mailbox
   public static final int ID_FOLDER_AUTO_CONTACTS = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_AUTO_CONTACTS;
   public static final int ID_FOLDER_IM_LOGS       = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_IM_LOGS;
   public static final int ID_FOLDER_COMMENTS      = 17;
-  public static final int ID_FOLDER_PROFILE       = 18;
 
   private static final int HIGHEST_SYSTEM_ID = com.zimbra.cs.mailbox.Mailbox.HIGHEST_SYSTEM_ID;
   public static final  int FIRST_USER_ID     = com.zimbra.cs.mailbox.Mailbox.FIRST_USER_ID;
 
   private static final Set<String> CREATE_CALENDAR_ITEM_ALLOWED_METHODS = new HashSet<>(Arrays.asList("PUBLISH", "REQUEST"));
-
-  private static Method sCreateDefaultFlags;
-
-  static
-  {
-    try
-    {
-      sCreateDefaultFlags = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredMethod("createDefaultFlags");
-      sCreateDefaultFlags.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  public MailboxMaintenance getMaintenance()
-  {
-    return new MailboxMaintenance(mMbox.getMaintenance());
-  }
 
   public long getSize()
   {
@@ -170,10 +134,10 @@ public class Mailbox
   public MailboxData getMailboxData()
   {
     return new MailboxData(
-      getId(),
-      getSchemaGroupId(),
-      getAccountId(),
-      getIndexVolume()
+            getId(),
+            getSchemaGroupId(),
+            getAccountId(),
+            getIndexVolume()
     );
   }
 
@@ -199,8 +163,8 @@ public class Mailbox
 
     @Nonnull
     private static MailboxData createMailboxMetadata(
-      @Nonnull
-        com.zimbra.cs.account.Account account
+            @Nonnull
+            com.zimbra.cs.account.Account account
     )
     {
       MailboxData data = new MailboxData();
@@ -218,7 +182,7 @@ public class Mailbox
       data.recentMessages = -1;
       data.trackSync = -1;
       data.trackImap = false;
-      data.configKeys = new HashSet<String>();
+      data.configKeys = new HashSet<>();
 
       return data;
     }
@@ -226,7 +190,7 @@ public class Mailbox
     @Nonnull
     private static MailboxData createMailboxMetadata(int id, String accountId, int schemaGroupId)
     {
-      com.zimbra.cs.mailbox.Mailbox.MailboxData data = new com.zimbra.cs.mailbox.Mailbox.MailboxData();
+      MailboxData data = new MailboxData();
       data.id = id;
       data.schemaGroupId = schemaGroupId;
       data.accountId = accountId;
@@ -241,7 +205,7 @@ public class Mailbox
       data.recentMessages = -1;
       data.trackSync = -1;
       data.trackImap = false;
-      data.configKeys = new HashSet<String>();
+      data.configKeys = new HashSet<>();
 
       return data;
     }
@@ -252,10 +216,10 @@ public class Mailbox
     try
     {
       com.zimbra.cs.mailbox.ContactGroup.MigrateContactGroup contactGroup =
-        new com.zimbra.cs.mailbox.ContactGroup.MigrateContactGroup(mMbox);
+              new com.zimbra.cs.mailbox.ContactGroup.MigrateContactGroup(mMbox);
       contactGroup.handle();
     }
-    catch (com.zimbra.common.service.ServiceException ex)
+    catch (ServiceException ex)
     {
       throw ExceptionWrapper.wrap(ex);
     }
@@ -276,7 +240,7 @@ public class Mailbox
   public static Mailbox createFakeMailbox(@Nonnull Account realAccount)
   {
     return new Mailbox(
-      new FakeMailbox(realAccount.toZimbra(com.zimbra.cs.account.Account.class))
+            new FakeMailbox(realAccount.toZimbra(com.zimbra.cs.account.Account.class))
     );
   }
 
@@ -284,7 +248,7 @@ public class Mailbox
   public static Mailbox createFakeMailbox(long id, String accountId, int schemaGroupId)
   {
     return new Mailbox(
-      new FakeMailbox(id, accountId, schemaGroupId)
+            new FakeMailbox(id, accountId, schemaGroupId)
     );
   }
 
@@ -297,11 +261,11 @@ public class Mailbox
   public OperationContext newZimbraAdminContext()
   {
     return new OperationContext(
-      new com.zimbra.cs.mailbox.OperationContext(
-        new ProvisioningImp(
-          com.zimbra.cs.account.Provisioning.getInstance()
-        ).getZimbraUser().toZimbra(com.zimbra.cs.account.Account.class)
-      ,true)
+            new com.zimbra.cs.mailbox.OperationContext(
+                    new ProvisioningImp(
+                            com.zimbra.cs.account.Provisioning.getInstance()
+                    ).getZimbraUser().toZimbra(com.zimbra.cs.account.Account.class)
+                    ,true)
     );
   }
 
@@ -313,13 +277,13 @@ public class Mailbox
 
   @Nonnull
   public Account getAccount()
-    throws NoSuchAccountException
+          throws NoSuchAccountException
   {
     try
     {
       return new Account(mMbox.getAccount());
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
     }
@@ -332,7 +296,7 @@ public class Mailbox
 
   public int getId()
   {
-    return (int) mMbox.getId();
+    return mMbox.getId();
   }
 
   public boolean hasListener(String listenerName)
@@ -351,22 +315,17 @@ public class Mailbox
     {
       mMbox.addListener(listener.getStoreContext().toZimbra(Session.class));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       ZimbraLog.mailbox.warn("Error adding listener to mailbox " +
-                               mMbox.getId() + ": " +
-                               e.getMessage());
+              mMbox.getId() + ": " +
+              e.getMessage());
     }
   }
 
   public void unregisterListener(@Nonnull Listener listener)
   {
     mMbox.removeListener(listener.getStoreContext().toZimbra(Session.class));
-  }
-
-  public void unregisterListener(@Nonnull MailboxSessionProxy session)
-  {
-    mMbox.removeListener(session.toZimbra(Session.class));
   }
 
   private static int getMailboxSyncCutoff(@Nonnull com.zimbra.cs.mailbox.Mailbox mMbox)
@@ -382,30 +341,14 @@ public class Mailbox
 
   @Nonnull
   public Item getItemById(@Nonnull OperationContext zContext, int id, byte type)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     MailItem item;
     try
     {
       item = mMbox.getItemById(zContext.getOperationContext(), id, Item.convertType(type));
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
-    {
-      throw ExceptionWrapper.wrap(serviceException);
-    }
-    return new Item(item);
-  }
-
-  @Nonnull
-  public Item getItemByUuId(@Nonnull OperationContext zContext, String uuid, byte type, boolean fromDumpster)
-    throws NoSuchItemException
-  {
-    MailItem item;
-    try
-    {
-      item = mMbox.getItemByUuid(zContext.getOperationContext(), uuid, Item.convertType(type),fromDumpster);
-    }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
     }
@@ -414,14 +357,14 @@ public class Mailbox
 
   @Nonnull
   public Item getItemByIdFromDumpster(@Nonnull OperationContext zContext, int id, byte type)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     MailItem item;
     try
     {
       item = mMbox.getItemById(zContext.getOperationContext(), id, Item.convertType(type), true);
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
     }
@@ -430,50 +373,14 @@ public class Mailbox
 
   @Nonnull
   public Item getItemRevisionById(@Nonnull OperationContext zContext, int id, byte type, int revision)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     MailItem item;
     try
     {
       item = mMbox.getItemRevision(zContext.getOperationContext(), id, Item.convertType(type), revision);
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
-    {
-      throw ExceptionWrapper.wrap(serviceException);
-    }
-    if (item == null)
-    {
-      throw new NoSuchItemException(id+"-"+revision);
-    }
-    return new Item(item);
-  }
-
-  @Nullable private static Method sLoadRevisionsMethod = null;
-
-  static
-  {
-    try
-    {
-      sLoadRevisionsMethod = com.zimbra.cs.mailbox.MailItem.class.getDeclaredMethod("loadRevisions");
-      sLoadRevisionsMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  @Nonnull
-  public Item getItemRevisionByIdFromDumpster(@Nonnull OperationContext zContext, int id, byte type, int revision)
-    throws NoSuchItemException
-  {
-    MailItem item;
-    try
-    {
-      item = mMbox.getItemRevision(zContext.getOperationContext(), id, Item.convertType(type), revision, true);
-    }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
     }
@@ -520,15 +427,15 @@ public class Mailbox
 
           MailItem mailItem = item.toZimbra(MailItem.class);
           List<Item> revisions;
-          Object revisionsObject = sLoadRevisionsMethod.invoke(mailItem);
+          List<MailItem> revisionsObject = mailItem.loadRevisions();
           if (revisionsObject == null)
           {
             revisions = Collections.singletonList(item);
           }
           else
           {
-            List<MailItem> zimbraRevisions = (List<MailItem>) revisionsObject;
-            revisions = new ArrayList<Item>(zimbraRevisions.size());
+            List<MailItem> zimbraRevisions = revisionsObject;
+            revisions = new ArrayList<>(zimbraRevisions.size());
             for (MailItem zimbraItem : zimbraRevisions)
             {
               revisions.add(new Item(zimbraItem));
@@ -547,7 +454,7 @@ public class Mailbox
       {
         List<MailItem> mailItems = mMbox.getAllRevisions(zContext.getOperationContext(), id, Item.convertType(type));
 
-        List<Item> items = new ArrayList<Item>(mailItems.size());
+        List<Item> items = new ArrayList<>(mailItems.size());
         for (MailItem mailItem : mailItems)
         {
           items.add(new Item(mailItem));
@@ -556,19 +463,15 @@ public class Mailbox
         return items;
       }
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
-    }
-    catch (IllegalAccessException | InvocationTargetException e)
-    {
-      throw new RuntimeException(e);
     }
   }
 
   @Nonnull
   public Message getMessageById(@Nonnull OperationContext zContext, int id)
-    throws NoSuchMessageException
+          throws NoSuchMessageException
   {
     try
     {
@@ -583,7 +486,7 @@ public class Mailbox
 
   @Nonnull
   public List<Message> getMessagesByConversation(@Nonnull OperationContext zContext, int id)
-    throws NoSuchConversationException
+          throws NoSuchConversationException
   {
     List<com.zimbra.cs.mailbox.Message> list;
     try
@@ -594,7 +497,7 @@ public class Mailbox
     {
       throw ExceptionWrapper.wrap(exception);
     }
-    List<Message> newList = new ArrayList<Message>(list.size());
+    List<Message> newList = new ArrayList<>(list.size());
 
     for (com.zimbra.cs.mailbox.Message item : list)
     {
@@ -604,58 +507,13 @@ public class Mailbox
     return newList;
   }
 
-  public void setDate(@Nonnull OperationContext octxt, int itemId, byte type, long date)
-  {
-    try
-    {
-      mMbox.setDate(octxt.getOperationContext(), itemId, Item.convertType(type), date);
-    }
-    catch (com.zimbra.common.service.ServiceException serviceException)
-    {
-      throw ExceptionWrapper.wrap(serviceException);
-    }
-  }
-
-  @Nonnull
-  public List<Tag> getModifiedTags(@Nonnull OperationContext octxt, int lastSync)
-  {
-    List<com.zimbra.cs.mailbox.Tag> list;
-    try
-    {
-      list = mMbox.getModifiedTags(octxt.getOperationContext(), lastSync);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-    List<Tag> newList = new ArrayList<Tag>(list.size());
-
-    for (MailItem item : list)
-    {
-      newList.add(new Tag(item));
-    }
-    return newList;
-  }
-
-  public List<Integer> getModifiedItems(@Nonnull OperationContext zContext, int sequence)
-  {
-    try
-    {
-      return mMbox.getModifiedItems(zContext.getOperationContext(), sequence).getFirst();
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public List<Integer> listTombstones(int sequence)
   {
     try
     {
       return mMbox.getTombstones(sequence).getAllIds();
     }
-    catch (com.zimbra.common.service.ServiceException serviceException)
+    catch (ServiceException serviceException)
     {
       throw ExceptionWrapper.wrap(serviceException);
     }
@@ -663,14 +521,14 @@ public class Mailbox
 
   @Nonnull
   public Folder getFolderByName(@Nonnull OperationContext zContext, String name, int parentId)
-    throws NoSuchFolderException
+          throws NoSuchFolderException
   {
     MailItem folder;
     try
     {
       folder = mMbox.getFolderByName(zContext.getOperationContext(), parentId, name);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -680,14 +538,14 @@ public class Mailbox
 
   @Nonnull
   public Folder getFolderByPath(@Nonnull OperationContext zContext, String path)
-    throws NoSuchFolderException
+          throws NoSuchFolderException
   {
     MailItem folder;
     try
     {
       folder = mMbox.getFolderByPath(zContext.getOperationContext(), path);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -697,18 +555,18 @@ public class Mailbox
 
   @Nonnull
   public List<Folder> getFolderList(@Nonnull OperationContext zContext)
-      throws NoSuchFolderException
+          throws NoSuchFolderException
   {
     List<Folder> folderList = new ArrayList<>(0);
     try
     {
       for (com.zimbra.cs.mailbox.Folder folder : mMbox
-          .getFolderList(zContext.getOperationContext(), SortBy.NONE)) {
+              .getFolderList(zContext.getOperationContext(), SortBy.NONE)) {
         folderList.add(new Folder(folder));
       }
 
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -717,72 +575,15 @@ public class Mailbox
   }
 
   @Nonnull
-  public Item getItemByPath(@Nonnull OperationContext zContext, String path)
-    throws NoSuchItemException
-  {
-    MailItem mailItem;
-    try
-    {
-      mailItem = mMbox.getItemByPath(zContext.getOperationContext(), path);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    return new Folder(mailItem);
-  }
-
-  @Nonnull
-  public List<Folder> getModifiedFolders(int sequence)
-    throws NoSuchFolderException
-  {
-    List<com.zimbra.cs.mailbox.Folder> folderList;
-    try
-    {
-      folderList = mMbox.getModifiedFolders(sequence);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    List<Folder> newFolderList = new ArrayList(folderList.size());
-
-    for (com.zimbra.cs.mailbox.Folder folder : folderList)
-    {
-      newFolderList.add(new Folder(folder));
-    }
-
-    return newFolderList;
-  }
-  /*
-  public Folder getFolderById( int id )
-    throws ServiceException
-  {
-    MailItem folder;
-    try
-    {
-      folder = mMbox.getFolderById(id);
-    }
-    catch(com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-    return new Folder(folder);
-  }
-  */
-
-  @Nonnull
   public Folder getFolderById(@Nonnull OperationContext zContext, int id)
-    throws NoSuchFolderException
+          throws NoSuchFolderException
   {
     MailItem folder;
     try
     {
       folder = mMbox.getFolderById(zContext.getOperationContext(), id);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -798,7 +599,7 @@ public class Mailbox
     {
       mountpoint = mMbox.getMountpointById(octxt.getOperationContext(), id);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -808,13 +609,13 @@ public class Mailbox
 
   @Nonnull
   public CalendarItem getCalendarItemById(@Nonnull OperationContext octxt, int id)
-    throws NoSuchCalendarException
+          throws NoSuchCalendarException
   {
     try
     {
       return new CalendarItem(mMbox.getCalendarItemById(octxt.getOperationContext(), id));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -822,14 +623,14 @@ public class Mailbox
 
   @Nonnull
   public CalendarItem getCalendarItemByUid(@Nonnull OperationContext octxt, String uid)
-    throws NoSuchCalendarException
+          throws NoSuchCalendarException
   {
     MailItem mailItem;
     try
     {
       mailItem = mMbox.getCalendarItemByUid(octxt.getOperationContext(), uid);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -842,32 +643,32 @@ public class Mailbox
     return new CalendarItem(mailItem);
   }
 
-    @Nonnull
-    public FreeBusy getFreeBusy(@Nonnull OperationContext octxt, long start, long end)
-    throws NoSuchItemException
+  @Nonnull
+  public FreeBusy getFreeBusy(@Nonnull OperationContext octxt, long start, long end)
+          throws NoSuchItemException
+  {
+    com.zimbra.cs.fb.FreeBusy freeBusy;
+    try
     {
-      com.zimbra.cs.fb.FreeBusy freeBusy;
-      try
-      {
-        freeBusy = mMbox.getFreeBusy(octxt.getOperationContext(),start,end,FreeBusyQuery.CALENDAR_FOLDER_ALL);
-      }
-      catch (com.zimbra.common.service.ServiceException e)
-      {
-        throw ExceptionWrapper.wrap(e);
-      }
-
-      if (freeBusy == null)
-      {
-        throw new NoSuchFreeBusyException(start, end);
-      }
-
-      return new FreeBusy(freeBusy);
+      freeBusy = mMbox.getFreeBusy(octxt.getOperationContext(),start,end,FreeBusyQuery.CALENDAR_FOLDER_ALL);
+    }
+    catch (ServiceException e)
+    {
+      throw ExceptionWrapper.wrap(e);
     }
 
+    if (freeBusy == null)
+    {
+      throw new NoSuchFreeBusyException(start, end);
+    }
+
+    return new FreeBusy(freeBusy);
+  }
+
   public void copyCalendarReplyInfo(
-    @Nonnull CalendarItem fromCalendarItem,
-    CalendarItem toCalendarItem,
-    @Nonnull OperationContext zContext
+          @Nonnull CalendarItem fromCalendarItem,
+          CalendarItem toCalendarItem,
+          @Nonnull OperationContext zContext
   )
   {
     synchronized (mMbox)
@@ -885,78 +686,70 @@ public class Mailbox
   }
 
   public void rename(@Nonnull OperationContext zContext, int id, byte type, String name, int folderId)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.rename(zContext.getOperationContext(), id, Item.convertType(type), name, folderId);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void renameMailbox(OperationContext operationContext, String oldName, String newName) {
-    try {
-      mMbox.renameMailbox(operationContext.getOperationContext(), oldName, newName);
-    } catch (com.zimbra.common.service.ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void delete(@Nonnull OperationContext octxt, int itemId, byte type)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.delete(octxt.getOperationContext(), itemId, Item.convertType(type));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void delete(@Nonnull OperationContext octxt, int[] itemIds, byte type)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.delete(octxt.getOperationContext(), itemIds, Item.convertType(type), null);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setPermissions(@Nonnull OperationContext zContext, int folderId, @Nonnull Acl acl)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.setPermissions(zContext.getOperationContext(), folderId, acl.toZimbra(ACL.class));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setColor(@Nonnull OperationContext octxt, int[] itemIds, byte type, @Nonnull Item.Color color)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.setColor(
-        octxt.getOperationContext(),
-        itemIds,
-        Item.convertType(type),
-        color.toZimbra(com.zimbra.common.mailbox.Color.class)
+              octxt.getOperationContext(),
+              itemIds,
+              Item.convertType(type),
+              color.toZimbra(com.zimbra.common.mailbox.Color.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -964,12 +757,12 @@ public class Mailbox
 
   @Nonnull
   public CalendarItem setCalendarItem(
-    @Nonnull OperationContext octxt, int folderId, int flags, String tags[],
-                                      @Nonnull CalendarItemData defaultInv,
-                                      @Nonnull List<CalendarItemData> exceptions,
-                                      List<ReplyInfo> replies, long nextAlarm
+          @Nonnull OperationContext octxt, int folderId, int flags, String tags[],
+          @Nonnull CalendarItemData defaultInv,
+          @Nonnull List<CalendarItemData> exceptions,
+          List<ReplyInfo> replies, long nextAlarm
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     com.zimbra.cs.mailbox.Mailbox.SetCalendarItemData[] zimbraExceptions = null;
     if( exceptions.size() > 0 )
@@ -990,8 +783,8 @@ public class Mailbox
         calendarItemData.invite.setMethod("PUBLISH");
         com.zimbra.cs.mailbox.CalendarItem calendarItem = calendarItemData.invite.getCalendarItem();
         String cid = String.format("Message Id: %s from account id %s",
-            calendarItem.getId(),
-            calendarItem.getAccount().getId()
+                calendarItem.getId(),
+                calendarItem.getAccount().getId()
         );
         ZimbraLog.extensions.warn(String.format("Setting metadata method to 'PUBLISH', '%s' is not supported for calendar item %s", oldMethod, cid));
       }
@@ -1003,20 +796,20 @@ public class Mailbox
       }
 
       CalendarItem result = new CalendarItem(
-          mMbox.setCalendarItem(
-              octxt.getOperationContext(),
-              folderId,
-              flags,
-              tags,
-              calendarItemData,
-              zimbraExceptions,
-              newReplies,
-              nextAlarm
-          )
+              mMbox.setCalendarItem(
+                      octxt.getOperationContext(),
+                      folderId,
+                      flags,
+                      tags,
+                      calendarItemData,
+                      zimbraExceptions,
+                      newReplies,
+                      nextAlarm
+              )
       );
       return result;
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1025,7 +818,7 @@ public class Mailbox
   public
   @Nullable
   Metadata getConfig(@Nonnull OperationContext octxt, String section)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -1036,73 +829,43 @@ public class Mailbox
       }
       return new Metadata(metadata);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setConfig(@Nonnull OperationContext octxt, String section, @Nonnull Metadata config)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.setConfig(
-        octxt.getOperationContext(),
-        section,
-        config.toZimbra(com.zimbra.cs.mailbox.Metadata.class));
+              octxt.getOperationContext(),
+              section,
+              config.toZimbra(com.zimbra.cs.mailbox.Metadata.class));
     }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void removeConfig(@Nonnull OperationContext octxt, String section)
-    throws ZimbraException
-  {
-    try
-    {
-      mMbox.setConfig(
-        octxt.getOperationContext(),
-        section,
-        null
-      );
-    }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void alterTag(@Nonnull OperationContext octxt, int itemId, byte type, int tagId, boolean addTag)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.alterTag(octxt.getOperationContext(), itemId, Item.convertType(type), Flag.of(tagId), addTag, null);
     }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void alterTag(@Nonnull OperationContext octxt, int itemId, byte type, String tagName, boolean addTag)
-    throws ZimbraException
-  {
-    try
-    {
-      mMbox.alterTag(octxt.getOperationContext(), itemId, Item.convertType(type), tagName, addTag, null);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setTags(@Nonnull OperationContext octxt, int itemId, byte type, @Nullable Collection<String> tags)
-    throws ZimbraException
+          throws ZimbraException
   {
     String[] tagsArray;
     if (tags == null)
@@ -1119,47 +882,47 @@ public class Mailbox
     {
       item = mMbox.getItemById(octxt.getOperationContext(), itemId, Item.convertType(Item.TYPE_UNKNOWN));
       mMbox.setTags(
-        octxt.getOperationContext(),
-        itemId,
-        Item.convertType(type),
-        item.getFlagBitmask(),
-        tagsArray
+              octxt.getOperationContext(),
+              itemId,
+              Item.convertType(type),
+              item.getFlagBitmask(),
+              tagsArray
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setFlags(@Nonnull OperationContext octxt, int itemId, byte type, int flags)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       MailItem item = mMbox.getItemById(octxt.getOperationContext(), itemId, Item.convertType(Item.TYPE_UNKNOWN));
       mMbox.setTags(octxt.getOperationContext(), itemId, Item.convertType(type), flags,
-        item.getTags()
+              item.getTags()
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void modifyContact(@Nonnull OperationContext octxt, int contactId, @Nonnull ParsedContact pc)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.modifyContact(
-        octxt.getOperationContext(),
-        contactId,
-        pc.toZimbra(com.zimbra.cs.mime.ParsedContact.class)
+              octxt.getOperationContext(),
+              contactId,
+              pc.toZimbra(com.zimbra.cs.mime.ParsedContact.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1167,12 +930,12 @@ public class Mailbox
 
   @Nullable
   public ZimbraItemId sendMimeMessage(
-    @Nonnull OperationContext octxt, Boolean saveToSent, MimeMessage mm,
-                                      List<Upload> uploads,
-                                      @Nullable ZimbraItemId origMsgId, String replyType,
-                                      boolean replyToSender
+          @Nonnull OperationContext octxt, Boolean saveToSent, MimeMessage mm,
+          List<Upload> uploads,
+          @Nullable ZimbraItemId origMsgId, String replyType,
+          boolean replyToSender
   )
-    throws ZimbraException
+          throws ZimbraException
   {
 
     ItemId itemId = null;
@@ -1186,9 +949,9 @@ public class Mailbox
     try
     {
       newItemId = mMbox.getMailSender().sendMimeMessage(
-        octxt.getOperationContext(), mMbox, saveToSent, mm,
-        uploads, itemId, replyType,
-        null, replyToSender
+              octxt.getOperationContext(), mMbox, saveToSent, mm,
+              uploads, itemId, replyType,
+              null, replyToSender
       );
 
       if( newItemId == null ) {
@@ -1196,20 +959,20 @@ public class Mailbox
       }
       return new ZimbraItemId(newItemId.getAccountId(), newItemId.getId());
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public boolean attachmentsIndexingEnabled()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       return mMbox.attachmentsIndexingEnabled();
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1226,71 +989,28 @@ public class Mailbox
       }
       mMbox.move(octxt.getOperationContext(), itemId, Item.convertType(type), targetId);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
-
-  public void move(@Nonnull OperationContext octxt, int[] itemIds, byte type, int targetId) throws ZimbraException
-  {
-    try
-    {
-      mMbox.move(octxt.getOperationContext(), itemIds, Item.convertType(type), targetId, null);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public List<Item> copy(@Nonnull OperationContext octxt, int[] itemIds, byte type, int targetId) throws ZimbraException
-  {
-    try
-    {
-      List<MailItem> copiedItems = mMbox.copy(octxt.getOperationContext(), itemIds, Item.convertType(type), targetId);
-      List<Item> result = new ArrayList<>(copiedItems.size());
-      for( MailItem mailItem : copiedItems ) {
-        result.add(new Item(mailItem));
-      }
-      return result;
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void createFolderPath(@Nonnull OperationContext octxt, String path) throws ZimbraException
-  {
-    try
-    {
-      mMbox.createFolderForMsgs(octxt.getOperationContext(), path);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-
 
   public int move(@Nonnull Account dstAccount,@Nonnull OperationContext octxt, int itemId, byte type, int targetId)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
-      com.zimbra.cs.service.util.ItemId zimbraItemId = new com.zimbra.cs.service.util.ItemId(
+      ItemId zimbraItemId = new ItemId(
               dstAccount.getId(),
               targetId
       );
       ItemActionHelper op = ItemActionHelper.MOVE(octxt.getOperationContext(),
-                                                  mMbox,
-                                                  SoapProtocol.Soap12,
-                                                  Arrays.asList(itemId),
-                                                  Item.convertType(type),
-                                                  null,
-                                                  zimbraItemId);
+              mMbox,
+              SoapProtocol.Soap12,
+              Arrays.asList(itemId),
+              Item.convertType(type),
+              null,
+              zimbraItemId);
       List<String> createdIds;
       createdIds = op.getResult().getSuccessIds();
       if (createdIds == null)
@@ -1301,80 +1021,48 @@ public class Mailbox
       {
         throw new NoSuchItemException(Integer.toString(itemId));
       }
-      com.zimbra.cs.service.util.ItemId newZimbraItemId = new com.zimbra.cs.service.util.ItemId(createdIds.get(0),(String)null);
+      ItemId newZimbraItemId = new ItemId(createdIds.get(0),(String)null);
       return newZimbraItemId.getId();
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public List<CalendarItem> getCalendarItemsForRange(
-    @Nonnull OperationContext octxt, byte type, long start,
-    long end, int folderId, int[] excludeFolders
+          @Nonnull OperationContext octxt, byte type, long start,
+          long end, int folderId, int[] excludeFolders
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       List<com.zimbra.cs.mailbox.CalendarItem> zimbraCalendarItems = mMbox.getCalendarItemsForRange(
-        octxt.getOperationContext(),
-        Item.convertType(type),
-        start,
-        end,
-        folderId,
-        excludeFolders
+              octxt.getOperationContext(),
+              Item.convertType(type),
+              start,
+              end,
+              folderId,
+              excludeFolders
       );
 
       return ZimbraListWrapper.wrapCalendarItems(zimbraCalendarItems);
     }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public List<Integer> getItemListByDates(
-    @Nonnull OperationContext octxt, byte type, long start,
-                                          long end, int folderId, boolean descending
-  )
-    throws ZimbraException
-  {
-    List<Integer> itemIds;
-
-    try
-    {
-      DbMailItem.QueryParams options = new DbMailItem.QueryParams();
-      options.setFolderIds(Collections.singletonList(folderId));
-      options.setIncludedTypes(Collections.singletonList(Item.convertType(type)));
-      options.setDateAfter((int) (start / 1000L));
-      options.setDateBefore((int) (end / 1000L));
-      if (descending)
-      {
-        options.setOrderBy(Collections.singletonList("date DESC"));
-      }
-      else
-      {
-        options.setOrderBy(Collections.singletonList("date ASC"));
-      }
-      itemIds = mMbox.getItemIdList(octxt.getOperationContext(), options);
-      return itemIds;
-    }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public List<Integer> listItemIds(@Nonnull OperationContext octxt, byte type, int folderId)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     try
     {
       return mMbox.listItemIds(octxt.getOperationContext(), Item.convertType(type), folderId);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1382,17 +1070,17 @@ public class Mailbox
 
   @Nonnull
   public Iterator<Map.Entry<Byte, List<Integer>>> getItemIds(@Nonnull OperationContext octxt, int folderId)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
-      Map<Byte, List<Integer>> map = new HashMap<Byte, List<Integer>>();
-      Iterator<Map.Entry<MailItem.Type, List<TypedIdList.ItemInfo>>> iterator
-        = mMbox.getItemIds(octxt.getOperationContext(), folderId).iterator();
+      Map<Byte, List<Integer>> map = new HashMap<>();
+      Iterator<Map.Entry<Type, List<TypedIdList.ItemInfo>>> iterator
+              = mMbox.getItemIds(octxt.getOperationContext(), folderId).iterator();
       while (iterator.hasNext())
       {
-        Map.Entry<MailItem.Type, List<TypedIdList.ItemInfo>> entry = iterator.next();
-        List<Integer> list = new ArrayList<Integer>();
+        Map.Entry<Type, List<TypedIdList.ItemInfo>> entry = iterator.next();
+        List<Integer> list = new ArrayList<>();
         for (TypedIdList.ItemInfo item : entry.getValue())
         {
           list.add(item.getId());
@@ -1401,7 +1089,7 @@ public class Mailbox
       }
       return map.entrySet().iterator();
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1413,7 +1101,7 @@ public class Mailbox
 
     try
     {
-      rights = mMbox.getEffectivePermissions(octxt.getOperationContext(), itemId, com.zimbra.cs.mailbox.MailItem.Type.UNKNOWN);
+      rights = mMbox.getEffectivePermissions(octxt.getOperationContext(), itemId, Type.UNKNOWN);
     }
     catch (ServiceException e)
     {
@@ -1429,7 +1117,7 @@ public class Mailbox
 
     try
     {
-      rights = mMbox.getEffectivePermissions(octxt.getOperationContext(), itemId, com.zimbra.cs.mailbox.MailItem.Type.UNKNOWN);
+      rights = mMbox.getEffectivePermissions(octxt.getOperationContext(), itemId, Type.UNKNOWN);
     }
     catch (ServiceException e)
     {
@@ -1440,11 +1128,11 @@ public class Mailbox
   }
 
   public void modifyPartStat(
-    @Nonnull OperationContext octxt, int calItemId,
-                             @Nullable RecurrenceId recurId, String cnStr,
-                             String addressStr, String cutypeStr,
-                             String roleStr, String partStatStr,
-                             Boolean rsvp, int seqNo, long dtStamp
+          @Nonnull OperationContext octxt, int calItemId,
+          @Nullable RecurrenceId recurId, String cnStr,
+          String addressStr, String cutypeStr,
+          String roleStr, String partStatStr,
+          Boolean rsvp, int seqNo, long dtStamp
   )
     throws ZimbraException
   {
@@ -1469,7 +1157,7 @@ public class Mailbox
         seqNo,
         dtStamp);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1477,14 +1165,14 @@ public class Mailbox
 
   @Nonnull
   public Tag getTagById(@Nonnull OperationContext octxt, int itemId)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     MailItem tag;
     try
     {
       tag = mMbox.getTagById(octxt.getOperationContext(), itemId);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1493,7 +1181,7 @@ public class Mailbox
 
   @Nullable
   public Tag getTagByName(@Nonnull OperationContext octxt, String name)
-    throws NoSuchItemException
+          throws NoSuchItemException
   {
     try
     {
@@ -1504,58 +1192,52 @@ public class Mailbox
       }
       return new Tag(tagByName);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void setCustomData(@Nonnull OperationContext octxt, int itemId, byte type, @Nonnull Item.CustomMetadata custom)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.setCustomData(
-        octxt.getOperationContext(),
-        itemId,
-        Item.convertType(type),
-        custom.toZimbra(MailItem.CustomMetadata.class)
+              octxt.getOperationContext(),
+              itemId,
+              Item.convertType(type),
+              custom.toZimbra(MailItem.CustomMetadata.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   @Nonnull
-  public ZimbraItemId nextItemId()
-  {
-    return new ZimbraItemId(mMbox.getAccountId(), 0);
-  }
-
-  @Nonnull
   public OperationContext newOperationContext()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       return new OperationContext(new com.zimbra.cs.mailbox.OperationContext(mMbox));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void beginTrackingSync()
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
       mMbox.beginTrackingSync();
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1564,11 +1246,6 @@ public class Mailbox
   public int getLastChangeID()
   {
     return mMbox.getLastChangeID();
-  }
-
-  public int getLastItemId()
-  {
-    return mMbox.getLastItemId();
   }
 
   public void clearItemCache() throws ZimbraException
@@ -1583,32 +1260,32 @@ public class Mailbox
 
   public void clearCache(byte type) throws ZimbraException
   {
-   mMbox.purge(Item.convertType(type));
+    mMbox.purge(Item.convertType(type));
   }
 
 
   @Nonnull
   public QueryResults search(
-    @Nonnull OperationContext octxt,
-    String queryString,
-    @Nonnull byte[] types,
-    @Nonnull SortedBy sortBy,
-    int chunkSize
+          @Nonnull OperationContext octxt,
+          String queryString,
+          @Nonnull byte[] types,
+          @Nonnull SortedBy sortBy,
+          int chunkSize
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     return search(octxt, queryString, types, sortBy, chunkSize, 0, false, false);
   }
 
   @Nonnull
   public QueryResults search(
-    @Nonnull OperationContext octxt,
-    String queryString,
-    @Nonnull byte[] types,
-    @Nonnull SortedBy sortBy,
-    int chunkSize,
-    int offset,
-    boolean onlyIds
+          @Nonnull OperationContext octxt,
+          String queryString,
+          @Nonnull byte[] types,
+          @Nonnull SortedBy sortBy,
+          int chunkSize,
+          int offset,
+          boolean onlyIds
   )
           throws ZimbraException
   {
@@ -1616,41 +1293,41 @@ public class Mailbox
   }
 
   public QueryResults search(
-    OperationContext operationContext,
-    org.openzal.zal.SearchParams  searchParams
+          OperationContext operationContext,
+          org.openzal.zal.SearchParams  searchParams
   ) {
     ZimbraQueryResults result;
     try {
       result = mMbox.index.search(
-          SoapProtocol.Soap12,
-          operationContext.getOperationContext(),
-          searchParams.toZimbra(SearchParams.class)
+              SoapProtocol.Soap12,
+              operationContext.getOperationContext(),
+              searchParams.toZimbra(SearchParams.class)
       );
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
 
     return new QueryResults(
-        result
+            result
     );
   }
 
   @Nonnull
   public QueryResults search(
-    @Nonnull OperationContext octxt,
-    String queryString,
-    @Nonnull byte[] types,
-    @Nonnull SortedBy sortBy,
-    int chunkSize,
-    int offset,
-    boolean onlyIds,
-    boolean inDumpster
+          @Nonnull OperationContext octxt,
+          String queryString,
+          @Nonnull byte[] types,
+          @Nonnull SortedBy sortBy,
+          int chunkSize,
+          int offset,
+          boolean onlyIds,
+          boolean inDumpster
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
-      Set<MailItem.Type> typeList = new HashSet(types.length);
+      Set<Type> typeList = new HashSet(types.length);
       for (byte type : types)
       {
         typeList.add(Item.convertType(type));
@@ -1658,7 +1335,7 @@ public class Mailbox
 
       SearchParams.Fetch fetchMode = onlyIds ? SearchParams.Fetch.IDS : SearchParams.Fetch.NORMAL;
 
-      com.zimbra.cs.index.SearchParams params = new com.zimbra.cs.index.SearchParams();
+      SearchParams params = new SearchParams();
       params.setQueryString(queryString);
       params.setTimeZone(null);
       params.setLocale(null);
@@ -1671,16 +1348,16 @@ public class Mailbox
       params.setOffset(offset);
 
       ZimbraQueryResults result = mMbox.index.search(
-        SoapProtocol.Soap12,
-        octxt.getOperationContext(),
-        params
+              SoapProtocol.Soap12,
+              octxt.getOperationContext(),
+              params
       );
 
       if( offset >= 1 )
         result.skipToHit(offset-1);
 
       return new QueryResults(
-        result
+              result
       );
     }
     catch (Exception e)
@@ -1691,9 +1368,9 @@ public class Mailbox
 
   @Nonnull
   public List<Item> getItemList(byte type, @Nonnull OperationContext zContext)
-    throws ZimbraException
+          throws ZimbraException
   {
-    List<Item> result = new LinkedList<Item>();
+    List<Item> result = new LinkedList<>();
 
     beginTransaction("ZxGetItemList", zContext.getOperationContext());
     try
@@ -1767,27 +1444,27 @@ public class Mailbox
 
   @Nonnull
   public Folder createFolder(
-    @Nonnull OperationContext octxt, String name, int parentId,
-                             byte attrs, byte defaultView, int flags,
-                             @Nonnull Item.Color color, String url
+          @Nonnull OperationContext octxt, String name, int parentId,
+          byte attrs, byte defaultView, int flags,
+          @Nonnull Item.Color color, String url
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     MailItem folder;
     try
     {
       folder = mMbox.createFolder(
-        octxt.getOperationContext(),
-        name,
-        parentId,
-        attrs,
-        Item.convertType(defaultView),
-        flags,
-        color.toZimbra(com.zimbra.common.mailbox.Color.class),
-        url
+              octxt.getOperationContext(),
+              name,
+              parentId,
+              attrs,
+              Item.convertType(defaultView),
+              flags,
+              color.toZimbra(com.zimbra.common.mailbox.Color.class),
+              url
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1797,27 +1474,27 @@ public class Mailbox
 
   @Nonnull
   public Folder createFolder(
-      OperationContext operationContext,
-      String path
+          OperationContext operationContext,
+          String path
   ) {
     MailItem folder;
     try {
       FolderOptions fopts = new FolderOptions();
       folder = mMbox.createFolder(operationContext.getOperationContext(), path, fopts);
-    } catch (com.zimbra.common.service.ServiceException e) {
+    } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
     return new Folder(folder);
   }
 
   public void setFolderRetentionPolicy(@Nonnull OperationContext octxt, int folderId, RetentionPolicy retentionPolicy)
-      throws ZimbraException {
+          throws ZimbraException {
     try {
       mMbox.setRetentionPolicy(
-          octxt.getOperationContext(),
-          folderId,
-          Type.FOLDER,
-          retentionPolicy.toZimbra(com.zimbra.soap.mail.type.RetentionPolicy.class)
+              octxt.getOperationContext(),
+              folderId,
+              Type.FOLDER,
+              retentionPolicy.toZimbra(com.zimbra.soap.mail.type.RetentionPolicy.class)
       );
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
@@ -1826,27 +1503,27 @@ public class Mailbox
 
   @Nonnull
   public SearchFolder createSearchFolder(
-    @Nonnull OperationContext octxt, int folderId, String name,
-                                         String query, String types, String sort,
-                                         int flags, @Nonnull Item.Color color
+          @Nonnull OperationContext octxt, int folderId, String name,
+          String query, String types, String sort,
+          int flags, @Nonnull Item.Color color
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     MailItem item;
     try
     {
       item = mMbox.createSearchFolder(
-        octxt.getOperationContext(),
-        folderId,
-        name,
-        query,
-        types,
-        sort,
-        flags,
-        color.toZimbra(com.zimbra.common.mailbox.Color.class)
+              octxt.getOperationContext(),
+              folderId,
+              name,
+              query,
+              types,
+              sort,
+              flags,
+              color.toZimbra(com.zimbra.common.mailbox.Color.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1855,46 +1532,19 @@ public class Mailbox
   }
 
   @Nonnull
-  public SearchFolder getSearchFolderById(@Nonnull OperationContext zContext, int id) throws NoSuchFolderException {
-    MailItem folder;
-
-    try
-    {
-      folder = mMbox.getSearchFolderById(zContext.getOperationContext(), id);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    return new SearchFolder(folder);
-  }
-
-  public void modifySearchFolder(OperationContext zContext, int id, String query, String types, String sort) {
-    try
-    {
-      mMbox.modifySearchFolder(zContext.getOperationContext(), id, query, types, sort);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nonnull
   public Tag createTag(@Nonnull OperationContext octxt, String name, @Nonnull Item.Color color)
-    throws ZimbraException
+          throws ZimbraException
   {
     MailItem tag;
     try
     {
       tag = mMbox.createTag(
-        octxt.getOperationContext(),
-        name,
-        color.toZimbra(com.zimbra.common.mailbox.Color.class)
+              octxt.getOperationContext(),
+              name,
+              color.toZimbra(com.zimbra.common.mailbox.Color.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1904,12 +1554,12 @@ public class Mailbox
 
   @Nonnull
   public Message addMessage(
-    @Nonnull OperationContext octxt, InputStream in, int sizeHint, Long receivedDate,
-                            int folderId, boolean noIcal,
-                            int flags, Collection<String> tags, int conversationId, String rcptEmail,
-                            @Nullable Item.CustomMetadata customData
+          @Nonnull OperationContext octxt, InputStream in, int sizeHint, Long receivedDate,
+          int folderId, boolean noIcal,
+          int flags, Collection<String> tags, int conversationId, String rcptEmail,
+          @Nullable Item.CustomMetadata customData
   )
-    throws IOException, ZimbraException
+          throws IOException, ZimbraException
   {
     DeliveryOptions opts = new DeliveryOptions();
     opts.setFolderId(folderId);
@@ -1927,14 +1577,14 @@ public class Mailbox
     try
     {
       message = mMbox.addMessage(octxt.getOperationContext(),
-                                 in,
-                                 sizeHint,
-                                 receivedDate,
-                                 opts,
-                                 null
+              in,
+              sizeHint,
+              receivedDate,
+              opts,
+              null
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1944,11 +1594,11 @@ public class Mailbox
 
   @Nonnull
   public Message simpleAddMessage(
-    @Nonnull OperationContext octxt,
-    InputStream in,
-    int folderId
+          @Nonnull OperationContext octxt,
+          InputStream in,
+          int folderId
   )
-    throws IOException, ZimbraException
+          throws IOException, ZimbraException
   {
     MailItem message;
     try
@@ -1957,15 +1607,15 @@ public class Mailbox
       opts.setFolderId(folderId);
       opts.setDraftInfo(null);
       message = mMbox.addMessage(
-        octxt.getOperationContext(),
-        in,
-        0L,
-        null,
-        opts,
-        null
+              octxt.getOperationContext(),
+              in,
+              0L,
+              null,
+              opts,
+              null
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -1975,13 +1625,13 @@ public class Mailbox
 
   @Nonnull
   public Message saveDraft(@Nonnull OperationContext octxt,@Nonnull ParsedMessage parsedMessage, int id)
-    throws IOException, ZimbraException
+          throws IOException, ZimbraException
   {
     try
     {
       return new Message(mMbox.saveDraft(octxt.getOperationContext(), parsedMessage.toZimbra(com.zimbra.cs.mime.ParsedMessage.class), id));
     }
-    catch( com.zimbra.common.service.ServiceException e )
+    catch( ServiceException e )
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2012,7 +1662,7 @@ public class Mailbox
         contacts.add(new Contact(contact));
       }
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2023,24 +1673,24 @@ public class Mailbox
   @Nonnull
   public Contact createContact(OperationContext octxt, ParsedContact pc, int folderId)
   {
-    return createContact(octxt, pc, folderId, Collections.<String>emptyList());
+    return createContact(octxt, pc, folderId, Collections.emptyList());
   }
 
   @Nonnull
   public Contact createContact(@Nonnull OperationContext octxt, @Nonnull ParsedContact pc, int folderId, @Nonnull Collection<String> tags)
-    throws ZimbraException
+          throws ZimbraException
   {
     MailItem contact;
     try
     {
       contact = mMbox.createContact(
-        octxt.getOperationContext(),
-        pc.toZimbra(com.zimbra.cs.mime.ParsedContact.class),
-        folderId,
-        tags.toArray(new String[tags.size()])
+              octxt.getOperationContext(),
+              pc.toZimbra(com.zimbra.cs.mime.ParsedContact.class),
+              folderId,
+              tags.toArray(new String[tags.size()])
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2048,13 +1698,13 @@ public class Mailbox
     return new Contact(contact);
   }
   public int addInvite(
-    @Nonnull OperationContext octxt, @Nonnull Invite inv,
-                       int folderId, @Nullable ParsedMessage pm,
-                       boolean preserveExistingAlarms,
-                       boolean discardExistingInvites,
-                       boolean addRevision
+          @Nonnull OperationContext octxt, @Nonnull Invite inv,
+          int folderId, @Nullable ParsedMessage pm,
+          boolean preserveExistingAlarms,
+          boolean discardExistingInvites,
+          boolean addRevision
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -2064,22 +1714,22 @@ public class Mailbox
         parsedMessage = pm.toZimbra(com.zimbra.cs.mime.ParsedMessage.class);
       }
       return mMbox.addInvite(
-        octxt.getOperationContext(),
-        inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
-        folderId, parsedMessage,
-        preserveExistingAlarms,
-        discardExistingInvites,
-        addRevision
+              octxt.getOperationContext(),
+              inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
+              folderId, parsedMessage,
+              preserveExistingAlarms,
+              discardExistingInvites,
+              addRevision
       ).calItemId;
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
   }
 
   public void addInvite(@Nonnull OperationContext octxt, @Nonnull Invite inv, int folderId)
-    throws ZimbraException
+          throws ZimbraException
   {
     try
     {
@@ -2094,7 +1744,7 @@ public class Mailbox
         true
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2116,7 +1766,7 @@ public class Mailbox
         true
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2124,29 +1774,29 @@ public class Mailbox
 
   @Nonnull
   public Mountpoint createMountpoint(
-    @Nonnull OperationContext octxt, int folderId,
-                                     String name, String ownerId,
-                                     int remoteId, String remoteUuid,
-                                     byte view, int flags,
-                                     @Nonnull Item.Color color
+          @Nonnull OperationContext octxt, int folderId,
+          String name, String ownerId,
+          int remoteId, String remoteUuid,
+          byte view, int flags,
+          @Nonnull Item.Color color
   )
-    throws ZimbraException
+          throws ZimbraException
   {
     MailItem mountPoint;
     try
     {
       mountPoint = mMbox.createMountpoint(
-        octxt.getOperationContext(), folderId,
-        name, ownerId,
-        remoteId,
-        remoteUuid,
-        Item.convertType(view),
-        flags,
-        color.toZimbra(com.zimbra.common.mailbox.Color.class),
-        false
+              octxt.getOperationContext(), folderId,
+              name, ownerId,
+              remoteId,
+              remoteUuid,
+              Item.convertType(view),
+              flags,
+              color.toZimbra(com.zimbra.common.mailbox.Color.class),
+              false
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2154,115 +1804,17 @@ public class Mailbox
     return new Mountpoint(mountPoint);
   }
 
-
-  @Nonnull
-  public Chat createChat(
-    @Nonnull OperationContext octxt,
-                         @Nonnull ParsedMessage pm,
-                         int folderId, int flags,
-                         @Nonnull Tags tags
-  )
-    throws ZimbraException, IOException
-  {
-    MailItem chat;
-    try
-    {
-      chat = mMbox.createChat(
-        octxt.getOperationContext(),
-        pm.toZimbra(com.zimbra.cs.mime.ParsedMessage.class),
-        folderId,
-        flags,
-        tags.getTags()
-      );
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    return new Chat(chat);
-  }
-
-  @Nonnull
-  public Chat createChat(
-    @Nonnull OperationContext octxt,
-                         @Nonnull ParsedMessage pm,
-                         int folderId, int flags
-  )
-    throws ZimbraException, IOException
-  {
-    MailItem chat;
-    try
-    {
-      chat = mMbox.createChat(
-        octxt.getOperationContext(),
-        pm.toZimbra(com.zimbra.cs.mime.ParsedMessage.class),
-        folderId,
-        flags,
-        null);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    return new Chat(chat);
-  }
-
-  @Nullable private static Method sEndTransactionMethod = null;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[1];
-      partypes[0] = boolean.class;
-
-      sEndTransactionMethod = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredMethod("endTransaction", partypes);
-      sEndTransactionMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  @Nullable private static Method sBeginTransactionMethod = null;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[2];
-      partypes[0] = String.class;
-      partypes[1] = com.zimbra.cs.mailbox.OperationContext.class;
-
-      sBeginTransactionMethod = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredMethod("beginTransaction", partypes);
-      sBeginTransactionMethod.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   public void beginTransaction(String name, @Nonnull OperationContext context)
   {
     beginTransaction(name, context.getOperationContext());
   }
 
-  private final void beginTransaction(String name, com.zimbra.cs.mailbox.OperationContext zContext)
-    throws ZimbraException
+  private void beginTransaction(String name, com.zimbra.cs.mailbox.OperationContext zContext)
+          throws ZimbraException
   {
     try
     {
-      Object parameters[] = new Object[2];
-      parameters[0] = name;
-      parameters[1] = zContext;
-
-      sBeginTransactionMethod.invoke(mMbox, parameters);
+      mMbox.beginTransaction(name, zContext);
     }
     catch (Exception ex)
     {
@@ -2271,14 +1823,11 @@ public class Mailbox
   }
 
   public final void endTransaction(boolean success)
-    throws ZimbraException
+          throws ZimbraException
   {
-    Object parameters[] = new Object[1];
-    parameters[0] = success;
-
     try
     {
-      sEndTransactionMethod.invoke(mMbox, parameters);
+      mMbox.endTransaction(success);
     }
     catch (Exception ex)
     {
@@ -2286,38 +1835,16 @@ public class Mailbox
     }
   }
 
-  private static Method sRawGetItem;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[1];
-      partypes[0] = MailItem.UnderlyingData.class;
-
-      sRawGetItem = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredMethod("getItem", partypes);
-      sRawGetItem.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   /*
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final Item rawGetItem(@Nonnull Item.UnderlyingData data)
-    throws InternalServerException
+  private Item rawGetItem(@Nonnull Item.UnderlyingData data)
+          throws InternalServerException
   {
-    Object parameters[] = new Object[1];
-    parameters[0] = data.toZimbra(MailItem.UnderlyingData.class);
-
     try
     {
-      MailItem item = (MailItem) sRawGetItem.invoke(mMbox, parameters);
+      MailItem item = mMbox.getItem(data.toZimbra(MailItem.UnderlyingData.class));
       if(item != null)
       {
         return new Item(item);
@@ -2333,46 +1860,21 @@ public class Mailbox
     }
   }
 
-  private static Method sGetAllFlags;
-
-  static
-  {
-    try
-    {
-      Class partypes[] = new Class[1];
-      partypes[0] = com.zimbra.cs.mailbox.Mailbox.class;
-
-      sGetAllFlags = com.zimbra.cs.mailbox.Flag.class.getDeclaredMethod("allOf", partypes);
-      sGetAllFlags.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
   /*
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final List<com.zimbra.cs.mailbox.Flag> getAllFlags()
-    throws ZimbraException
+  private List<com.zimbra.cs.mailbox.Flag> getAllFlags()
+          throws ZimbraException
   {
-    Object parameters[] = new Object[1];
-    parameters[0] = mMbox;
-
-    try
-    {
-      return (List<com.zimbra.cs.mailbox.Flag>) sGetAllFlags.invoke(null, parameters);
-    }
-    catch (Throwable ex)
-    {
+    try {
+      return com.zimbra.cs.mailbox.Flag.allOf(mMbox);
+    } catch (ServiceException | RuntimeException e) {
       return null;
     }
   }
 
-  public final static boolean ACLIsEmpty(@Nullable Acl acl)
+  public static boolean ACLIsEmpty(@Nullable Acl acl)
   {
     if (acl == null)
     {
@@ -2381,109 +1883,27 @@ public class Mailbox
     return acl.isEmpty();
   }
 
-  private static Field sTagCache;
-
-  static
+  /*
+   * Warning: unsynchronized private access to mailbox
+   */
+  @Nullable
+  private Map<Object, com.zimbra.cs.mailbox.Tag> getTagCache()
   {
-    try
-    {
-      sTagCache = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredField("mTagCache");
-      sTagCache.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
+    return mMbox.getTagCache();
   }
 
   /*
    * Warning: unsynchronized private access to mailbox
    */
   @Nullable
-  private final Map<Object, com.zimbra.cs.mailbox.Tag> getTagCache()
+  private Collection<Folder> getFolderCache()
   {
     try
     {
-      Map<Object, com.zimbra.cs.mailbox.Tag> tagsMap;
-      tagsMap = (Map<Object, com.zimbra.cs.mailbox.Tag>) sTagCache.get(mMbox);
-      return tagsMap;
-    }
-    catch (Throwable ex)
-    {
-      return null;
-    }
-  }
+      Collection<com.zimbra.cs.mailbox.Folder> folders = mMbox.getCacheFolders();
+      ArrayList<Folder> newList = new ArrayList<>(folders.size());
 
-  private static Field sFolderCache;
-
-  static
-  {
-    try
-    {
-      sFolderCache = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredField("mFolderCache");
-      sFolderCache.setAccessible(true);
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  private static Field sFolderCacheMap;
-
-  static
-  {
-    try
-    {
-      Class cls = null;
-      Class subClasses[] = com.zimbra.cs.mailbox.Mailbox.class.getDeclaredClasses();
-
-      for (int n = 0; n < subClasses.length; ++n)
-      {
-        if (subClasses[n].getName().equals("com.zimbra.cs.mailbox.Mailbox$FolderCache"))
-        {
-          cls = subClasses[n];
-          break;
-        }
-      }
-      if (cls == null)
-      {
-        ZimbraLog.extensions.fatal(
-          "ZAL Reflection Initialization Exception: " +
-            "com.zimbra.cs.mailbox.Mailbox$FolderCache not found"
-        );
-        throw new RuntimeException();
-      }
-      else
-      {
-        //do not avoid the exception
-        sFolderCacheMap = cls.getDeclaredField("mapById");
-        sFolderCacheMap.setAccessible(true);
-      }
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-  /*
-   * Warning: unsynchronized private access to mailbox
-   */
-  @Nullable
-  private final Collection<Folder> getFolderCache()
-  {
-    try
-    {
-      Collection<com.zimbra.cs.mailbox.Folder> folders = Collections.emptyList();
-      folders = (Collection<com.zimbra.cs.mailbox.Folder>) (((Map<Integer, com.zimbra.cs.mailbox.Folder>) sFolderCacheMap
-        .get(sFolderCache.get(mMbox))).values());
-      ArrayList<Folder> newList = new ArrayList<Folder>(folders.size());
-
-      for (Object folder : folders)
+      for (com.zimbra.cs.mailbox.Folder folder : folders)
       {
         if ( folder != null)
         {
@@ -2502,57 +1922,24 @@ public class Mailbox
 
   @Nullable
   public static Mailbox getByAccount(@Nonnull Account account)
-    throws ZimbraException
+          throws ZimbraException
   {
     return getByAccount(account, true);
   }
 
   @Nullable
-  public static Mailbox getByAccountId(String id)
-    throws ZimbraException
-  {
-    return getByAccountId(id, true);
-  }
-
-  @Nullable
-  public static Mailbox getByAccountId(String id, boolean autocreate)
-    throws ZimbraException
-  {
-    com.zimbra.cs.mailbox.Mailbox mbox;
-    try
-    {
-      mbox = com.zimbra.cs.mailbox.MailboxManager.getInstance().getMailboxByAccountId(
-        id,
-        autocreate ? com.zimbra.cs.mailbox.MailboxManager.FetchMode.AUTOCREATE :
-          com.zimbra.cs.mailbox.MailboxManager.FetchMode.DO_NOT_AUTOCREATE
-      );
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    if (mbox != null)
-    {
-      return new Mailbox(mbox);
-    }
-
-    return null;
-  }
-
-  @Nullable
   @Deprecated
   public static Mailbox getByAccount(@Nonnull Account account, boolean autocreate)
-    throws ZimbraException
+          throws ZimbraException
   {
     com.zimbra.cs.mailbox.Mailbox mbox;
     try
     {
       mbox = com.zimbra.cs.mailbox.MailboxManager.getInstance().getMailboxByAccount(
-        account.toZimbra(com.zimbra.cs.account.Account.class)
+              account.toZimbra(com.zimbra.cs.account.Account.class)
       );
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2566,7 +1953,7 @@ public class Mailbox
   @Nullable
   @Deprecated
   public static Mailbox getById(long mboxId)
-    throws ZimbraException
+          throws ZimbraException
   {
     return getById((int) mboxId);
   }
@@ -2574,14 +1961,14 @@ public class Mailbox
   @Nullable
   @Deprecated
   public static Mailbox getById(int mboxId)
-    throws ZimbraException
+          throws ZimbraException
   {
     com.zimbra.cs.mailbox.Mailbox mbox;
     try
     {
       mbox = com.zimbra.cs.mailbox.MailboxManager.getInstance().getMailboxById(mboxId);
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2601,14 +1988,14 @@ public class Mailbox
 
   @Deprecated
   public static Map<String, Integer> getMapAccountsAndMailboxes(@Nonnull Connection conn)
-    throws ZimbraException
+          throws ZimbraException
   {
     Map<String, Integer> accountsAndMailboxes;
     try
     {
       accountsAndMailboxes = DbMailbox.listMailboxes(conn.toZimbra(DbPool.DbConnection.class));
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2618,14 +2005,14 @@ public class Mailbox
 
   @Nonnull
   public Connection getOperationConnection()
-    throws ZimbraException
+          throws ZimbraException
   {
     DbPool.DbConnection connection;
     try
     {
       connection = mMbox.getOperationConnection();
     }
-    catch (com.zimbra.common.service.ServiceException e)
+    catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -2635,46 +2022,13 @@ public class Mailbox
   public int getSchemaGroupId()
   {
     //leave the cast
-    return (int) mMbox.getSchemaGroupId();
-  }
-
-  public void updateChat(@Nonnull OperationContext operationContext, @Nonnull ParsedMessage parsedMessage, int id)
-    throws IOException, ZimbraException
-  {
-    try
-    {
-      mMbox.updateChat(
-        operationContext.getOperationContext(),
-        parsedMessage.toZimbra(com.zimbra.cs.mime.ParsedMessage.class),
-        id
-      );
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void reindexItem(@Nonnull Item item)
-    throws ZimbraException
-  {
-    List list = new ArrayList<Integer>();
-
-    list.add(item.getId());
-    try
-    {
-      mMbox.index.startReIndexById(list);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
+    return mMbox.getSchemaGroupId();
   }
 
   public String rawGetConfig(
-    @Nonnull String key
+          @Nonnull String key
   )
-    throws SQLException, ZimbraException
+          throws SQLException, ZimbraException
   {
     String query = "SELECT metadata FROM zimbra.mailbox_metadata WHERE mailbox_id=? AND section=? LIMIT 1";
     Connection connection = null;
@@ -2711,10 +2065,10 @@ public class Mailbox
   public static final long MAX_METADATA_SIZE = 16777215;
 
   public void rawSetConfig(
-    @Nonnull String section,
-    @Nullable String metadata
+          @Nonnull String section,
+          @Nullable String metadata
   )
-    throws SQLException, ZimbraException
+          throws SQLException, ZimbraException
   {
     if (metadata != null && metadata.length() > MAX_METADATA_SIZE)
     {
@@ -2807,10 +2161,6 @@ public class Mailbox
     }
   }
 
-  public void deleteIndex() throws IOException, ZimbraException
-  {
-    mMbox.index.deleteIndex();
-  }
   public void suspendIndexing()
   {
     mMbox.suspendIndexing();
@@ -2828,43 +2178,6 @@ public class Mailbox
 
   public short getIndexVolume() {
     return mMbox.getIndexVolume();
-  }
-
-  public boolean isInMaintenanceMode()
-  {
-    com.zimbra.cs.mailbox.MailboxMaintenance maintenace = mMbox.getMaintenance();
-    return maintenace != null;
-  }
-
-  public void checkSizeChange(long newSize) throws ZimbraException
-  {
-    try
-    {
-      mMbox.checkSizeChangeOnAddOperation(newSize);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void createDefaultFlags()  throws ZimbraException
-  {
-    try
-    {
-      beginTransaction("createDefaultFlags", newOperationContext());
-      sCreateDefaultFlags.invoke(mMbox);
-      endTransaction(true);
-    }
-    catch( Exception e )
-    {
-      endTransaction(false);
-      if( e instanceof ServiceException )
-      {
-        throw ExceptionWrapper.wrap(e);
-      }
-      throw new RuntimeException(e);
-    }
   }
 
   public void purgeImapDeleted(OperationContext operationContext) {

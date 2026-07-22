@@ -21,14 +21,10 @@
 package org.openzal.zal.extension;
 
 import javax.annotation.Nonnull;
-import org.openzal.zal.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSigner;

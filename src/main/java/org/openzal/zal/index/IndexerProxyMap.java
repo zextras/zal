@@ -20,17 +20,19 @@
 
 package org.openzal.zal.index;
 
+import com.zimbra.cs.mime.MimeHandlerManager;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-class IndexerProxyMap implements Map<String, Object>
+class IndexerProxyMap implements Map<String, MimeHandlerManager.HandlerInfo>
 {
-  private final Map<String, Object> mMap;
+  private final Map<String, MimeHandlerManager.HandlerInfo> mMap;
   private final MimeHandlerProvider mMimeHandlerProvider;
 
   IndexerProxyMap(
-    Map<String, Object> map,
+    Map<String, MimeHandlerManager.HandlerInfo> map,
     MimeHandlerProvider mimeHandlerProvider
   )
   {
@@ -39,7 +41,7 @@ class IndexerProxyMap implements Map<String, Object>
   }
 
   @Override
-  public Object get(Object key)
+  public MimeHandlerManager.HandlerInfo get(Object key)
   {
     String strKey = (String) key;
 
@@ -56,7 +58,7 @@ class IndexerProxyMap implements Map<String, Object>
       fileExtension = data[1];
     }
 
-    Object obj = mMimeHandlerProvider.getMimeHandlerFor(
+    MimeHandlerManager.HandlerInfo obj = mMimeHandlerProvider.getMimeHandlerFor(
       contentType, fileExtension
     );
 
@@ -95,19 +97,19 @@ class IndexerProxyMap implements Map<String, Object>
   }
 
   @Override
-  public Object put(String key, Object value)
+  public MimeHandlerManager.HandlerInfo put(String key, MimeHandlerManager.HandlerInfo value)
   {
     return mMap.put(key, value);
   }
 
   @Override
-  public Object remove(Object key)
+  public MimeHandlerManager.HandlerInfo remove(Object key)
   {
     return mMap.remove(key);
   }
 
   @Override
-  public void putAll(Map<? extends String, ? extends Object> m)
+  public void putAll(Map<? extends String, ? extends MimeHandlerManager.HandlerInfo> m)
   {
     mMap.putAll(m);
   }
@@ -125,13 +127,13 @@ class IndexerProxyMap implements Map<String, Object>
   }
 
   @Override
-  public Collection<Object> values()
+  public Collection<MimeHandlerManager.HandlerInfo> values()
   {
     return mMap.values();
   }
 
   @Override
-  public Set<Entry<String, Object>> entrySet()
+  public Set<Entry<String, MimeHandlerManager.HandlerInfo>> entrySet()
   {
     return mMap.entrySet();
   }

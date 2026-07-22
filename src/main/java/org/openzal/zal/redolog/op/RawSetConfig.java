@@ -31,7 +31,7 @@ public class RawSetConfig extends RedoableOp {
   }
 
   @Override
-  public void redo() throws Exception {
+  public void redo() {
     throw new UnsupportedOperationException();
   }
 
@@ -43,7 +43,7 @@ public class RawSetConfig extends RedoableOp {
   }
 
   @Override
-  protected void serializeData(RedoLogOutput out) throws IOException {
+  public void serializeData(RedoLogOutput out) throws IOException {
     out.writeUTF(this.section);
     out.writeUTF(config != null ? config : "");
   }

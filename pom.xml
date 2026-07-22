@@ -10,10 +10,57 @@
   <packaging>jar</packaging>
 
   <properties>
-    <revision>4.32.1</revision>
-    <sha1></sha1>
+    <revision>4.33.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <carbonio.version>4.28.0</carbonio.version>
+    Also:   hudson.remoting.ProxyException: org.jenkinsci.plugins.workflow.actions.ErrorAction$ErrorId: 905c18f7-800d-478b-8e42-c9ddf08ca1ae
+    hudson.remoting.ProxyException: groovy.lang.MissingMethodException: No signature of method: java.lang.String.remove() is applicable for argument types: (null, null) values: [null, null]
+    Possible solutions: reverse()
+    at PluginClassLoader for script-security//org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SandboxInterceptor.onMethodCall(SandboxInterceptor.java:159)
+    at PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker$15.call(Checker.java:868)
+    at PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker.preCheckedCast(Checker.java:874)
+    at PluginClassLoader for script-security//org.kohsuke.groovy.sandbox.impl.Checker.checkedCast(Checker.java:838)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.sandbox.SandboxInvoker.cast(SandboxInvoker.java:59)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.LoggingInvoker.cast(LoggingInvoker.java:267)
+    at mavenStage.call(mavenStage.groovy:50)
+    at WorkflowScript.run(WorkflowScript:44)
+    at ___cps.transform___(Native Method)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.CastBlock$ContinuationImpl.cast(CastBlock.java:56)
+    at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+    at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:71)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ContinuationGroup.methodCall(ContinuationGroup.java:110)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.dispatchOrArg(FunctionCallBlock.java:118)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.fixArg(FunctionCallBlock.java:87)
+    at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+    at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:71)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.CollectionLiteralBlock$ContinuationImpl.dispatch(CollectionLiteralBlock.java:54)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.impl.CollectionLiteralBlock.eval(CollectionLiteralBlock.java:26)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.Next.step(Next.java:84)
+    at PluginClassLoader for workflow-cps//com.cloudbees.groovy.cps.Continuable.run0(Continuable.java:142)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.SandboxContinuable.access$001(SandboxContinuable.java:17)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.SandboxContinuable.run0(SandboxContinuable.java:48)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThread.runNextChunk(CpsThread.java:188)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.run(CpsThreadGroup.java:464)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:372)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:302)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService.lambda$wrap$4(CpsVmExecutorService.java:143)
+    at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+    at hudson.remoting.SingleLaneExecutorService$1.run(SingleLaneExecutorService.java:139)
+    at jenkins.util.ContextResettingExecutorService.lambda$wrap$0(ContextResettingExecutorService.java:26)
+    at jenkins.security.ImpersonatingExecutorService.lambda$wrap$0(ImpersonatingExecutorService.java:66)
+    at jenkins.util.ErrorLoggingExecutorService.lambda$wrap$0(ErrorLoggingExecutorService.java:51)
+    at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+    at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+    at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$1.call(CpsVmExecutorService.java:53)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$1.call(CpsVmExecutorService.java:50)
+    at org.codehaus.groovy.runtime.GroovyCategorySupport$ThreadCategoryInfo.use(GroovyCategorySupport.java:136)
+    at org.codehaus.groovy.runtime.GroovyCategorySupport.use(GroovyCategorySupport.java:275)
+    at PluginClassLoader for workflow-cps//org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService.lambda$categoryThreadFactory$0(CpsVmExecutorService.java:50)
+    at java.base/java.lang.Thread.run(Unknown Source)
+    <carbonio.version>4.29.0</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -698,39 +745,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.coderplus.maven.plugins</groupId>
-        <artifactId>copy-rename-maven-plugin</artifactId>
-        <version>1.0.1</version>
-        <executions>
-          <execution>
-            <id>rename-DataExtractor</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <sourceFile>
-                ${project.build.directory}/classes/com/zimbra/cs/redolog/op/DataExtractor.class</sourceFile>
-              <destinationFile>
-                ${project.build.directory}/classes/com/zimbra/cs/redolog/op/DataExtractor</destinationFile>
-            </configuration>
-          </execution>
-          <execution>
-            <id>rename-VolumeBlobProxy</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <sourceFile>
-                ${project.build.directory}/classes/com/zimbra/cs/store/file/VolumeBlobProxy.class</sourceFile>
-              <destinationFile>
-                ${project.build.directory}/classes/com/zimbra/cs/store/file/VolumeBlobProxy</destinationFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.2.1</version>
@@ -769,10 +783,6 @@
                   <Zimbra-Extension-Class>org.openzal.zal.extension.ZalEntrypointImpl</Zimbra-Extension-Class>
                 </manifestEntries>
               </archive>
-              <excludes>
-                <exclude>com/zimbra/cs/redolog/op/DataExtractor.class</exclude>
-                <exclude>com/zimbra/cs/store/file/VolumeBlobProxy.class</exclude>
-              </excludes>
             </configuration>
           </execution>
           <execution>
