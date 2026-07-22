@@ -41,9 +41,7 @@ pipeline {
         stage('Maven') {
             steps {
                 script {
-                    mavenStage(
-                       mvnOpts: '-Dchangelist='
-                    )
+                    mavenStage()
                 }
             }
         }

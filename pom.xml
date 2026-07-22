@@ -6,11 +6,12 @@
 
   <groupId>org.openzal</groupId>
   <artifactId>zal</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}${sha1}${changelist}</version>
   <packaging>jar</packaging>
 
   <properties>
     <revision>4.32.1</revision>
+    <sha1></sha1>
     <changelist>-SNAPSHOT</changelist>
     <carbonio.version>4.28.0</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -813,5 +814,30 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>env.TAG_NAME</name>
+        </property>
+      </activation>
+      <properties>
+        <changelist></changelist>
+      </properties>
+    </profile>
+    <profile>
+      <id>snapshot</id>
+      <activation>
+        <property>
+          <name>!env.TAG_NAME</name>
+        </property>
+      </activation>
+      <properties>
+        <sha1>.${env.GIT_COMMIT}</sha1>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
