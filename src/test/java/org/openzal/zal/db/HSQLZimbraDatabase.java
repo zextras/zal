@@ -4,6 +4,7 @@ package org.openzal.zal.db;
  * Zimbra Collaboration Suite Server
  */
 
+import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.db.DbMailbox;
 import com.zimbra.cs.db.DbPool;
@@ -90,7 +91,7 @@ public final class HSQLZimbraDatabase extends HSQLDB
 
   private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String classpathFile) throws Exception
   {
-    for( int i=1; i <= 100; ++i ) executeFromClasspath(conn, classpathFile, i);
+    for( int i=1; i <= LC.zimbra_mailbox_groups.intValue(); ++i ) executeFromClasspath(conn, classpathFile, i);
   }
 
   interface TempFileRunner {

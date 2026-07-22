@@ -21,6 +21,7 @@
 package org.openzal.zal;
 
 
+import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.db.DbMailbox;
 import com.zimbra.cs.db.DbPool;
@@ -119,7 +120,7 @@ public class MailboxManagerImp implements MailboxManager
 
     for( int n=0; n < ids.length; ++n )
     {
-      set.add( (ids[n]-1) % 100 + 1 );
+      set.add( (ids[n]-1) % LC.zimbra_mailbox_groups.intValue() + 1 );
     }
 
     return set;
