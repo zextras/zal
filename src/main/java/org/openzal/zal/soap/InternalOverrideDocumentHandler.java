@@ -20,8 +20,6 @@
 
 package org.openzal.zal.soap;
 
-import javax.annotation.Nullable;
-import org.openzal.zal.Utils;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.cs.account.Account;
@@ -30,10 +28,7 @@ import com.zimbra.cs.session.Session;
 import com.zimbra.soap.DocumentHandler;
 import com.zimbra.soap.ZimbraSoapContext;
 import org.openzal.zal.exceptions.ExceptionWrapper;
-import org.openzal.zal.log.ZimbraLog;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 public class InternalOverrideDocumentHandler extends DocumentHandler
@@ -113,44 +108,10 @@ public class InternalOverrideDocumentHandler extends DocumentHandler
     return mOriginalDocumentHandler.isReadOnly();
   }
 
-  @Nullable private static Method sMethod = null;
 
-  /*
-    protected Element proxyIfNecessary(Element request, Map<String, Object> context) throws ServiceException {
-  */
-  static
+  public Element proxyIfNecessary(Element request, Map<String, Object> context) throws ServiceException
   {
-    try
-    {
-      Class[] parameters = {
-        Element.class,
-        Map.class
-      };
-      sMethod = DocumentHandler.class.getDeclaredMethod("proxyIfNecessary", parameters);
-      sMethod.setAccessible(true);
-    }
-    catch (NoSuchMethodException ex)
-    {
-      ZimbraLog.extensions.fatal("ZAL Reflection Initialization Exception: " + Utils.exceptionToString(ex));
-      throw new RuntimeException(ex);
-    }
-  }
-
-
-  protected Element proxyIfNecessary(Element request, Map<String, Object> context) throws ServiceException
-  {
-    try
-    {
-      return (Element) sMethod.invoke(mOriginalDocumentHandler, request, context);
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
-    catch (InvocationTargetException e)
-    {
-      throw (ServiceException) e.getCause();
-    }
+    return mOriginalDocumentHandler.proxyIfNecessary(request, context);
   }
 
   public void preProxy(Element request, Map<String, Object> context) throws ServiceException

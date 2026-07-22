@@ -20,29 +20,23 @@
 
 package org.openzal.zal.soap;
 
-import com.google.common.cache.LoadingCache;
-import com.zimbra.soap.*;
+import com.zimbra.soap.DocumentHandler;
+import com.zimbra.soap.SoapServlet;
 import org.dom4j.QName;
 import org.openzal.zal.Utils;
-import org.openzal.zal.lib.ZimbraVersion;
 import org.openzal.zal.log.ZimbraLog;
 
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SoapServiceManager
 {
   private final static Map<QName, DocumentHandler> sOriginalHandlersMap;
-  private static Field sExtraServices;
 
   static
   {
     try
     {
-      sExtraServices = com.zimbra.soap.SoapServlet.class.getDeclaredField("sExtraServices");
-      sExtraServices.setAccessible(true);
       sOriginalHandlersMap = new ConcurrentHashMap<QName, DocumentHandler>(64);
     }
     catch (Throwable ex)
@@ -84,18 +78,7 @@ public class SoapServiceManager
       soapService.getServiceName(),
       new InternalUnregisterDocumentService(soapService)
     );
-
-    try
-    {
-      synchronized(this)
-      {
-        ((LoadingCache<String, List<DocumentService>>) sExtraServices.get(null)).invalidate(soapService.getServiceName());
-      }
-    }
-    catch (IllegalAccessException e)
-    {
-      throw new RuntimeException(e);
-    }
+    SoapServlet.invalidateServiceCache(soapService.getServiceName());
   }
 
   public void overrideZimbraHandler(OverridenSoapService soapService)

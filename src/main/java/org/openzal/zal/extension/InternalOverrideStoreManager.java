@@ -30,11 +30,8 @@ import com.zimbra.cs.store.MailboxBlob;
 import com.zimbra.cs.store.MailboxBlob.MailboxBlobInfo;
 import com.zimbra.cs.store.StagedBlob;
 import com.zimbra.cs.store.StoreManager;
-import com.zimbra.cs.store.file.VolumeStagedBlob;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import org.openzal.zal.BlobWrap;
 import org.openzal.zal.MailboxBlobWrap;
@@ -43,7 +40,6 @@ import org.openzal.zal.Pair;
 import org.openzal.zal.PrimaryStore;
 import org.openzal.zal.StagedBlobWrap;
 import org.openzal.zal.Store;
-import org.openzal.zal.StoreFeature;
 import org.openzal.zal.StoreVolume;
 import org.openzal.zal.Utils;
 import org.openzal.zal.VolumeManager;
@@ -130,19 +126,19 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     return true;
   }
 
-  public BlobBuilder getBlobBuilder() throws IOException, ServiceException
+  public BlobBuilder getBlobBuilder() throws IOException
   {
     return mStoreManager.getPrimaryStore().getBlobBuilder().toZimbra(BlobBuilder.class);
   }
 
   public Blob storeIncoming(InputStream data, boolean storeAsIs)
-    throws IOException, ServiceException
+    throws IOException
   {
     return mStoreManager.getPrimaryStore().storeIncoming(data, storeAsIs).toZimbra(Blob.class);
   }
 
   public StagedBlob stage(InputStream data, long actualSize, Mailbox mbox)
-    throws IOException, ServiceException
+    throws IOException
   {
     return mStoreManager.getPrimaryStore().stage(
       mStoreManager.getPrimaryStore().storeIncoming(data, false),
@@ -150,7 +146,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     ).toZimbra(StagedBlob.class);
   }
 
-  public StagedBlob stage(Blob blob, Mailbox mbox) throws IOException, ServiceException
+  public StagedBlob stage(Blob blob, Mailbox mbox) throws IOException
   {
     return mStoreManager.getPrimaryStore().stage(
       BlobWrap.wrapZimbraBlob(blob),
@@ -241,30 +237,6 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     );
   }
 
-  private static final Method mVolumeStagedBlobWasStagedDirectlyMethod;
-  private static final Constructor mMailServiceException;
-  //private static final Method mExternalStagedBlobIsInsertedMethod;
-
-  static
-  {
-    try
-    {
-      mVolumeStagedBlobWasStagedDirectlyMethod = VolumeStagedBlob.class.getDeclaredMethod("wasStagedDirectly");
-      mMailServiceException = MailServiceException.class.getDeclaredConstructor(
-        String.class, String.class, boolean.class, Throwable.class, MailServiceException.Argument[].class
-      );
-      //mExternalStagedBlobIsInsertedMethod = ExternalStagedBlob.class.getDeclaredMethod("isInserted");
-
-      mVolumeStagedBlobWasStagedDirectlyMethod.setAccessible(true);
-      mMailServiceException.setAccessible(true);
-      //mExternalStagedBlobIsInsertedMethod.setAccessible(true);
-    }
-    catch (NoSuchMethodException e)
-    {
-      throw new RuntimeException("ZAL reflection error " + Utils.exceptionToString(e));
-    }
-  }
-
   public boolean delete(StagedBlob staged) throws IOException
   {
     if (staged == null)
@@ -285,7 +257,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   @Nullable
-  public MailboxBlob getMailboxBlob(Mailbox mbox, int itemId, int revision, String locator) throws ServiceException
+  public MailboxBlob getMailboxBlob(Mailbox mbox, int itemId, int revision, String locator)
   {
     try
     {
@@ -309,14 +281,12 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   public MailboxBlob getMailboxBlob(Mailbox mailbox, int itemId, int revision, String locator, boolean validate)
-    throws ServiceException
   {
     return getMailboxBlob(mailbox, itemId, revision, locator);
   }
 
   @Nullable
-  public MailboxBlob getMailboxBlob(MailItem mailItem) throws ServiceException
-  {
+  public MailboxBlob getMailboxBlob(MailItem mailItem) {
     MailboxBlob blob = getMailboxBlob(
       mailItem.getMailbox(), mailItem.getId(), mailItem.getSavedSequence(), mailItem.getLocator()
     );
@@ -332,8 +302,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
   }
 
   @Nullable
-  public InputStream getContent(MailboxBlob mboxBlob) throws IOException
-  {
+  public InputStream getContent(MailboxBlob mboxBlob) {
     org.openzal.zal.MailboxBlob zalMailboxBlob = MailboxBlobWrap.wrapZimbraObject(mboxBlob);
     try
     {
@@ -348,7 +317,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
         arguments[0] = new ServiceException.Argument(ITEM_ID, zalMailboxBlob.getItemId(), ServiceException.Argument.Type.IID);
         arguments[1] = new ServiceException.Argument(REVISION, zalMailboxBlob.getRevision(), ServiceException.Argument.Type.NUM);
         AnyThrow.throwUnchecked(
-          (Throwable) mMailServiceException.newInstance(
+          MailServiceException.mailServiceException(
             "No such blob: mailbox=" + zalMailboxBlob.getMailbox().getId() + "," + " item=" + zalMailboxBlob.getItemId() + ", change=" + zalMailboxBlob.getRevision(),
             NO_SUCH_BLOB,
             SENDERS_FAULT,
@@ -365,8 +334,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     }
   }
 
-  public InputStream getContent(Blob blob) throws IOException
-  {
+  public InputStream getContent(Blob blob) {
     org.openzal.zal.Blob zalBlob = BlobWrap.wrapZimbraBlob(blob);
     if (zalBlob.hasMailboxInfo())
     {
@@ -387,7 +355,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
             arguments[0] = new ServiceException.Argument(ITEM_ID, zalMailboxBlob.getItemId(), ServiceException.Argument.Type.IID);
             arguments[1] = new ServiceException.Argument(REVISION, zalMailboxBlob.getRevision(), ServiceException.Argument.Type.NUM);
             AnyThrow.throwUnchecked(
-              (Throwable) mMailServiceException.newInstance(
+              MailServiceException.mailServiceException(
                 "No such blob: mailbox=" + zalMailboxBlob.getMailbox().getId() + "," + " item=" + zalMailboxBlob.getItemId() + ", change=" + zalMailboxBlob.getRevision(),
                 NO_SUCH_BLOB,
                 SENDERS_FAULT,
@@ -423,7 +391,7 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
           arguments[0] = new ServiceException.Argument("volumeId", zalBlob.getVolumeId(), ServiceException.Argument.Type.STR);
           arguments[1] = new ServiceException.Argument("blobPath", zalBlob.getKey(), ServiceException.Argument.Type.STR);
           AnyThrow.throwUnchecked(
-            (Throwable) mMailServiceException.newInstance(
+            MailServiceException.mailServiceException(
               "No such blob: " + zalBlob.getKey() + ", volume=" + zalBlob.getVolumeId(),
               NO_SUCH_BLOB,
               false,
