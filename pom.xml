@@ -41,6 +41,10 @@
   <!-- Bootstrap repo to locate the parent POM; all other repos are inherited from it. -->
   <repositories>
     <repository>
+      <id>central</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
       <id>zextras-public-release</id>
       <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
     </repository>
