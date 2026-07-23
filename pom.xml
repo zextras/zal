@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.zextras</groupId>
+    <artifactId>maven-ci-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath/>
+  </parent>
+
   <groupId>org.openzal</groupId>
   <artifactId>zal</artifactId>
   <version>${revision}${sha1}${changelist}</version>
@@ -14,7 +21,6 @@
     <sha1></sha1>
     <changelist>-SNAPSHOT</changelist>
     <carbonio.version>4.29.0</carbonio.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
     <log4j.version>2.20.0</log4j.version>
@@ -44,29 +50,6 @@
       <name>Maven public</name>
       <url>https://repo.maven.apache.org/maven2/</url>
     </repository>
-    <repository>
-      <id>zextras-public-snapshots</id>
-      <name>Zextras public maven snapshot repository</name>
-      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>zextras-public-release</id>
-      <name>Zextras public releases</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
     <repository>
       <id>maven-redhat</id>
       <url>https://maven.repository.redhat.com/ga/</url>
@@ -113,19 +96,6 @@
       <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>artifactory</id>
-      <name>Zextras snapshots</name>
-      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
-    </snapshotRepository>
-    <repository>
-      <id>artifactory</id>
-      <name>Zextras releases</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
-    </repository>
-  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -779,17 +749,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>release</id>
-      <activation>
-        <property>
-          <name>env.TAG_NAME</name>
-        </property>
-      </activation>
-      <properties>
-        <changelist></changelist>
-      </properties>
-    </profile>
     <profile>
       <id>snapshot</id>
       <activation>
