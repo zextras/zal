@@ -39,6 +39,14 @@
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
   </properties>
 
+  <!-- Bootstrap repo to locate the parent POM; all other repos are inherited from it. -->
+  <repositories>
+    <repository>
+      <id>zextras-public-release</id>
+      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
