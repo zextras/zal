@@ -40,14 +40,14 @@
 
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Maven public</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+    <repository>
       <id>artifactory</id>
       <name>Zextras public maven repo</name>
       <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
-    </repository>
-    <repository>
-      <id>default</id>
-      <name>Maven public</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
     </repository>
     <repository>
       <id>zextras-public-snapshots</id>
