@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.zextras</groupId>
+    <artifactId>maven-ci-parent</artifactId>
+    <version>1.1.0</version>
+    <relativePath/>
+  </parent>
+
   <groupId>org.openzal</groupId>
   <artifactId>zal</artifactId>
   <version>${revision}${changelist}</version>
@@ -70,7 +77,6 @@
       <id>maven-redhat</id>
       <url>https://maven.repository.redhat.com/ga/</url>
     </repository>
-
   </repositories>
 
   <pluginRepositories>
@@ -87,7 +93,7 @@
     <pluginRepository>
       <id>zextras-public-snapshots</id>
       <name>Zextras public snaposhots</name>
-      <url>https://repo.zextras.io/maven/snapshot</url>
+      <url>https://zextras.jfrog.io/maven/snapshot</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -98,7 +104,7 @@
     <pluginRepository>
       <id>zextras-public-release</id>
       <name>Zextras public releases</name>
-      <url>https://repo.zextras.io/maven/release</url>
+      <url>https://zextras.jfrog.io/maven/release</url>
       <releases>
         <enabled>true</enabled>
       </releases>
