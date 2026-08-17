@@ -101,11 +101,6 @@ public class Domain extends Entry
     return new HashMap<String, Object>(mDomain.getAttrs(applyDefaults));
   }
 
-  public long getMailDomainQuota()
-  {
-    return mDomain.getMailDomainQuota();
-  }
-
   public void setDomainCOSMaxAccounts(@Nonnull Collection<String> zimbraDomainCOSMaxAccounts)
   {
     try

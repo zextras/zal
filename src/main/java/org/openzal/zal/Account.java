@@ -1106,30 +1106,6 @@ public class Account extends Entry
     }
   }
 
-  public long getMailQuota()
-  {
-    try
-    {
-      return AccountUtil.getEffectiveQuota(mAccount);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void setMailQuota(long zimbraMailQuota)
-  {
-    try
-    {
-      mAccount.setMailQuota(zimbraMailQuota);
-    }
-    catch( ServiceException e )
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public boolean hasAddress(String address)
   {
     try
@@ -1271,18 +1247,6 @@ public class Account extends Entry
 
   public boolean isPasswordNoMoreValid() {
     return mustChangePassword() || isPasswordExpired();
-  }
-
-
-  public void unsetMailQuota() {
-    try
-    {
-      this.mAccount.unsetMailQuota();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
   }
 
   public boolean isNE2FAEnabled() {

@@ -97,7 +97,6 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraFeatureContactsEnabled                               = com.zimbra.cs.account.Provisioning.A_zimbraFeatureContactsEnabled;
   public static String A_zimbraIsACLGroup                                           = com.zimbra.cs.account.Provisioning.A_zimbraIsACLGroup;
   public static String A_memberURL                                                  = com.zimbra.cs.account.Provisioning.A_memberURL;
-  public static String A_zimbraMailDomainQuota                                      = com.zimbra.cs.account.Provisioning.A_zimbraMailDomainQuota;
   public static String A_zimbraPrefAllowAddressForDelegatedSender                   = com.zimbra.cs.account.Provisioning.A_zimbraPrefAllowAddressForDelegatedSender;
   public static String DEFAULT_COS_NAME                                             = com.zimbra.cs.account.Provisioning.DEFAULT_COS_NAME;
   public static String DEFAULT_EXTERNAL_COS_NAME                                    = com.zimbra.cs.account.Provisioning.DEFAULT_EXTERNAL_COS_NAME;
@@ -177,7 +176,6 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraPublicServiceProtocol                          = com.zimbra.cs.account.Provisioning.A_zimbraPublicServiceProtocol;
   public static String A_zimbraMyoneloginSamlSigningCert                      = com.zimbra.cs.account.Provisioning.A_zimbraMyoneloginSamlSigningCert;
   public static String A_zimbraInterceptAddress                               = com.zimbra.cs.account.Provisioning.A_zimbraInterceptAddress;
-  public static String A_zimbraMailQuota                                      = com.zimbra.cs.account.Provisioning.A_zimbraMailQuota;
   public static String A_zimbraPrefDefaultSignatureId                         = com.zimbra.cs.account.Provisioning.A_zimbraPrefDefaultSignatureId;
   public static String A_zimbraPrefForwardReplySignatureId                    = com.zimbra.cs.account.Provisioning.A_zimbraPrefForwardReplySignatureId;
   public static String A_zimbraSignatureName                                  = com.zimbra.cs.account.Provisioning.A_zimbraSignatureName;
@@ -2274,30 +2272,6 @@ public class ProvisioningImp implements Provisioning
     catch (com.zimbra.common.service.ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Override
-  public long getEffectiveQuota(@Nonnull Account account)
-  {
-    long acctQuota = account.getLongAttr(A_zimbraMailQuota, 0);
-    Domain domain = getDomain(account);
-    long domainQuota = 0;
-    if (domain != null)
-    {
-      domainQuota = domain.getLongAttr(A_zimbraMailDomainQuota, 0);
-    }
-    if (acctQuota == 0)
-    {
-      return domainQuota;
-    }
-    else if (domainQuota == 0)
-    {
-      return acctQuota;
-    }
-    else
-    {
-      return Math.min(acctQuota, domainQuota);
     }
   }
 
