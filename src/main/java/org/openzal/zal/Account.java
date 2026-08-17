@@ -143,11 +143,6 @@ public class Account extends Entry
     return mAccount.getSignatureId();
   }
 
-  public long getDomainAdminMaxMailQuota()
-  {
-    return mAccount.getDomainAdminMaxMailQuota();
-  }
-
   public boolean isIsDelegatedAdminAccount()
   {
     return mAccount.isIsDelegatedAdminAccount();

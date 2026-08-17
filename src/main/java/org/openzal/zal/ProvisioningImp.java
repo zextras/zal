@@ -139,7 +139,6 @@ public class ProvisioningImp implements Provisioning
   public static String A_zimbraAdminConsoleUIComponents                       = com.zimbra.cs.account.Provisioning.A_zimbraAdminConsoleUIComponents;
   public static String A_zimbraDomainMaxAccounts                              = com.zimbra.cs.account.Provisioning.A_zimbraDomainMaxAccounts;
   public static String A_zimbraIsDelegatedAdminAccount                        = com.zimbra.cs.account.Provisioning.A_zimbraIsDelegatedAdminAccount;
-  public static String A_zimbraDomainAdminMaxMailQuota                        = com.zimbra.cs.account.Provisioning.A_zimbraDomainAdminMaxMailQuota;
   public static String A_zimbraMailCanonicalAddress                           = com.zimbra.cs.account.Provisioning.A_zimbraMailCanonicalAddress;
   public static String A_zimbraMailHost                                       = com.zimbra.cs.account.Provisioning.A_zimbraMailHost;
   public static String A_zimbraId                                             = com.zimbra.cs.account.Provisioning.A_zimbraId;
