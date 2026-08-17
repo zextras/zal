@@ -18,7 +18,7 @@
 
   <properties>
     <revision>4.33.2</revision>
-    <carbonio.version>4.29.0</carbonio.version>
+    <carbonio.version>4.32.0</carbonio.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>

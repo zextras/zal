@@ -333,8 +333,6 @@ public interface Provisioning
   boolean onLocalServer(@Nonnull Account userAccount)
       throws ZimbraException;
 
-  long getEffectiveQuota(@Nonnull Account account);
-
   List<Account> getAllDelegatedAdminAccounts() throws ZimbraException;
 
   void visitAllDelegatedAdminAccounts(SimpleVisitor<Account> visitor) throws ZimbraException;

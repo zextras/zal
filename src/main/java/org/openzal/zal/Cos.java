@@ -69,11 +69,6 @@ public class Cos extends Entry
     return Arrays.asList(mCos.getACE());
   }
 
-  public long getMailQuota()
-  {
-    return mCos.getMailQuota();
-  }
-
   @Nonnull
   public Set<String> getMultiAttrSet(String name)
   {
