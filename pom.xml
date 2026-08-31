@@ -17,7 +17,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <revision>4.40.0</revision>
+    <revision>4.34.0</revision>
     <mailbox.version>4.35.1</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
