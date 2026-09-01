@@ -1,5 +1,5 @@
 library(
-        identifier: 'jenkins-lib-common@v4.1.4',
+        identifier: 'jenkins-lib-common@v4.10.2',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
@@ -16,7 +16,7 @@ pipeline {
         }
     }
     triggers {
-        cron(env.BRANCH_NAME == 'devel' ? 'H 5 * * *' : '')
+        cron(env.BRANCH_IS_PRIMARY == 'true' ? 'H 5 * * *' : '')
     }
     parameters {
         booleanParam defaultValue: false, description: 'Whether to upload the packages in playground repositories', name: 'PLAYGROUND'
@@ -28,6 +28,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '25'))
+        disableConcurrentBuilds()
         timeout(time: 15, unit: 'MINUTES')
         skipDefaultCheckout()
     }
@@ -38,17 +39,24 @@ pipeline {
                 gitMetadata()
             }
         }
+        stage('Skip CI') {
+            steps {
+                script { semanticRelease.guard() }
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                gitleaksStage()
+            }
+        }
         stage('Maven') {
             steps {
                 script {
-                    mavenStage()
-                }
-            }
-        }
-        stage('Bump version') {
-            steps {
-                script {
-                    dt2_semanticRelease()
+                    mavenStage(
+                        profile: '',
+                        deployArtifacts: env.TAG_NAME ? true : false,
+                        extraDeployArgs: '-Dchangelist='
+                    )
                 }
             }
         }
@@ -67,9 +75,6 @@ pipeline {
                 }
 
                 stage('Upload artifacts') {
-                    when {
-                        expression { return uploadStage.shouldUpload() }
-                    }
                     tools {
                         jfrog 'jfrog-cli'
                     }
@@ -78,6 +83,13 @@ pipeline {
                             uploadStage()
                         }
                     }
+                }
+            }
+        }
+        stage('Bump version') {
+            steps {
+                script {
+                    semanticRelease()
                 }
             }
         }
