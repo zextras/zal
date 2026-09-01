@@ -18,7 +18,7 @@
 
   <properties>
     <revision>4.34.0</revision>
-    <carbonio.version>4.32.0</carbonio.version>
+    <mailbox.version>4.35.1</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.15.4</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
@@ -159,7 +159,7 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-common</artifactId>
-      <version>${carbonio.version}</version>
+      <version>${mailbox.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -171,7 +171,7 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-client</artifactId>
-      <version>${carbonio.version}</version>
+      <version>${mailbox.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -183,7 +183,7 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-soap</artifactId>
-      <version>${carbonio.version}</version>
+      <version>${mailbox.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -398,7 +398,7 @@
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
       <classifier>tests</classifier>
-      <version>${carbonio.version}</version>
+      <version>${mailbox.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -406,7 +406,7 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
-      <version>${carbonio.version}</version>
+      <version>${mailbox.version}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -735,7 +735,7 @@
                   <Specification-Version>${project.version}</Specification-Version>
                   <Specification-Commit>${git.commit.id.full}</Specification-Commit>
                   <Specification-Vendor>Zextras</Specification-Vendor>
-                  <Implementation-Version>${carbonio.version}</Implementation-Version>
+                  <Implementation-Version>${mailbox.version}</Implementation-Version>
                   <Created-By>Zextras</Created-By>
                   <Zimbra-Extension-Class>org.openzal.zal.extension.ZalEntrypointImpl</Zimbra-Extension-Class>
                 </manifestEntries>
@@ -773,7 +773,7 @@
                 <include>git.dirty</include>
                 <include>git.commit.id.abbrev</include>
                 <include>git.commit.id.full</include>
-                <include>carbonio.version</include>
+                <include>mailbox.version</include>
               </includes>
             </configuration>
           </execution>
