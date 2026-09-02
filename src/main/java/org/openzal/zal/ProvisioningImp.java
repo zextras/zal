@@ -483,7 +483,7 @@ public class ProvisioningImp implements Provisioning
       searchOptions.setFilter(new ZLdapFilter(ZLdapFilterFactory.FilterId.ALL_ACCOUNTS,FILTER_ALL_NON_SYSTEM_INTERNAL_ACCOUNTS));
       searchOptions.setMakeObjectOpt(SearchDirectoryOptions.MakeObjectOpt.NO_DEFAULTS);
 
-      CountLicensedAccountsVisitor visitor = new CountLicensedAccountsVisitor();
+      CountLicensedAccountsVisitor visitor = new CountLicensedAccountsVisitor(mProvisioning);
       mProvisioning.searchDirectory(searchOptions, visitor);
       return visitor.countersMap;
     } catch (ServiceException e) {
@@ -3151,8 +3151,20 @@ public class ProvisioningImp implements Provisioning
 
   private static class CountLicensedAccountsVisitor implements NamedEntry.Visitor {
     private Map<String, Long> countersMap = new HashMap<>();
+    private final com.zimbra.cs.account.Provisioning provisioning;
+    private String defaultCosId;
+    private CountLicensedAccountsVisitor(com.zimbra.cs.account.Provisioning provisioning) {
+      this.provisioning = provisioning;
+    }
+
     @Override public void visit(NamedEntry entry) throws ServiceException {
-      var cosId = entry.getAttr("zimbraCosId");
+      String cosId = entry.getAttr("zimbraCosId");
+      if (cosId == null || cosId.isEmpty()) {
+        if (defaultCosId == null) {
+          defaultCosId = provisioning.getCosByName(com.zimbra.cs.account.Provisioning.DEFAULT_COS_NAME).getId();
+        }
+        cosId = defaultCosId;
+      }
       countersMap.compute(cosId, (key, oldValue) -> {
         if (oldValue == null) {
           return 1L;

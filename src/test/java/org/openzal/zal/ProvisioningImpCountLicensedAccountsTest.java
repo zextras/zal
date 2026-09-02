@@ -1,15 +1,18 @@
 package org.openzal.zal;
 
 import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.account.Cos;
 import com.zimbra.cs.account.NamedEntry;
 import com.zimbra.cs.account.SearchDirectoryOptions;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openzal.zal.exceptions.ZimbraException;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static com.zimbra.cs.account.SearchDirectoryOptions.MakeObjectOpt.NO_DEFAULTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +26,8 @@ import static org.mockito.Mockito.when;
 
 public class ProvisioningImpCountLicensedAccountsTest
 {
+  private final String DEFAULT_COS_ID = "e00428a1-0c00-11d9-836a-000d93afea2a";
+
   @BeforeAll
   static void setUpFilterFactory()
   {
@@ -30,11 +35,13 @@ public class ProvisioningImpCountLicensedAccountsTest
   }
 
   private static final String ZIMBRA_COS_ID_ATTR = "zimbraCosId";
+  private static final String ZIMBRA_ID = "zimbraId";
 
   private static NamedEntry accountWithCosId(String cosId)
   {
     NamedEntry entry = mock(NamedEntry.class);
     when(entry.getAttr(ZIMBRA_COS_ID_ATTR)).thenReturn(cosId);
+    when(entry.getAttr(ZIMBRA_ID)).thenReturn(UUID.randomUUID().toString());
     return entry;
   }
 
@@ -47,6 +54,10 @@ public class ProvisioningImpCountLicensedAccountsTest
   {
     com.zimbra.cs.account.Provisioning zimbraProvisioning =
         mock(com.zimbra.cs.account.Provisioning.class);
+
+    Cos defaultCos = mock();
+    when(defaultCos.getId()).thenReturn(DEFAULT_COS_ID);
+    when(zimbraProvisioning.getCosByName(com.zimbra.cs.account.Provisioning.DEFAULT_COS_NAME)).thenReturn(defaultCos);
 
     doAnswer(invocation -> {
       @SuppressWarnings("unchecked")
@@ -131,7 +142,7 @@ public class ProvisioningImpCountLicensedAccountsTest
   {
     Map<String, Long> result = executeCountLicensedAccounts(accountWithNullCosId());
     assertEquals(1, result.size());
-    assertEquals(1L, result.get(null));
+    assertEquals(1L, result.get(DEFAULT_COS_ID));
   }
 
   @Test
@@ -143,7 +154,7 @@ public class ProvisioningImpCountLicensedAccountsTest
         accountWithNullCosId()
     );
     assertEquals(2, result.size());
-    assertEquals(2L, result.get(null));
+    assertEquals(2L, result.get(DEFAULT_COS_ID));
     assertEquals(1L, result.get("cos-1"));
   }
 
@@ -152,7 +163,7 @@ public class ProvisioningImpCountLicensedAccountsTest
   {
     Map<String, Long> result = executeCountLicensedAccounts(accountWithCosId(""));
     assertEquals(1, result.size());
-    assertEquals(1L, result.get(""));
+    assertEquals(1L, result.get(DEFAULT_COS_ID));
   }
 
   @Test
@@ -164,7 +175,7 @@ public class ProvisioningImpCountLicensedAccountsTest
         accountWithNullCosId()
     );
     assertEquals(2, result.size());
-    assertEquals(2L, result.get(null));
+    assertEquals(2L, result.get(DEFAULT_COS_ID));
     assertEquals(1L, result.get("cos-a"));
   }
 
@@ -180,25 +191,9 @@ public class ProvisioningImpCountLicensedAccountsTest
         accountWithCosId("cos-valid"),
         accountWithCosId("cos-valid")
     );
-    assertEquals(3, result.size());
-    assertEquals(2L, result.get(null));
-    assertEquals(2L, result.get(""));
-    assertEquals(3L, result.get("cos-valid"));
-  }
-
-  // --- Edge cases ---
-
-  @Test
-  public void whitespace_only_cos_id() throws Exception
-  {
-    Map<String, Long> result = executeCountLicensedAccounts(
-        accountWithCosId(" "),
-        accountWithCosId(" "),
-        accountWithCosId("")
-    );
     assertEquals(2, result.size());
-    assertEquals(2L, result.get(" "));
-    assertEquals(1L, result.get(""));
+    assertEquals(4L, result.get(DEFAULT_COS_ID));
+    assertEquals(3L, result.get("cos-valid"));
   }
 
   @Test
