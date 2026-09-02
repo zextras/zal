@@ -314,6 +314,9 @@ public interface Provisioning
   ProvisioningImp.CountAccountResult countAccount(@Nonnull Domain domain)
         throws ZimbraException;
 
+  Map<String, Long> countLicensedAccountsGroupByCosId()
+          throws ZimbraException;
+
   long getAccountsOnCos(@Nonnull Domain domain, @Nonnull Cos cos);
 
   long getMaxAccountsOnCos(@Nonnull Domain domain, @Nonnull Cos cos);

@@ -37,6 +37,7 @@ import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapProtocol;
 import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
 import com.zimbra.cs.account.*;
+import com.zimbra.cs.account.AttributeClass;
 import com.zimbra.cs.account.AuthToken;
 import com.zimbra.cs.account.accesscontrol.*;
 import com.zimbra.cs.account.auth.AuthContext;
@@ -462,6 +463,34 @@ public class ProvisioningImp implements Provisioning
       throw ExceptionWrapper.wrap(e);
     }
   }
+
+  static com.unboundid.ldap.sdk.Filter FILTER_ALL_NON_SYSTEM_INTERNAL_ACCOUNTS =
+          com.unboundid.ldap.sdk.Filter.createANDFilter(
+                  com.unboundid.ldap.sdk.Filter.createEqualityFilter(LdapConstants.ATTR_objectClass,AttributeClass.OC_zimbraAccount),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraIsSystemResource, LdapConstants.LDAP_TRUE)),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraIsSystemAccount, LdapConstants.LDAP_TRUE)),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(LdapConstants.ATTR_objectClass, AttributeClass.OC_zimbraCalendarResource)),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraIsExternalVirtualAccount, LdapConstants.LDAP_TRUE)),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraAccountStatus, "closed")),
+                  com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createPresenceFilter(com.zimbra.cs.account.Provisioning.A_zimbraCalResType)));
+
+  public Map<String, Long> countLicensedAccountsGroupByCosId()
+          throws ZimbraException {
+    try {
+      SearchDirectoryOptions searchOptions = new SearchDirectoryOptions();
+      searchOptions.setTypes(SearchDirectoryOptions.ObjectType.accounts);
+      searchOptions.setReturnAttrs(new String[] { com.zimbra.cs.account.Provisioning.A_zimbraCOSId });
+      searchOptions.setFilter(new ZLdapFilter(ZLdapFilterFactory.FilterId.ALL_ACCOUNTS,FILTER_ALL_NON_SYSTEM_INTERNAL_ACCOUNTS));
+      searchOptions.setMakeObjectOpt(SearchDirectoryOptions.MakeObjectOpt.NO_DEFAULTS);
+
+      CountLicensedAccountsVisitor visitor = new CountLicensedAccountsVisitor();
+      mProvisioning.searchDirectory(searchOptions, visitor);
+      return visitor.countersMap;
+    } catch (ServiceException e) {
+      throw ExceptionWrapper.wrap(e);
+    }
+  }
+
 
   @Override
   public void visitAllLocalAccountsNoDefaults(@Nonnull SimpleVisitor<Account> visitor)
@@ -3117,6 +3146,20 @@ public class ProvisioningImp implements Provisioning
       return mProvisioning.searchDirectory((SearchDirectoryOptions) options.toZimbra()).stream().map(Entry::of).toList();
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
+    }
+  }
+
+  private static class CountLicensedAccountsVisitor implements NamedEntry.Visitor {
+    private Map<String, Long> countersMap = new HashMap<>();
+    @Override public void visit(NamedEntry entry) throws ServiceException {
+      var cosId = entry.getAttr("zimbraCosId");
+      countersMap.compute(cosId, (key, oldValue) -> {
+        if (oldValue == null) {
+          return 1L;
+        } else {
+          return oldValue + 1;
+        }
+      });
     }
   }
 }
