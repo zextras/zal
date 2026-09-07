@@ -3158,7 +3158,7 @@ public class ProvisioningImp implements Provisioning
     }
 
     @Override public void visit(NamedEntry entry) throws ServiceException {
-      String cosId = entry.getAttr("zimbraCosId");
+      String cosId = entry.getAttr(ProvisioningImp.A_zimbraCOSId);
       if (cosId == null || cosId.isEmpty()) {
         if (defaultCosId == null) {
           defaultCosId = provisioning.getCosByName(com.zimbra.cs.account.Provisioning.DEFAULT_COS_NAME).getId();

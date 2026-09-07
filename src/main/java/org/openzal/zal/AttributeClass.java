@@ -23,4 +23,5 @@ package org.openzal.zal;
 public class AttributeClass
 {
   public static String OC_zimbraAccount = com.zimbra.cs.account.AttributeClass.OC_zimbraAccount;
+  public static String OC_zimbraCalendarResource = com.zimbra.cs.account.AttributeClass.OC_zimbraCalendarResource;
 }
