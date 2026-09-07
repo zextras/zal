@@ -473,6 +473,7 @@ public class ProvisioningImp implements Provisioning
                   com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraAccountStatus, "closed")),
                   com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createPresenceFilter(com.zimbra.cs.account.Provisioning.A_zimbraCalResType)));
 
+  @Override
   public Map<String, Long> countLicensedAccountsGroupByCosId()
           throws ZimbraException {
     try {
