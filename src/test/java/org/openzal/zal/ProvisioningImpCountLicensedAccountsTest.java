@@ -34,8 +34,8 @@ public class ProvisioningImpCountLicensedAccountsTest
     ZLdapFilterFactorySimulator.setInstance();
   }
 
-  private static final String ZIMBRA_COS_ID_ATTR = "zimbraCosId";
-  private static final String ZIMBRA_ID = "zimbraId";
+  private static final String ZIMBRA_COS_ID_ATTR = ProvisioningImp.A_zimbraCOSId;
+  private static final String ZIMBRA_ID = ProvisioningImp.A_zimbraId;
 
   private static NamedEntry accountWithCosId(String cosId)
   {
