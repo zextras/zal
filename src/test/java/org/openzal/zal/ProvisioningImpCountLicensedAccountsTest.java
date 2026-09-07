@@ -138,7 +138,7 @@ public class ProvisioningImpCountLicensedAccountsTest
   // --- Null and empty COS ID ---
 
   @Test
-  public void null_cos_id_produces_null_key() throws Exception
+  public void null_cos_id_fallback_to_default_COS() throws Exception
   {
     Map<String, Long> result = executeCountLicensedAccounts(accountWithNullCosId());
     assertEquals(1, result.size());
