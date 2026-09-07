@@ -465,10 +465,8 @@ public class ProvisioningImp implements Provisioning
 
   private static final com.unboundid.ldap.sdk.Filter FILTER_ALL_NON_SYSTEM_INTERNAL_ACCOUNTS;
 
-  static
-  {
-    try
-    {
+  static {
+    try {
       FILTER_ALL_NON_SYSTEM_INTERNAL_ACCOUNTS = com.unboundid.ldap.sdk.Filter.createANDFilter(
         com.unboundid.ldap.sdk.Filter.createEqualityFilter(LdapConstants.ATTR_objectClass, AttributeClass.OC_zimbraAccount),
         com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraIsSystemResource, LdapConstants.LDAP_TRUE)),
@@ -478,9 +476,7 @@ public class ProvisioningImp implements Provisioning
         com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createEqualityFilter(com.zimbra.cs.account.Provisioning.A_zimbraAccountStatus, "closed")),
         com.unboundid.ldap.sdk.Filter.createNOTFilter(com.unboundid.ldap.sdk.Filter.createPresenceFilter(com.zimbra.cs.account.Provisioning.A_zimbraCalResType))
       );
-    }
-    catch (LDAPException e)
-    {
+    } catch (RuntimeException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
