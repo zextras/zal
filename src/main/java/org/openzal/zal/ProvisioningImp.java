@@ -37,7 +37,6 @@ import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapProtocol;
 import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
 import com.zimbra.cs.account.*;
-import com.zimbra.cs.account.AttributeClass;
 import com.zimbra.cs.account.AuthToken;
 import com.zimbra.cs.account.accesscontrol.*;
 import com.zimbra.cs.account.auth.AuthContext;
