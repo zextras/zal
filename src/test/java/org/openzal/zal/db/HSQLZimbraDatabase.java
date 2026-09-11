@@ -18,8 +18,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public final class HSQLZimbraDatabase extends HSQLDB
@@ -62,30 +65,46 @@ public final class HSQLZimbraDatabase extends HSQLDB
 
   //
   // Deletes all records from all tables.
-  // @param zimbraServerDir the directory that contains the ZimbraServer project
   // @throws Exception
   //
   public static void clearDatabase() throws Exception
   {
-    clearDatabase("/dbsetup/clear.sql");
-  }
-
-  /**
-   * Executes a clear script for all mailbox groups
-   * @param clearSqlScript sql script containing clear instructions
-   * @throws Exception
-   */
-  private static void clearDatabase(String clearSqlScript) throws Exception
-  {
     com.zimbra.cs.db.DbPool.DbConnection conn = DbPool.getConnection();
     try {
-      executeForAllGroups(
-          conn,
-          clearSqlScript
-      );
+      truncateMailboxGroups(conn);
+      executeFromClasspath(conn, "/dbsetup/clear_zimbra.sql");
     } finally {
       DbPool.quietClose(conn);
     }
+  }
+
+  private static void truncateMailboxGroups(com.zimbra.cs.db.DbPool.DbConnection conn) throws Exception
+  {
+    List<String> schemas = new ArrayList<>();
+    PreparedStatement select = null;
+    ResultSet rs = null;
+    try {
+      select = conn.prepareStatement(
+          "SELECT schema_name FROM information_schema.schemata WHERE schema_name LIKE 'MBOXGROUP%'");
+      rs = select.executeQuery();
+      while (rs.next()) {
+        schemas.add(rs.getString(1));
+      }
+    } finally {
+      DbPool.closeResults(rs);
+      DbPool.quietCloseStatement(select);
+    }
+
+    Statement truncate = conn.getConnection().createStatement();
+    try {
+      for (String schema : schemas) {
+        // NO CHECK skips foreign key validation, so the schemas can be emptied in any order
+        truncate.execute("TRUNCATE SCHEMA " + schema + " RESTART IDENTITY AND COMMIT NO CHECK");
+      }
+    } finally {
+      truncate.close();
+    }
+    conn.commit();
   }
 
   private static void executeForAllGroups(com.zimbra.cs.db.DbPool.DbConnection conn, String classpathFile) throws Exception
