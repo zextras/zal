@@ -135,7 +135,7 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.2.redhat-00023</version>
     </dependency>
 
     <!-- provided: zal is meant to run against whatever jackson version the
