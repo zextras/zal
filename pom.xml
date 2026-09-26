@@ -20,7 +20,7 @@
     <revision>4.35.1</revision>
     <mailbox.version>4.35.1</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.15.4</jackson.version>
+    <jackson.version>2.18.9</jackson.version>
     <jfreechart.version>1.0.15</jfreechart.version>
     <log4j.version>2.20.0</log4j.version>
     <maven.compiler.source>21</maven.compiler.source>
