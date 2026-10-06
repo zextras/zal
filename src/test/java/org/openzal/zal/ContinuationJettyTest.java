@@ -117,6 +117,19 @@ public class ContinuationJettyTest
       }
     }
 
+    /** What Jetty does on startAsync(): the listeners of the previous cycle are notified and dropped. */
+    void newCycle() throws IOException
+    {
+      List<AsyncListener> previous = new ArrayList<>(listeners);
+      listeners.clear();
+      state = State.ASYNC;
+      AsyncEvent event = new AsyncEvent(this);
+      for (AsyncListener listener : previous)
+      {
+        listener.onStartAsync(event);
+      }
+    }
+
     void finish() throws IOException
     {
       state = State.COMPLETE;
@@ -143,7 +156,7 @@ public class ContinuationJettyTest
     Mockito.when(mRequest.isAsyncStarted()).thenAnswer(i -> mAsyncStarted);
     Mockito.when(mRequest.startAsync()).thenAnswer(i -> {
       mAsyncStarted = true;
-      mAsyncContext.state = FakeAsyncContext.State.ASYNC;
+      mAsyncContext.newCycle();
       return mAsyncContext;
     });
     Mockito.when(mRequest.getAsyncContext()).thenReturn(mAsyncContext);
@@ -329,14 +342,58 @@ public class ContinuationJettyTest
   }
 
   @Test
-  public void listener_registers_itself_again_on_start_async() throws Exception
+  public void listener_is_registered_exactly_once_on_every_async_cycle() throws Exception
   {
     mContinuation.suspend(0);
     assertEquals(1, mAsyncContext.listeners.size());
+    // suspending twice in the same cycle must not register twice
+    mContinuation.suspend(0);
+    assertEquals(1, mAsyncContext.listeners.size());
 
-    mAsyncContext.listeners.get(0).onStartAsync(new AsyncEvent(mAsyncContext));
+    mContinuation.resume();
+    mAsyncStarted = false;
+    mContinuation.suspend(500);
 
-    assertEquals(2, mAsyncContext.listeners.size());
+    assertEquals(1, mAsyncContext.listeners.size());
+  }
+
+  @Test
+  public void timeout_on_the_second_cycle_dispatches_and_marks_expired() throws Exception
+  {
+    mContinuation.suspend(0);
+    mContinuation.resume();
+    mAsyncStarted = false;
+    assertEquals(1, mAsyncContext.dispatchCount);
+
+    mContinuation.suspend(500);
+    mAsyncContext.expire();
+
+    assertEquals(2, mAsyncContext.dispatchCount);
+    assertTrue(mContinuation.isExpired());
+    assertFalse(mContinuation.isSuspended());
+    assertDoesNotThrow(() -> mContinuation.resume());
+    assertEquals(2, mAsyncContext.dispatchCount);
+  }
+
+  @Test
+  public void listener_is_registered_on_a_brand_new_async_context_without_on_start_async() throws Exception
+  {
+    mContinuation.suspend(0);
+    mContinuation.resume();
+    mAsyncStarted = false;
+    FakeAsyncContext second = new FakeAsyncContext();
+    Mockito.doAnswer(i -> {
+      mAsyncStarted = true;
+      return second;
+    }).when(mRequest).startAsync();
+
+    mContinuation.suspend(500);
+    second.expire();
+
+    assertEquals(1, second.listeners.size());
+    assertEquals(1, second.dispatchCount);
+    assertTrue(mContinuation.isExpired());
+    Mockito.verify(mRequest, Mockito.never()).getAsyncContext();
   }
 
   @Test

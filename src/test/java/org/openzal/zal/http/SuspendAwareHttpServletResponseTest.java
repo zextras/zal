@@ -31,6 +31,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SuspendAwareHttpServletResponseTest
 {
@@ -112,5 +118,72 @@ public class SuspendAwareHttpServletResponseTest
     response.getOutputStream().flush();
 
     Mockito.verify(mOut, Mockito.never()).flush();
+  }
+
+  @Test
+  public void output_stream_wrapper_is_cached() throws IOException
+  {
+    HttpServletResponse response = new SuspendAwareHttpServletResponse(mRequest, mResponse);
+
+    assertSame(response.getOutputStream(), response.getOutputStream());
+  }
+
+  @Test
+  public void writer_wrapper_is_cached() throws IOException
+  {
+    PrintWriter delegate = new PrintWriter(new StringWriter());
+    Mockito.when(mResponse.getWriter()).thenReturn(delegate);
+    HttpServletResponse response = new SuspendAwareHttpServletResponse(mRequest, mResponse);
+
+    assertSame(response.getWriter(), response.getWriter());
+  }
+
+  @Test
+  public void writer_flush_and_close_are_ignored_while_suspended() throws IOException
+  {
+    StringWriter sink = new StringWriter();
+    PrintWriter delegate = Mockito.spy(new PrintWriter(sink));
+    Mockito.when(mResponse.getWriter()).thenReturn(delegate);
+    Mockito.when(mContinuation.isSuspended()).thenReturn(true);
+    HttpServletResponse response = new SuspendAwareHttpServletResponse(mRequest, mResponse);
+
+    PrintWriter writer = response.getWriter();
+    writer.print("hello");
+    writer.flush();
+    writer.close();
+
+    Mockito.verify(delegate, Mockito.never()).flush();
+    Mockito.verify(delegate, Mockito.never()).close();
+    // content written while suspended is not lost, it is only not pushed to the client
+    Mockito.verify(delegate, Mockito.atLeastOnce()).write(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
+  }
+
+  @Test
+  public void writer_flush_and_close_are_delegated_when_not_suspended() throws IOException
+  {
+    StringWriter sink = new StringWriter();
+    PrintWriter delegate = Mockito.spy(new PrintWriter(sink));
+    Mockito.when(mResponse.getWriter()).thenReturn(delegate);
+    Mockito.when(mContinuation.isSuspended()).thenReturn(false);
+    HttpServletResponse response = new SuspendAwareHttpServletResponse(mRequest, mResponse);
+
+    PrintWriter writer = response.getWriter();
+    writer.print("hello");
+    writer.flush();
+    writer.close();
+
+    Mockito.verify(delegate, Mockito.atLeastOnce()).flush();
+    Mockito.verify(delegate).close();
+    assertEquals("hello", sink.toString());
+  }
+
+  @Test
+  public void container_still_enforces_stream_or_writer_exclusivity() throws IOException
+  {
+    Mockito.when(mResponse.getWriter()).thenThrow(new IllegalStateException("STREAM"));
+    HttpServletResponse response = new SuspendAwareHttpServletResponse(mRequest, mResponse);
+    response.getOutputStream();
+
+    assertThrows(IllegalStateException.class, response::getWriter);
   }
 }

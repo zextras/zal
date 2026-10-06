@@ -30,11 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Response handed to {@link HttpHandler}s. While the request is suspended
  * ({@link Continuation#suspend()}) it never commits or completes the underlying response:
- * <code>flushBuffer()</code>, <code>flush()</code> and <code>close()</code> of the output stream are ignored.
+ * <code>flushBuffer()</code>, <code>flush()</code> and <code>close()</code> of the output stream and of the
+ * writer are ignored.
  *
  * <p>Since {@code Continuation.suspend()} no longer unwinds the caller with an exception, code
  * running after it on the first dispatch (typically an unconditional
@@ -73,10 +75,60 @@ class SuspendAwareHttpServletResponse extends HttpServletResponseWrapper
     }
   }
 
+  // Servlet spec: getOutputStream() and getWriter() are mutually exclusive. The container is always asked
+  // first so it keeps enforcing that (IllegalStateException); the wrappers are cached per delegate instance.
+  private SuspendAwareOutputStream mOutputStream;
+  private SuspendAwarePrintWriter mWriter;
+
   @Override
-  public ServletOutputStream getOutputStream() throws IOException
+  public synchronized ServletOutputStream getOutputStream() throws IOException
   {
-    return new SuspendAwareOutputStream(super.getOutputStream());
+    ServletOutputStream delegate = super.getOutputStream();
+    if (mOutputStream == null || mOutputStream.mDelegate != delegate)
+    {
+      mOutputStream = new SuspendAwareOutputStream(delegate);
+    }
+    return mOutputStream;
+  }
+
+  @Override
+  public synchronized PrintWriter getWriter() throws IOException
+  {
+    PrintWriter delegate = super.getWriter();
+    if (mWriter == null || mWriter.mDelegate != delegate)
+    {
+      mWriter = new SuspendAwarePrintWriter(delegate);
+    }
+    return mWriter;
+  }
+
+  private class SuspendAwarePrintWriter extends PrintWriter
+  {
+    private final PrintWriter mDelegate;
+
+    SuspendAwarePrintWriter(PrintWriter delegate)
+    {
+      super(delegate, false);
+      mDelegate = delegate;
+    }
+
+    @Override
+    public void flush()
+    {
+      if (!isSuspended())
+      {
+        super.flush();
+      }
+    }
+
+    @Override
+    public void close()
+    {
+      if (!isSuspended())
+      {
+        super.close();
+      }
+    }
   }
 
   private class SuspendAwareOutputStream extends ServletOutputStream

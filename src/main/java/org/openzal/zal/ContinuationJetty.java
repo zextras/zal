@@ -60,6 +60,8 @@ public class ContinuationJetty implements Continuation
   private final HttpServletRequest mReq;
   private final AtomicBoolean mSuspended;
   private final AsyncListener mListener;
+  private boolean mListenerRegistered = false; // guarded by this
+  private AsyncContext mListenerContext = null; // guarded by this
   private volatile AsyncContext mAsyncContext;
   private volatile boolean mExpired;
   private volatile boolean mIsInitial;
@@ -135,16 +137,12 @@ public class ContinuationJetty implements Continuation
       if (asyncContext == null || !mReq.isAsyncStarted())
       {
         // First suspension, or a new one after the previous async cycle was dispatched.
-        // The listener is registered once; on later cycles Jetty calls onStartAsync on it,
-        // where it registers itself again.
-        boolean firstCycle = (asyncContext == null);
         asyncContext = mReq.isAsyncStarted() ? mReq.getAsyncContext() : mReq.startAsync();
         mAsyncContext = asyncContext;
-        if (firstCycle)
-        {
-          asyncContext.addListener(mListener);
-        }
       }
+      // Container listeners are per async cycle (dropped at startAsync()): make sure ours is registered
+      // on the current one, exactly once.
+      registerListener(asyncContext);
       // 0 (or negative) means "never expire": the caller owns the timeout.
       // Without this the container default (30 s on Jetty) would apply.
       asyncContext.setTimeout(timeoutMs > 0 ? timeoutMs : 0);
@@ -156,6 +154,23 @@ public class ContinuationJetty implements Continuation
     {
       throw new ContinuationThrowable(ex);
     }
+  }
+
+  /**
+   * Registers the listener on the given async context unless it already is registered for the current
+   * async cycle. Jetty reuses the same AsyncContext object across cycles but drops its listeners at every
+   * startAsync() (notifying them through onStartAsync, which clears the flag); other containers may hand out
+   * a new AsyncContext instead: both cases are covered.
+   */
+  private synchronized void registerListener(AsyncContext asyncContext)
+  {
+    if (mListenerRegistered && mListenerContext == asyncContext)
+    {
+      return;
+    }
+    asyncContext.addListener(mListener);
+    mListenerContext = asyncContext;
+    mListenerRegistered = true;
   }
 
   @Override
@@ -261,8 +276,12 @@ public class ContinuationJetty implements Continuation
     @Override
     public void onStartAsync(AsyncEvent event) throws IOException
     {
-      // The container drops the listeners at every startAsync(): register again.
-      event.getAsyncContext().addListener(this);
+      // The container drops all the listeners at every startAsync(): the new cycle starts with none.
+      // suspend() registers this listener again, explicitly, on the new cycle.
+      synchronized (ContinuationJetty.this)
+      {
+        mListenerRegistered = false;
+      }
     }
   }
 }
