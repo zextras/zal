@@ -20,6 +20,8 @@
 
 package org.openzal.zal;
 
+import com.zimbra.common.util.ZimbraLog;
+
 import javax.annotation.Nullable;
 
 import javax.servlet.AsyncContext;
@@ -27,17 +29,40 @@ import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * {@link Continuation} implemented on top of the Servlet 3 {@link AsyncContext}.
+ *
+ * <p>The semantics intentionally mirror the former Jetty 9 {@code Servlet3Continuation}:
+ * <ul>
+ *   <li>{@code suspend(0)} means <em>no timeout</em> ({@code AsyncContext.setTimeout(0)}): the
+ *   caller owns the timeout (the container default of 30 s must not apply);</li>
+ *   <li>when the async timeout does fire the request is re-dispatched, so the servlet runs
+ *   again with {@link #isExpired()} set and can write the normal response;</li>
+ *   <li>{@link #resume()} only dispatches a request that is currently suspended and is a
+ *   no-op when it lost the race against timeout/completion.</li>
+ * </ul>
+ *
+ * <p>Unlike Jetty 9, {@code suspend()} does <strong>not</strong> unwind the caller with an
+ * exception: on Jetty 12 EE8 any exception escaping the servlet while async is started is
+ * routed to {@code HttpChannelState.onError}, which fires {@code AsyncListener.onError} and
+ * then sends an HTTP 500 (see commit message). Callers must simply return from the
+ * servlet after {@code suspend()}; {@code org.openzal.zal.http.InternalHttpHandler} makes sure
+ * the response is not flushed/committed while the request is suspended.
+ */
 public class ContinuationJetty implements Continuation
 {
-  private static final String CONTINUATION_ATTR = "org.openzal.zal.ContinuationJetty";
+  /** Request attribute under which the continuation is cached. */
+  public static final String CONTINUATION_ATTR = "org.openzal.zal.ContinuationJetty";
 
   private final HttpServletRequest mReq;
-  private AsyncContext mAsyncContext;
   private final AtomicBoolean mSuspended;
+  private final AsyncListener mListener;
+  private volatile AsyncContext mAsyncContext;
   private volatile boolean mExpired;
-  private boolean mIsInitial;
+  private volatile boolean mIsInitial;
 
   public static Continuation getOrCreateContinuation(HttpServletRequest req)
   {
@@ -57,6 +82,7 @@ public class ContinuationJetty implements Continuation
     mExpired = false;
     mAsyncContext = null;
     mIsInitial = !req.isAsyncStarted();
+    mListener = new ContinuationListener();
   }
 
   @Override
@@ -68,10 +94,21 @@ public class ContinuationJetty implements Continuation
   @Override
   public void resume()
   {
-    if (mAsyncContext != null)
+    AsyncContext asyncContext = mAsyncContext;
+    // Only the thread that flips suspended -> resumed may dispatch. Not suspended yet,
+    // already resumed, expired (timeout owns the dispatch) or completed: nothing to do.
+    if (asyncContext == null || !mSuspended.compareAndSet(true, false))
     {
-      mSuspended.set(false);
-      mAsyncContext.dispatch();
+      return;
+    }
+    try
+    {
+      asyncContext.dispatch();
+    }
+    catch (IllegalStateException ex)
+    {
+      // lost the race against the async timeout / complete(): the container already owns the request
+      ZimbraLog.extensions.debug("Continuation resume ignored, request is no more suspended: " + ex.getMessage());
     }
   }
 
@@ -94,43 +131,26 @@ public class ContinuationJetty implements Continuation
   {
     try
     {
-      if (mAsyncContext == null)
+      AsyncContext asyncContext = mAsyncContext;
+      if (asyncContext == null || !mReq.isAsyncStarted())
       {
-        mAsyncContext = mReq.startAsync();
-        mAsyncContext.addListener(new AsyncListener()
+        // First suspension, or a new one after the previous async cycle was dispatched.
+        // The listener is registered once; on later cycles Jetty calls onStartAsync on it,
+        // where it registers itself again.
+        boolean firstCycle = (asyncContext == null);
+        asyncContext = mReq.isAsyncStarted() ? mReq.getAsyncContext() : mReq.startAsync();
+        mAsyncContext = asyncContext;
+        if (firstCycle)
         {
-          @Override
-          public void onComplete(AsyncEvent event)
-          {
-            mSuspended.set(false);
-          }
-
-          @Override
-          public void onTimeout(AsyncEvent event)
-          {
-            mSuspended.set(false);
-            mExpired = true;
-          }
-
-          @Override
-          public void onError(AsyncEvent event)
-          {
-            mSuspended.set(false);
-          }
-
-          @Override
-          public void onStartAsync(AsyncEvent event)
-          {
-          }
-        });
+          asyncContext.addListener(mListener);
+        }
       }
+      // 0 (or negative) means "never expire": the caller owns the timeout.
+      // Without this the container default (30 s on Jetty) would apply.
+      asyncContext.setTimeout(timeoutMs > 0 ? timeoutMs : 0);
       mExpired = false;
       mIsInitial = false;
       mSuspended.set(true);
-      if (timeoutMs > 0)
-      {
-        mAsyncContext.setTimeout(timeoutMs);
-      }
     }
     catch (Throwable ex)
     {
@@ -159,9 +179,10 @@ public class ContinuationJetty implements Continuation
   @Override
   public String toString()
   {
-    if (mAsyncContext != null)
+    AsyncContext asyncContext = mAsyncContext;
+    if (asyncContext != null)
     {
-      return mAsyncContext.toString();
+      return asyncContext.toString();
     }
     return super.toString();
   }
@@ -192,5 +213,56 @@ public class ContinuationJetty implements Continuation
   public int hashCode()
   {
     return mReq.hashCode();
+  }
+
+  private class ContinuationListener implements AsyncListener
+  {
+    @Override
+    public void onComplete(AsyncEvent event)
+    {
+      mSuspended.set(false);
+    }
+
+    @Override
+    public void onTimeout(AsyncEvent event)
+    {
+      // If resume() already won the race it owns the dispatch and the request is not expired.
+      if (mSuspended.compareAndSet(true, false))
+      {
+        mExpired = true;
+      }
+      // Re-dispatch (as Servlet3Continuation did) so that the servlet runs again and writes
+      // the regular response. Without a dispatch/complete the container would send a 500
+      // "AsyncContext timeout" or, if the response is already committed, get stuck.
+      try
+      {
+        event.getAsyncContext().dispatch();
+      }
+      catch (IllegalStateException ex)
+      {
+        ZimbraLog.extensions.debug("Continuation timeout dispatch ignored: " + ex.getMessage());
+      }
+    }
+
+    @Override
+    public void onError(AsyncEvent event)
+    {
+      mSuspended.set(false);
+      try
+      {
+        event.getAsyncContext().complete();
+      }
+      catch (IllegalStateException ex)
+      {
+        ZimbraLog.extensions.debug("Continuation error completion ignored: " + ex.getMessage());
+      }
+    }
+
+    @Override
+    public void onStartAsync(AsyncEvent event) throws IOException
+    {
+      // The container drops the listeners at every startAsync(): register again.
+      event.getAsyncContext().addListener(this);
+    }
   }
 }

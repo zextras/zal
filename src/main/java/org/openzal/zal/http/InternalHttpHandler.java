@@ -42,36 +42,36 @@ class InternalHttpHandler extends ExtensionHttpHandler
   @Override
   public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
   {
-    mHttpHandler.doOptions(req, resp);
+    mHttpHandler.doOptions(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
   {
-    mHttpHandler.doGet(req, resp);
+    mHttpHandler.doGet(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
   {
-    mHttpHandler.doPost(req, resp);
+    mHttpHandler.doPost(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 
   @Override
   public void doPut(HttpServletRequest req, HttpServletResponse resp)
     throws IOException, ServletException {
-    mHttpHandler.doPut(req, resp);
+    mHttpHandler.doPut(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 
   @Override
   public void doDelete(HttpServletRequest req, HttpServletResponse resp)
     throws IOException, ServletException {
-    mHttpHandler.doDelete(req, resp);
+    mHttpHandler.doDelete(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 
   @Override
   public void doPatch(HttpServletRequest req, HttpServletResponse resp)
     throws IOException, ServletException {
-    mHttpHandler.doPatch(req, resp);
+    mHttpHandler.doPatch(req, new SuspendAwareHttpServletResponse(req, resp));
   }
 }
