@@ -40,12 +40,6 @@ public class TransactionId
     mTransactionId = (com.zimbra.cs.redolog.TransactionId) transactionId;
   }
 
-  public void deserialize(@Nonnull RedoLogInput redologInput)
-    throws IOException
-  {
-    mTransactionId.deserialize(redologInput.toZimbra(com.zimbra.cs.redolog.RedoLogInput.class));
-  }
-
   @Override
   public boolean equals(Object o)
   {
