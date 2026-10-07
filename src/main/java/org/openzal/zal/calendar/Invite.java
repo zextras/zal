@@ -203,12 +203,6 @@ public class Invite
     return alarmMins;
   }
 
-  public long getUTCAlarmAbsoluteTime()
-  {
-    Alarm alarm = getDisplayAlarm();
-    return alarm.getTriggerTime(getUtcStartTime(), getUtcEndTime());
-  }
-
   public FreeBusyStatus getFreeBusy()
   {
     return FreeBusyStatus.fromZimbra(mInvite.getFreeBusy());
@@ -521,16 +515,6 @@ public class Invite
     return Priority.fromZimbra(mInvite.getPriority());
   }
 
-  public long getEffectiveEndTime()
-  {
-    ParsedDateTime parsedDateTime = mInvite.getEffectiveEndTime();
-    if (parsedDateTime == null)
-    {
-      return getUtcStartTime() + 2L*60L*60L*1000L;
-    }
-    return parsedDateTime.getDate().getTime();
-  }
-
   public boolean isAllDayEvent()
   {
     return mInvite.isAllDayEvent();
@@ -688,21 +672,6 @@ public class Invite
     public boolean hasEndDate()
   {
     return mInvite.getEffectiveEndTime() != null;
-  }
-
-  public boolean hasEffectiveEndDate()
-  {
-    return mInvite.getEffectiveEndTime() != null;
-  }
-
-  public long getUtcEffectiveEndDate()
-  {
-    return mInvite.getEffectiveEndTime().getUtcTime();
-  }
-
-  public boolean isCompleted()
-  {
-    return getStatus().equals(GlobalInviteStatus.TASK_COMPLETED);
   }
 
   public boolean createdByOrganizer()
