@@ -25,8 +25,7 @@ public class AccountIT
   private Domain          mMainDomain;
 
   @BeforeEach
-  public void setup() throws Exception
-  {
+  public void setup() {
     mZimbraSimulator = new ZalZimbraSimulator();
     mProvisioning = mZimbraSimulator.getProvisioning();
     mMainDomain = mProvisioning.createDomain("example.com",new HashMap<String, Object>());
@@ -40,8 +39,7 @@ public class AccountIT
   }
 
   @Test
-  public void no_aliases_only_one_address_returned() throws Exception
-  {
+  public void no_aliases_only_one_address_returned() {
     List<String> aliases;
 
     aliases = new LinkedList<String>(
@@ -59,8 +57,7 @@ public class AccountIT
   }
 
   @Test
-  public void two_alias_three_addresses_returned() throws Exception
-  {
+  public void two_alias_three_addresses_returned() {
     mAccount.addAlias("alias_1@example.com");
     mAccount.addAlias("alias_2@example.com");
 
@@ -90,8 +87,7 @@ public class AccountIT
   }
 
   @Test
-  public void one_alias_plus_domain_alias_four_addresses_returned() throws Exception
-  {
+  public void one_alias_plus_domain_alias_four_addresses_returned() {
     List<String> aliases;
 
     mAccount.addAlias("alias@example.com");
@@ -129,8 +125,7 @@ public class AccountIT
   }
 
   @Test
-  public void alias_on_other_domain_returned() throws Exception
-  {
+  public void alias_on_other_domain_returned() {
     List<String> aliases;
 
     mAccount.addAlias("alias@otherdomain.com");
@@ -178,8 +173,7 @@ public class AccountIT
   }
 
   @Test
-  public void include_allow_from_addresses() throws Exception
-  {
+  public void include_allow_from_addresses() {
     HashMap<String, Object> attrs = new HashMap<String, Object>();
     attrs.put("zimbraAllowFromAddress", "other@domain123.com");
     mProvisioning.modifyAttrs(mAccount,attrs);

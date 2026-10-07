@@ -26,8 +26,6 @@ import java.security.NoSuchAlgorithmException;
 public class ExtensionVersionValidator
 {
 
-  public void validate(JarAccessor jar, Version zalVersion)
-    throws IOException, NoSuchAlgorithmException
-  {
+  public void validate(JarAccessor jar, Version zalVersion) {
   }
 }

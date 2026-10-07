@@ -26,6 +26,6 @@ import java.lang.ref.WeakReference;
 
 public interface ZalExtensionController
 {
-    void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader) throws IOException;
+    void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader);
   boolean canControlExtension();
 }

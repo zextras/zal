@@ -12,8 +12,7 @@ public class ExtensionVersionValidatorIT
   private JarAccessor               mJar;
 
   @BeforeEach
-  public void setup() throws Exception
-  {
+  public void setup() {
     mJar = mock(JarAccessor.class);
 
     mValidator = new ExtensionVersionValidator();

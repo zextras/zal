@@ -63,8 +63,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception
-  {
+  public void beforeEach(ExtensionContext context) {
   }
 
   @Override
@@ -193,8 +192,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     MailboxIndex.startup();
   }
 
-  private void initProvisioning() throws Exception
-  {
+  private void initProvisioning() {
     com.zimbra.cs.account.Provisioning.setInstance(createProvisioning());
     ZLdapFilterFactorySimulator.setInstance();
     /* $if ZimbraVersion >= 8.7.6$ */

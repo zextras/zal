@@ -142,8 +142,7 @@ public class ZalBlob implements Blob
   }
 
   @Override
-  public long getStoredFileSize() throws IOException
-  {
+  public long getStoredFileSize() {
     return mFile.length();
   }
 

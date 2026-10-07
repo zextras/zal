@@ -33,7 +33,7 @@ import org.openzal.zal.mailbox.ZalStoreManager;
 
 public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
 
-  public void startup() throws IOException {
+  public void startup() {
     BlobInputStream.setFileDescriptorCache(new FileDescriptorCache(null));
   }
 
@@ -304,7 +304,7 @@ public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
       mMockStagedBlob = mockStagedBlob;
     }
 
-    public Blob getLocalBlob() throws IOException {
+    public Blob getLocalBlob() {
       return new ZalMailboxBlob(
           BlobWrap.wrapZimbraBlob(mMockStagedBlob.getMockBlob()),
           new org.openzal.zal.Mailbox(mMockStagedBlob.getMailbox()),

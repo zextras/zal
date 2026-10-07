@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class ZalProvUtil {
 
-  public static void main(String[] args) throws IOException, ServiceException {
+  public static void main(String[] args) throws ServiceException {
     try {
       ProvUtil.main(args);
     } catch (IOException e) {

@@ -16,9 +16,7 @@ public class SanitizeFolderNameIT
   private final String DEFAULT_FOLDER_NAME = "New Folder";
 
   @BeforeEach
-  public void setUp()
-    throws Exception
-  {
+  public void setUp() {
     NoSuchItemException noShuchFolderException = mock(NoSuchItemException.class);
     mailbox = mock(Mailbox.class);
     when(mailbox.getFolderByName(any(OperationContext.class),
@@ -28,32 +26,28 @@ public class SanitizeFolderNameIT
   }
 
   @Test
-  public void callOriginalName_withExampleName_returnSameName() throws Exception
-  {
+  public void callOriginalName_withExampleName_returnSameName() {
     String name = "Example";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
     assertEquals(sfn.getOriginalName(), name);
   }
 
   @Test
-  public void sanitize_simpleName_returnTheSame() throws Exception
-  {
+  public void sanitize_simpleName_returnTheSame() {
     String name = "SimpleName";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
     assertEquals(sfn.sanitizeName(zcontext), name);
   }
 
   @Test
-  public void sanitize_simpleNameWithSpaces_returnTheSame() throws Exception
-  {
+  public void sanitize_simpleNameWithSpaces_returnTheSame() {
     String name = "Simple Folder Name";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
     assertEquals(sfn.sanitizeName(zcontext), name);
   }
 
   @Test
-  public void sanitize_simpleNameWithTrailingSpaces_returnNameWithoutTrailingSpaces() throws Exception
-  {
+  public void sanitize_simpleNameWithTrailingSpaces_returnNameWithoutTrailingSpaces() {
     String name = "  Simple Folder Name  ";
     String nameExpected = "Simple Folder Name";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
@@ -61,8 +55,7 @@ public class SanitizeFolderNameIT
   }
 
   @Test
-  public void sanitize_nameWithCtrlChars_returnNameWithoutCtrlChars() throws Exception
-  {
+  public void sanitize_nameWithCtrlChars_returnNameWithoutCtrlChars() {
     String name = "Simple\tFolder Name\n";
     String nameExpected = "SimpleFolder Name";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
@@ -70,8 +63,7 @@ public class SanitizeFolderNameIT
   }
 
   @Test
-  public void sanitize_nameWithCtrlCharsAndInvalidChars_returnNameWithoutCtrlCharsAndInvalidChars() throws Exception
-  {
+  public void sanitize_nameWithCtrlCharsAndInvalidChars_returnNameWithoutCtrlCharsAndInvalidChars() {
     String name = "Si:mple\tFo/lder N\"ame\n";
     String nameExpected = "SimpleFolder Name";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
@@ -79,16 +71,14 @@ public class SanitizeFolderNameIT
   }
 
   @Test
-  public void sanitize_nameWithSpaceCtrlCharsAndDots_returnNewFolder() throws Exception
-  {
+  public void sanitize_nameWithSpaceCtrlCharsAndDots_returnNewFolder() {
     String name = "  \t..\n";
     SanitizeFolderName sfn = new SanitizeFolderName(mailbox, name, 0);
     assertEquals(sfn.sanitizeName(zcontext), DEFAULT_FOLDER_NAME);
   }
 
   @Test
-  public void sanitize_nameOfAnExistingFolder_returnNextAvailableFolderName() throws Exception
-  {
+  public void sanitize_nameOfAnExistingFolder_returnNextAvailableFolderName() {
     String name = "Folder";
     Folder existingFolder = mock(Folder.class);
     Mailbox mailbox = mock(Mailbox.class);
@@ -110,8 +100,7 @@ public class SanitizeFolderNameIT
   }
 
   @Test
-  public void sanitize_nameOfAnExistingFolder_throwsExceptionOnOverflow() throws Exception
-  {
+  public void sanitize_nameOfAnExistingFolder_throwsExceptionOnOverflow() {
     Folder existingFolder = mock(Folder.class);
     Mailbox mailbox = mock(Mailbox.class);
 

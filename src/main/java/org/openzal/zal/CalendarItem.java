@@ -152,7 +152,7 @@ public class CalendarItem extends Item
     @Nullable RecurrenceId recurId,
     long time
   )
-    throws IOException, MessagingException
+    throws MessagingException
   {
     Mailbox mailbox = getMailbox();
     OperationContext operationContext = mailbox.newOperationContext();

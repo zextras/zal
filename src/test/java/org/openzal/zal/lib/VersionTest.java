@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 public class VersionTest {
 
   @Test
-  public void testToString() throws Exception
-  {
+  public void testToString() {
     Version version_1 = Version.parse("1");
     assertEquals("1",version_1.toString());
 
@@ -30,8 +29,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testCompareTo() throws Exception
-  {
+  public void testCompareTo() {
     Version version1 = Version.of(1);
     Version version10 = Version.of(1, 0);
     Version version11 = Version.of(1, 1);
@@ -66,8 +64,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testEquals() throws Exception
-  {
+  public void testEquals() {
     Version version1 = Version.of(1);
     Version version10 = Version.of(1, 0);
     Version version100 = Version.of(1, 0, 0);
@@ -104,8 +101,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testGetMajor() throws Exception
-  {
+  public void testGetMajor() {
     Version version = Version.of(8, 0, 1);
     assertEquals(8, version.getMajor());
 
@@ -114,8 +110,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testGetMinor() throws Exception
-  {
+  public void testGetMinor() {
     Version version = Version.of(8, 0, 1);
     assertEquals(0, version.getMinor());
 
@@ -127,8 +122,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testGetMicro() throws Exception
-  {
+  public void testGetMicro() {
     Version version = Version.of(8, 0, 1);
     assertEquals(1, version.getPatchAsNumber());
 
@@ -140,8 +134,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testIsAtLeast() throws Exception
-  {
+  public void testIsAtLeast() {
     Version version1 = Version.of(1);
     Version version10 = Version.of(1, 0);
     Version version11 = Version.of(1, 1);
@@ -172,8 +165,7 @@ public class VersionTest {
   }
 
   @Test
-  public void testLessThan() throws Exception
-  {
+  public void testLessThan() {
     Version version1 = Version.of(1);
     Version version10 = Version.of(1, 0);
     Version version11 = Version.of(1, 1);

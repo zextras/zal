@@ -89,8 +89,7 @@ public class FakeQueryResults extends QueryResults
         }
 
         @Override
-        public void close() throws IOException
-        {
+        public void close() {
 
         }
 

@@ -28,8 +28,7 @@ public class StubZalExtensionController implements ZalExtensionController
 {
 
     @Override
-  public void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader) throws IOException
-  {
+  public void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader) {
     throw new UnsupportedOperationException();
   }
 

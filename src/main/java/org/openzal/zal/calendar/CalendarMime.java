@@ -159,8 +159,7 @@ public class CalendarMime
     return bodyPartList;
   }
 
-  private Pair<String, String> extractDescriptionFromMimeMessage(MimeMessage mimeMessage, int inviteId) throws MessagingException, IOException
-  {
+  private Pair<String, String> extractDescriptionFromMimeMessage(MimeMessage mimeMessage, int inviteId) throws MessagingException {
     String descriptionTextPlain = null;
     String descriptionHtml = null;
     try

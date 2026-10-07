@@ -17,8 +17,7 @@ public class ExceptionWrapperIT
   public ZalZimbraSimulator mZimbraSimulator = new ZalZimbraSimulator();
 
   @Test
-  public void wrap_new_no_suchitem_exception() throws Exception
-  {
+  public void wrap_new_no_suchitem_exception() {
     Account account = mZimbraSimulator.getProvisioning().createAccount("test", "iddddd", new HashMap<String, Object>());
     Mailbox mbox = mZimbraSimulator.getMailboxManager().getMailboxByAccount(account);
     OperationContext octxt = mbox.newOperationContext();

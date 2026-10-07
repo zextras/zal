@@ -50,8 +50,7 @@ public class Identity implements Comparable<Identity>
     return cls.cast(mIdentity);
   }
 
-  public InternetAddress getFriendlyEmailAddress() throws UnsupportedEncodingException
-  {
+  public InternetAddress getFriendlyEmailAddress() {
     return mIdentity.getFriendlyEmailAddress();
   }
 

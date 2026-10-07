@@ -27,8 +27,7 @@ public class ZalVersionValidator
 {
   private final static String ATTR_VERSION            = "Specification-Version";
 
-    public Version validate(JarAccessor jar) throws IOException, NoSuchAlgorithmException
-  {
+    public Version validate(JarAccessor jar) throws IOException {
     return Version.parse(jar.getAttributeInManifest(ATTR_VERSION));
   }
 

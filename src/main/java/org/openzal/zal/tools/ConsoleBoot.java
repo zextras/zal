@@ -53,8 +53,7 @@ public class ConsoleBoot
     bootCli.run(Arrays.copyOfRange(args,1,args.length));
   }
 
-  private static BootCli createBootCli(File extensionDirectory, String cliClassName) throws IOException
-  {
+  private static BootCli createBootCli(File extensionDirectory, String cliClassName) {
     return new BootCli(sVersionChooser.getBootstrapClassLoader(extensionDirectory), cliClassName);
   }
 }
