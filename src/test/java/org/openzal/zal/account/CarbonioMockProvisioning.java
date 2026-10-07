@@ -3,7 +3,6 @@ package org.openzal.zal.account;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Account;
 import com.zimbra.cs.account.GalContact;
-import com.zimbra.cs.account.Provisioning;
 import com.zimbra.cs.gal.GalSearchParams;
 import com.zimbra.cs.gal.GalSearchResultCallback;
 import java.util.ArrayList;
@@ -15,9 +14,6 @@ import org.openzal.zal.gal.SearchGalProperty;
 public class CarbonioMockProvisioning extends MockProvisioning {
 
   public CarbonioMockProvisioning() {
-  }
-
-  public CarbonioMockProvisioning(Provisioning.CacheMode mode) {
   }
 
   @Override

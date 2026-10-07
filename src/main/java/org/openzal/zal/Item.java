@@ -32,7 +32,6 @@ import java.util.Objects;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.NoSuchFolderException;
 import org.openzal.zal.exceptions.ZimbraException;
-import org.openzal.zal.lib.ZimbraVersion;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -538,7 +537,7 @@ public class Item implements Comparable<Item>
   }
 
   @Nonnull
-  public static UnderlyingData decodeZimbraMetadata(@Nullable ZimbraVersion originVersion, final String encodedString)
+  public static UnderlyingData decodeZimbraMetadata(final String encodedString)
           throws ZimbraException
   {
     Metadata meta = new Metadata(encodedString);

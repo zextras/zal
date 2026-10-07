@@ -99,7 +99,7 @@ class ZimbraContextImpl implements ZimbraContext
     }
   }
 
-  class StubSoapNode implements SoapNode
+  static class StubSoapNode implements SoapNode
   {
     @Override
     public SoapNode getSubNode(String name)

@@ -225,8 +225,6 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     });
     mZimbra.restoreZimbraStoreManager();
     recursiveDelete(mTmpDir);
-    //sVolumeManagerInstance.set(null, sVolumeManagerBuilder.newInstance());
-    //((StoreManagerSimulator) com.zimbra.cs.store.StoreManager.getInstance()).shutdown();
   }
 
   public Provisioning getProvisioning()

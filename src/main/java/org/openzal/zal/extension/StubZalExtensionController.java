@@ -21,7 +21,6 @@
 package org.openzal.zal.extension;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class StubZalExtensionController implements ZalExtensionController

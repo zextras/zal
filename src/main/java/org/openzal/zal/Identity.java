@@ -23,7 +23,6 @@ package org.openzal.zal;
 import javax.annotation.Nonnull;
 
 import javax.mail.internet.InternetAddress;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 

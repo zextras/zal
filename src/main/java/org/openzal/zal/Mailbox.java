@@ -764,7 +764,6 @@ public class Mailbox
         ZimbraLog.extensions.warn(String.format("Setting metadata method to 'PUBLISH', '%s' is not supported for calendar item %s", oldMethod, cid));
       }
 
-      com.zimbra.cs.mailbox.CalendarItem inviteCalendarItem = calendarItemData.invite.getCalendarItem();
       List<ReplyInfo> newReplies = replies;
       if (calendarItemData.invite != null && calendarItemData.invite.getCalendarItem() != null) {
         newReplies = replies == null ? calendarItemData.invite.getCalendarItem().getAllReplies() : null;
@@ -1708,7 +1707,6 @@ public class Mailbox
   {
     try
     {
-      com.zimbra.cs.mime.ParsedMessage parsedMessage = null;
       mMbox.addInvite(
         octxt.getOperationContext(),
         inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
@@ -1730,7 +1728,6 @@ public class Mailbox
   {
     try
     {
-      com.zimbra.cs.mime.ParsedMessage parsedMessage = null;
       mMbox.addInvite(
         octxt.getOperationContext(),
         inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),

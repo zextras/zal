@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,13 +201,10 @@ public class CalendarItem extends Item
       }
     }
 
-    CalendarItemData defaultCalendarItemData;
-    if (recurId == null)
+      if (recurId == null)
     {
       try {
-        Invite refetchedInvite;
-        CalendarItem refetchedCalendarItem;
-        com.zimbra.cs.mailbox.calendar.Invite localException = defaultInvite
+          com.zimbra.cs.mailbox.calendar.Invite localException = defaultInvite
                 .toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class)
                 .getCalendarItem()
                 .getDefaultInviteOrNull();

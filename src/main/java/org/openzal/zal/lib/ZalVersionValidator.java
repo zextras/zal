@@ -21,7 +21,6 @@
 package org.openzal.zal.lib;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class ZalVersionValidator
 {

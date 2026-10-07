@@ -20,13 +20,11 @@
 
 package org.openzal.zal;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class FakeContinuation implements Continuation
 {
     private Object mObject;
 
-  public FakeContinuation(HttpServletRequest req)
+  public FakeContinuation()
   {
       mObject = null;
   }
