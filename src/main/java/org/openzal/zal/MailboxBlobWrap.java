@@ -41,12 +41,6 @@ public class MailboxBlobWrap implements MailboxBlob
     mMailboxBlob = (com.zimbra.cs.store.MailboxBlob) mailboxBlob;
   }
 
-  @Nonnull
-  public Object getWrappedObject()
-  {
-    return mMailboxBlob;
-  }
-
   @Override
   public String getDigest()
   {

@@ -21,10 +21,6 @@
 package org.openzal.zal.exceptions;
 
 public class NoSuchFreeBusyException extends NoSuchItemException {
-  protected NoSuchFreeBusyException(Exception exception) {
-    super(exception);
-  }
-
   public NoSuchFreeBusyException(long start, long end) {
     super("from " + start + " to " + end);
   }

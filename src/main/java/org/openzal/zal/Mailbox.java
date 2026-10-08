@@ -49,7 +49,6 @@ import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.InternalServerException;
 import org.openzal.zal.exceptions.NoSuchAccountException;
 import org.openzal.zal.exceptions.NoSuchCalendarException;
-import org.openzal.zal.exceptions.NoSuchConversationException;
 import org.openzal.zal.exceptions.NoSuchFolderException;
 import org.openzal.zal.exceptions.NoSuchFreeBusyException;
 import org.openzal.zal.exceptions.NoSuchItemException;
@@ -86,7 +85,6 @@ import java.util.Set;
 public class Mailbox
 {
   @Nonnull final private com.zimbra.cs.mailbox.Mailbox mMbox;
-  @Nonnull private final MailboxIndex mIndex;
 
   public static final int ID_FOLDER_USER_ROOT     = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_USER_ROOT;
   public static final int ID_FOLDER_INBOX         = com.zimbra.cs.mailbox.Mailbox.ID_FOLDER_INBOX;
@@ -232,8 +230,6 @@ public class Mailbox
       throw new IllegalArgumentException("mMbox is null");
     }
     this.mMbox = (com.zimbra.cs.mailbox.Mailbox) mbox;
-
-    mIndex = new MailboxIndex(this, this.mMbox.index);
   }
 
   @Nonnull
@@ -486,7 +482,6 @@ public class Mailbox
 
   @Nonnull
   public List<Message> getMessagesByConversation(@Nonnull OperationContext zContext, int id)
-          throws NoSuchConversationException
   {
     List<com.zimbra.cs.mailbox.Message> list;
     try
@@ -665,26 +660,6 @@ public class Mailbox
     return new FreeBusy(freeBusy);
   }
 
-  public void copyCalendarReplyInfo(
-          @Nonnull CalendarItem fromCalendarItem,
-          CalendarItem toCalendarItem,
-          @Nonnull OperationContext zContext
-  )
-  {
-    synchronized (mMbox)
-    {
-      beginTransaction("ZxCalendarRepliesRestore", zContext);
-      try
-      {
-        fromCalendarItem.copyReplyInfoTo(toCalendarItem);
-      }
-      finally
-      {
-        endTransaction(true);
-      }
-    }
-  }
-
   public void rename(@Nonnull OperationContext zContext, int id, byte type, String name, int folderId)
           throws ZimbraException
   {
@@ -789,7 +764,6 @@ public class Mailbox
         ZimbraLog.extensions.warn(String.format("Setting metadata method to 'PUBLISH', '%s' is not supported for calendar item %s", oldMethod, cid));
       }
 
-      com.zimbra.cs.mailbox.CalendarItem inviteCalendarItem = calendarItemData.invite.getCalendarItem();
       List<ReplyInfo> newReplies = replies;
       if (calendarItemData.invite != null && calendarItemData.invite.getCalendarItem() != null) {
         newReplies = replies == null ? calendarItemData.invite.getCalendarItem().getAllReplies() : null;
@@ -1733,7 +1707,6 @@ public class Mailbox
   {
     try
     {
-      com.zimbra.cs.mime.ParsedMessage parsedMessage = null;
       mMbox.addInvite(
         octxt.getOperationContext(),
         inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
@@ -1755,7 +1728,6 @@ public class Mailbox
   {
     try
     {
-      com.zimbra.cs.mime.ParsedMessage parsedMessage = null;
       mMbox.addInvite(
         octxt.getOperationContext(),
         inv.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
@@ -2141,12 +2113,6 @@ public class Mailbox
     {
       throw ExceptionWrapper.wrap(e);
     }
-  }
-
-  @Nonnull
-  public MailboxIndex getIndex()
-  {
-    return mIndex;
   }
 
   public void startReIndex()

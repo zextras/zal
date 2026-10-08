@@ -90,8 +90,7 @@ public class InviteFactory
   private       ICalendarTimezone mTimezone;
   private       boolean           mAlarmSet;
   private       int               mAlarmTime;
-  private       long              mReminderTime;
-  private       MimeMessage       mMimeMessage;
+    private       MimeMessage       mMimeMessage;
   private       boolean           mHasAttachment;
   @Nonnull
   private final Clock             mClock;
@@ -153,17 +152,7 @@ public class InviteFactory
     mPriority = priority;
   }
 
-  public void setTaskPercentageCompleted(int percentage)
-  {
-    mPercentage = percentage;
-  }
-
-  public void setUtcTaskCompletedTime(long completedTime)
-  {
-    mCompletedTime = completedTime;
-  }
-
-  public void setFreeBusyStatus(FreeBusyStatus freeBusyStatus)
+    public void setFreeBusyStatus(FreeBusyStatus freeBusyStatus)
   {
     mFreeBusyStatus = freeBusyStatus;
   }
@@ -243,24 +232,13 @@ public class InviteFactory
     mSequence = sequence;
   }
 
-  public int getSequence()
-  {
-    return mSequence;
-  }
-
-  public void setAlarm( int minutesBeforeStart )
+    public void setAlarm( int minutesBeforeStart )
   {
     mAlarmTime = minutesBeforeStart;
     mAlarmSet = true;
   }
 
-  public void setReminderTime(long time)
-  {
-    mAlarmSet = true;
-    mReminderTime = time;
-  }
-
-  public void setAttachment(@Nullable MimeMessage mimeMessage )
+    public void setAttachment(@Nullable MimeMessage mimeMessage )
   {
     if(mimeMessage != null)
     {
@@ -274,21 +252,7 @@ public class InviteFactory
     mResponseRequest = rsvp;
   }
 
-  public void addICalAttach(Attach attachment)
-  {
-    mICalAttachmentList.add(attachment);
-    mHasAttachment = true;
-  }
-
-  public void addICalAttaches(Iterable<Attach> attachments)
-  {
-    for( Attach attachment : attachments)
-    {
-      addICalAttach(attachment);
-    }
-  }
-
-  public void setIsAtLeastEas16(boolean isAtLeastEas16) {
+    public void setIsAtLeastEas16(boolean isAtLeastEas16) {
     this.isAtLeastEas16 = isAtLeastEas16;
   }
 

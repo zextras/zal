@@ -9,9 +9,5 @@ public abstract class ZalMockBlob extends Blob {
     super(file);
   }
 
-  protected ZalMockBlob(File file, long rawSize, String digest) {
-    super(file, rawSize, digest);
-  }
-
   public abstract void remove();
 }

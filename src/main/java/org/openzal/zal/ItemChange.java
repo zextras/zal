@@ -21,8 +21,6 @@
 package org.openzal.zal;
 
 
-import javax.annotation.Nonnull;
-
 public class ItemChange extends PlacedItemInfo
 {
   public enum ChangeType {
@@ -42,16 +40,6 @@ public class ItemChange extends PlacedItemInfo
   )
   {
     super( folderId, itemId, sequence, date);
-    this.changeType = changeType;
-  }
-
-  public ItemChange(
-    ChangeType changeType,
-    int folderId,
-    @Nonnull ItemInfo itemInfo
-  )
-  {
-    super(folderId, itemInfo.itemId, itemInfo.sequence, itemInfo.date);
     this.changeType = changeType;
   }
 

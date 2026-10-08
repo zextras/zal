@@ -40,7 +40,7 @@ public class Message extends Item
     mMessage = (com.zimbra.cs.mailbox.Message) mailItem;
   }
 
-  public class CalendarInfo
+  public static class CalendarInfo
   {
     private final com.zimbra.cs.mailbox.Message.CalendarItemInfo mCalendarItemInfo;
 
@@ -141,12 +141,7 @@ public class Message extends Item
     );
   }
 
-  public boolean isInvite()
-  {
-    return mMessage.isInvite();
-  }
-
-  public String getFragment()
+    public String getFragment()
   {
     return mMessage.getFragment();
   }

@@ -33,11 +33,6 @@ public class ParsedContact
 {
   @Nonnull private final com.zimbra.cs.mime.ParsedContact mParsedContact;
 
-  protected ParsedContact(Object parsedContact)
-  {
-    mParsedContact = (com.zimbra.cs.mime.ParsedContact) parsedContact;
-  }
-
   protected <T> T toZimbra(@Nonnull Class<T> cls)
   {
     return cls.cast(mParsedContact);
@@ -96,11 +91,6 @@ public class ParsedContact
     {
       throw ExceptionWrapper.wrap(e);
     }
-  }
-
-  public List<Contact.ContactAttachment> getAttachments()
-  {
-    return ZimbraListWrapper.wrapAttachments(mParsedContact.getAttachments());
   }
 
   public Map<String,String> getFields()

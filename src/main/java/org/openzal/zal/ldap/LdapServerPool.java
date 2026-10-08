@@ -24,11 +24,6 @@ public class LdapServerPool
     }
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mLdapServerPool);
-  }
-
   public List<LDAPURL> getUrls()
   {
     List<com.unboundid.ldap.sdk.LDAPURL> urls = mLdapServerPool.getUrls();

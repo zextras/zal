@@ -24,9 +24,7 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
-import com.zimbra.common.service.ServiceException;
 import org.openzal.zal.exceptions.*;
-import org.openzal.zal.exceptions.ZimbraException;
 
 import com.zimbra.cs.volume.*;
 
@@ -44,31 +42,14 @@ public class VolumeManager
     mVolumeManager = com.zimbra.cs.volume.VolumeManager.getInstance();
   }
 
-  public void reload()
-  {
-    try {
-      mVolumeManager.load();
-    } catch (ServiceException e) {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public List<StoreVolume> getAll()
+    public List<StoreVolume> getAll()
   {
     List<Volume> list = mVolumeManager.getAllVolumes();
 
     return ZimbraListWrapper.wrapVolumes(list);
   }
 
-  public StoreVolume update(String id, short type,
-                            String name, String path,
-                            boolean compressBlobs, long compressionThreshold)
-    throws ZimbraException
-  {
-    return update(id, type, name, path, compressBlobs, compressionThreshold, true);
-  }
-
-  public StoreVolume update(String id, short type,
+    public StoreVolume update(String id, short type,
                             String name, String path,
                             boolean compressBlobs, long compressionThreshold,
                             boolean checkPath)
@@ -160,21 +141,7 @@ public class VolumeManager
     }
   }
 
-  public void setCurrentSecondaryVolume(String id)
-    throws ZimbraException
-  {
-    Short volType = Short.valueOf("2");
-    try
-    {
-      mVolumeManager.setCurrentVolume(volType, Short.valueOf(id));
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public boolean delete(String id) throws ZimbraException
+    public boolean delete(String id) throws ZimbraException
   {
     try
     {

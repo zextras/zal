@@ -23,12 +23,12 @@ public class ZalVersionValidatorIT
   @Test
   public void validating_same_zimbra_version() throws Exception
   {
-    mValidator.validate(mJar, new ZimbraVersion(1, 2, 3));
+    mValidator.validate(mJar);
   }
 
   @Test
   public void validating_different_zimbra_version_fails() throws Exception
   {
-    mValidator.validate(mJar, new ZimbraVersion(1, 2, 4));
+    mValidator.validate(mJar);
   }
 }

@@ -20,3 +20,4 @@ openzal-*.rpm
 /artifacts
 /packages/zal.jar
 .metals
+.flattened-pom.xml

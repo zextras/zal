@@ -22,89 +22,13 @@ package org.openzal.zal.calendar;
 
 public class Attach
 {
-  public static Attach fromUnencodedAndContentType(byte[] rawBytes, String contentType)
-  {
-    {
-      return new Attach(com.zimbra.common.calendar.Attach.fromUnencodedAndContentType(rawBytes, contentType));
-    }
-  }
 
-  public static Attach fromEncodedAndContentType(byte[] binaryB64Data, String contentType)
-  {
-    {
-      return new Attach(com.zimbra.common.calendar.Attach.fromEncodedAndContentType(binaryB64Data, contentType));
-    }
-  }
-
-  public static Attach fromEncodedAndContentType(String binaryB64Data, String contentType)
-  {
-    {
-      return new Attach(com.zimbra.common.calendar.Attach.fromEncodedAndContentType(binaryB64Data, contentType));
-    }
-  }
-
-  public static Attach fromUriAndContentType(String uri, String contentType)
-  {
-    {
-      return new Attach(com.zimbra.common.calendar.Attach.fromUriAndContentType(uri, contentType));
-    }
-  }
-
-  private com.zimbra.common.calendar.Attach mZAttach;
+    private com.zimbra.common.calendar.Attach mZAttach;
 
   public Attach(Object zAttach)
   {
     {
       mZAttach = (com.zimbra.common.calendar.Attach) zAttach;
-    }
-  }
-
-  public String getUri()
-  {
-    {
-      return mZAttach.getUri();
-    }
-  }
-
-  public String getFileName()
-  {
-    {
-      return mZAttach.getFileName();
-    }
-  }
-
-  public void setFileName(String fileName)
-  {
-    {
-      mZAttach.setFileName(fileName);
-    }
-  }
-
-  public String getContentType()
-  {
-    {
-      return mZAttach.getContentType();
-    }
-  }
-
-  public void setContentType(String contentType)
-  {
-    {
-      mZAttach.setContentType(contentType);
-    }
-  }
-
-  public String getBinary64Data()
-  {
-    {
-      return mZAttach.getBinaryB64Data();
-    }
-  }
-
-  public byte[] getDecodedData()
-  {
-    {
-      return mZAttach.getDecodedData();
     }
   }
 

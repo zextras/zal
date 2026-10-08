@@ -23,10 +23,7 @@ package org.openzal.zal.soap;
 public interface SoapResponse
 {
   void setValue(String key, String value);
-  void setValue(String key, boolean value);
-  void setValue(String key, long value);
-  void setQName( QName qName );
-  void setResponse(SoapResponse soapResponse);
 
-  SoapResponse createNode(String name);
+    void setResponse(SoapResponse soapResponse);
+
 }

@@ -23,7 +23,7 @@ public class SearchUsersByFeatureResponse {
     response.addAttribute(AccountConstants.A_TOTAL, total);
     response.addAttribute(AccountConstants.A_MORE, more);
     entries.forEach(a -> ToXML.encodeAccount(response, (Account) a.toZimbraEntry(), true, attributes, null));
-    return new SoapResponseImpl(response, null);
+    return new SoapResponseImpl(response);
   }
 
 }

@@ -5,7 +5,6 @@ import com.unboundid.ldap.sdk.Attribute;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ZalSearchResultEntry
 {

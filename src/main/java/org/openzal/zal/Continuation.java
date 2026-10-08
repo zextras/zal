@@ -32,9 +32,7 @@ public interface Continuation
 
   void suspend(long timeoutMs) throws Error;
 
-  boolean isExpired();
-
-  void setObject(Object obj);
+    void setObject(Object obj);
 
   Object getObject();
 }

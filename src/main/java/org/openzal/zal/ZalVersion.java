@@ -22,8 +22,6 @@ package org.openzal.zal;
 
 import javax.annotation.Nonnull;
 import org.openzal.zal.lib.Version;
-import org.openzal.zal.lib.ZimbraVersion;
-import org.openzal.zal.log.ZimbraLog;
 
 public class ZalVersion
 {
@@ -39,23 +37,7 @@ public class ZalVersion
     }
   }
 
-  public static void checkCompatibility()
-  {
-    if (!ZimbraVersion.current.equals(ZalVersion.target)) {
-      if (BuildProperties.isDevBuild()) {
-        ZimbraLog.extensions.warn("Carbonio version mismatch - ZAL built for Carbonio: " + ZalVersion.target + " (dev build)");
-      } else {
-        throw new RuntimeException("Carbonio version mismatch - ZAL built for Carbonio: " + ZalVersion.target.toString());
-      }
-    }
-  }
-
-  public static boolean isZimbraX()
-  {
-    return false;
-  }
-
-  public static void main(String args[])
+    public static void main(String args[])
   {
     System.out.println("zal_version: " + current.toString());
     System.out.println("zal_commit: " + BuildProperties.getCommitFull());

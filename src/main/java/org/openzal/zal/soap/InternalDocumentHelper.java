@@ -21,13 +21,11 @@
 package org.openzal.zal.soap;
 
 import com.zimbra.common.service.ServiceException;
-import javax.annotation.Nonnull;
 import org.openzal.zal.Utils;
 import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.soap.SoapEngine;
 import com.zimbra.soap.ZimbraSoapContext;
-import org.dom4j.Namespace;
 import org.openzal.zal.log.ZimbraLog;
 
 import java.util.Map;
@@ -41,32 +39,13 @@ public class InternalDocumentHelper
     mSoapHandler = soapHandler;
   }
 
-  public static class ElementFactory
-  {
-    private final ZimbraSoapContext mZimbraSoapContext;
-
-    ElementFactory( ZimbraSoapContext zimbraSoapContext )
-    {
-      mZimbraSoapContext = zimbraSoapContext;
-    }
-
-    Element createElement( @Nonnull QName qName )
-    {
-      org.dom4j.QName domqName = org.dom4j.QName.get(
-        qName.getName(),
-        Namespace.get(qName.getNamespace())
-      );
-      return mZimbraSoapContext.createElement(domqName);
-    }
-  }
-
   @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-  public Element handle(Element request, Map<String, Object> context, InternalDocumentHandler.Proxier proxier) throws ZimbraException, ServiceException
+  public Element handle(Element request, Map<String, Object> context) throws ZimbraException, ServiceException
   {
-    ZimbraContext zimbraContext = new ZimbraContextImpl(request,context,proxier);
+    ZimbraContext zimbraContext = new ZimbraContextImpl(request,context);
     ZimbraSoapContext zimbraSoapContext = (ZimbraSoapContext) context.get(SoapEngine.ZIMBRA_CONTEXT);
     Element element = zimbraSoapContext.createElement("response");
-    SoapResponseImpl soapResponse = new SoapResponseImpl(element, new ElementFactory(zimbraSoapContext));
+    SoapResponseImpl soapResponse = new SoapResponseImpl(element);
     ZimbraExceptionContainer container = new ZimbraExceptionContainer();
 
     mSoapHandler.handleRequest(zimbraContext, soapResponse, container);

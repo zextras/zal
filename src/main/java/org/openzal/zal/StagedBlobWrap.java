@@ -47,12 +47,7 @@ public class StagedBlobWrap<S extends Blob> implements StagedBlob
     return mStagedBlob.getSize();
   }
 
-  public String getLocator()
-  {
-    return mStagedBlob.getLocator();
-  }
-
-  public String getDigest()
+    public String getDigest()
   {
     return mStagedBlob.getDigest();
   }

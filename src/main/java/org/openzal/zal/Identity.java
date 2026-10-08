@@ -23,7 +23,6 @@ package org.openzal.zal;
 import javax.annotation.Nonnull;
 
 import javax.mail.internet.InternetAddress;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +49,7 @@ public class Identity implements Comparable<Identity>
     return cls.cast(mIdentity);
   }
 
-  public InternetAddress getFriendlyEmailAddress() throws UnsupportedEncodingException
-  {
+  public InternetAddress getFriendlyEmailAddress() {
     return mIdentity.getFriendlyEmailAddress();
   }
 

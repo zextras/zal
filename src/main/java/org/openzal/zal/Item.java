@@ -23,19 +23,15 @@ package org.openzal.zal;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.mailbox.ACL;
 import com.zimbra.cs.mailbox.MailItem;
-import java.io.IOException;
+
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.NoSuchFolderException;
 import org.openzal.zal.exceptions.ZimbraException;
-import org.openzal.zal.lib.ZimbraVersion;
-import org.openzal.zal.lucene.document.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,26 +119,6 @@ public class Item implements Comparable<Item>
   }
 
   @Nonnull
-  public static Item constructItem(@Nonnull Mailbox mbox, @Nonnull UnderlyingData data, boolean skipCache)
-          throws ZimbraException
-  {
-    try
-    {
-      return new Item(
-              MailItem.constructItem(
-                      mbox.toZimbra(com.zimbra.cs.mailbox.Mailbox.class),
-                      data.toZimbra(MailItem.UnderlyingData.class),
-                      skipCache
-              )
-      );
-    }
-    catch( com.zimbra.common.service.ServiceException e )
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nonnull
   public Mailbox getMailbox()
   {
     return new Mailbox(mMailItem.getMailbox());
@@ -212,12 +188,6 @@ public class Item implements Comparable<Item>
   }
 
   @Nonnull
-  public Task toTask()
-  {
-    return new Task(mMailItem);
-  }
-
-  @Nonnull
   public Appointment toAppointment()
   {
     return new Appointment(mMailItem);
@@ -227,12 +197,6 @@ public class Item implements Comparable<Item>
   public Flag toFlag()
   {
     return new Flag(mMailItem);
-  }
-
-  @Nonnull
-  public Chat toChat()
-  {
-    return new Chat(mMailItem);
   }
 
   @Nonnull
@@ -264,19 +228,6 @@ public class Item implements Comparable<Item>
         return null;
       }
       return new MailboxBlobWrap(blob);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nonnull
-  public String getBlobPath() throws IOException
-  {
-    try
-    {
-      return mMailItem.getBlob().getLocalBlob().getPath();
     }
     catch (ServiceException e)
     {
@@ -328,10 +279,6 @@ public class Item implements Comparable<Item>
       return mCustomMetadata.size();
     }
 
-    public Set<String> keySet()
-    {
-      return mCustomMetadata.keySet();
-    }
   }
 
   @Nullable
@@ -355,26 +302,6 @@ public class Item implements Comparable<Item>
 
   public static class UnderlyingData
   {
-    public static final String FN_ID           = "id";
-    public static final String FN_TYPE         = "tp";
-    public static final String FN_PARENT_ID    = "pid";
-    public static final String FN_FOLDER_ID    = "fid";
-    public static final String FN_PREV_FOLDER  = "pfid";
-    public static final String FN_INDEX_ID     = "idx";
-    public static final String FN_IMAP_ID      = "imap";
-    public static final String FN_LOCATOR      = "loc";
-    public static final String FN_BLOB_DIGEST  = "dgst";
-    public static final String FN_DATE         = "dt";
-    public static final String FN_SIZE         = "sz";
-    public static final String FN_UNREAD_COUNT = "uc";
-    public static final String FN_FLAGS        = "fg";
-    public static final String FN_TAGS         = "tg";
-    public static final String FN_SUBJECT      = "sbj";
-    public static final String FN_NAME         = "nm";
-    public static final String FN_METADATA     = "meta";
-    public static final String FN_MOD_METADATA = "modm";
-    public static final String FN_MOD_CONTENT  = "modc";
-    public static final String FN_DATE_CHANGED = "dc";
 
     private final MailItem.UnderlyingData mUnderlyingData;
 
@@ -388,25 +315,6 @@ public class Item implements Comparable<Item>
       mUnderlyingData = (MailItem.UnderlyingData)data;
     }
 
-    public UnderlyingData(Metadata metadata)
-    {
-      this();
-      try
-      {
-        deserialize(metadata);
-      }
-      catch( ServiceException e )
-      {
-        throw ExceptionWrapper.wrap(e);
-      }
-    }
-
-    public void deserialize(Metadata metadata)
-            throws ServiceException
-    {
-      mUnderlyingData.deserialize(metadata.toZimbra(com.zimbra.cs.mailbox.Metadata.class));
-    }
-
     public <T> T toZimbra(@Nonnull Class<T> cls)
     {
       return cls.cast(mUnderlyingData);
@@ -415,16 +323,6 @@ public class Item implements Comparable<Item>
     public void setFlag(int flag)
     {
       mUnderlyingData.setFlags(flag | mUnderlyingData.getFlags());
-    }
-
-    public void unsetFlag(int flag)
-    {
-      mUnderlyingData.setFlags((~flag) & mUnderlyingData.getFlags());
-    }
-
-    public boolean isSet(int flag)
-    {
-      return (mUnderlyingData.getFlags() & flag) != 0;
     }
 
     public String toString()
@@ -442,91 +340,17 @@ public class Item implements Comparable<Item>
       return mUnderlyingData.name;
     }
 
-    public long getDate()
-    {
-      return mUnderlyingData.date;
-    }
-
-    public String getMetadata()
-    {
-      return mUnderlyingData.metadata;
-    }
-
-    public int getParentId()
-    {
-      return mUnderlyingData.parentId;
-    }
-
-    public int getFolderId()
-    {
-      return mUnderlyingData.folderId;
-    }
-
-    public int getIndexId()
-    {
-      return mUnderlyingData.indexId;
-    }
-
-    public int getImapId()
-    {
-      return mUnderlyingData.imapId;
-    }
-
-    public long getSize()
-    {
-      return mUnderlyingData.size;
-    }
-
     public String getLocator()
     {
       return mUnderlyingData.locator;
     }
 
 
-    public String getBlobDigest()
-    {
-      return mUnderlyingData.getBlobDigest();
-    }
-
-    public int getUnreadCount()
-    {
-      return mUnderlyingData.unreadCount;
-    }
-
-    public int getFlags()
-    {
-      return mUnderlyingData.getFlags();
-    }
-
-    public String[] getTags()
-    {
-      return mUnderlyingData.getTags();
-    }
-
-    public String getSubject()
-    {
-      return mUnderlyingData.getSubject();
-    }
-
-    public int getModMetadata()
-    {
-      return mUnderlyingData.modMetadata;
-    }
-
-    public int getChangeDate()
-    {
-      return mUnderlyingData.dateChanged;
-    }
-
     public int getModContent()
     {
       return mUnderlyingData.modContent;
     }
 
-    public String getUuid()
-    {
-      return mUnderlyingData.uuid;
-    }
   }
 
   @Nonnull
@@ -655,11 +479,6 @@ public class Item implements Comparable<Item>
     return convertType(type).toString();
   }
 
-  public static String getNameForType(@Nonnull Item item)
-  {
-    return getNameForType(item.getType());
-  }
-
   private static final HashMap<String, String> sTypeMap = new HashMap<String, String>();
 
   static
@@ -712,18 +531,13 @@ public class Item implements Comparable<Item>
     return mMailItem.getFlagBitmask();
   }
 
-  public void unsetFlag(int flag)
-  {
-    getUnderlyingData().unsetFlag(flag);
-  }
-
   public boolean isUnread()
   {
     return mMailItem.isUnread();
   }
 
   @Nonnull
-  public static UnderlyingData decodeZimbraMetadata(@Nullable ZimbraVersion originVersion, final String encodedString)
+  public static UnderlyingData decodeZimbraMetadata(final String encodedString)
           throws ZimbraException
   {
     Metadata meta = new Metadata(encodedString);
@@ -790,10 +604,5 @@ public class Item implements Comparable<Item>
   public String getUuid()
   {
     return mMailItem.getUuid();
-  }
-
-  public List<Document> generateIndexData()
-  {
-    return new ArrayList<>();
   }
 }

@@ -32,7 +32,6 @@ import com.zimbra.cs.mailbox.MailItem;
 import com.zimbra.cs.session.PendingModifications;
 import com.zimbra.cs.session.Session;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class MailboxSessionProxy

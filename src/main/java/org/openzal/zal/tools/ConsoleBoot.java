@@ -20,10 +20,7 @@
 
 package org.openzal.zal.tools;
 
-import org.openzal.zal.lib.JarAccessor;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class ConsoleBoot
@@ -55,8 +52,7 @@ public class ConsoleBoot
     bootCli.run(Arrays.copyOfRange(args,1,args.length));
   }
 
-  private static BootCli createBootCli(File extensionDirectory, String cliClassName) throws IOException
-  {
+  private static BootCli createBootCli(File extensionDirectory, String cliClassName) {
     return new BootCli(sVersionChooser.getBootstrapClassLoader(extensionDirectory), cliClassName);
   }
 }

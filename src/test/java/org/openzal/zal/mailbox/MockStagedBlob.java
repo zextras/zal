@@ -18,12 +18,7 @@ public class MockStagedBlob extends StagedBlob
     mMockBlob = mockBlob;
   }
 
-  public String getStagedLocator()
-  {
-    return getLocator();
-  }
-
-  public String getLocator()
+    public String getLocator()
   {
     return "1";
   }

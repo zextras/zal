@@ -40,12 +40,6 @@ public class SoapElement
     mElement = (Element) element;
   }
 
-  public List<SoapElement> getPathElementList(String[] xpath)
-  {
-    return ZimbraListWrapper.wrapElements(mElement.getPathElementList(xpath));
-
-  }
-
   public String getAttribute(String key)
   {
     try
@@ -70,18 +64,6 @@ public class SoapElement
     }
   }
 
-  public long getAttributeLong(String key)
-  {
-    try
-    {
-      return mElement.getAttributeLong(key);
-    }
-    catch(ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public Set<SoapElement.Attribute> listAttributes()
   {
     return ZimbraListWrapper.wrapElementAttributes(mElement.listAttributes());
@@ -94,18 +76,6 @@ public class SoapElement
       return new SoapElement(Element.parseXML(xml));
     }
     catch(ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public static SoapElement parseJSON(String json)
-  {
-    try
-    {
-      return new SoapElement(Element.parseJSON(json));
-    }
-    catch(SoapParseException e)
     {
       throw ExceptionWrapper.wrap(e);
     }
@@ -175,11 +145,6 @@ public class SoapElement
     return mElement.toString();
   }
 
-  public byte[] toUTF8()
-  {
-    return mElement.toUTF8();
-  }
-
   public int getAttributeInt(String key, int defaultValue) throws org.openzal.zal.exceptions.ServiceException {
     try {
       return mElement.getAttributeInt(key, defaultValue);
@@ -202,19 +167,6 @@ public class SoapElement
       return mAttribute.getKey();
     }
 
-    public String getValue()
-    {
-      return mAttribute.getValue();
-    }
-
-    public void setValue(String value)
-    {
-      mAttribute.setValue(value);
-    }
   }
 
-  public String toXML()
-  {
-    return mElement.toXML().asXML();
-  }
 }

@@ -27,14 +27,6 @@ public class ColorItem {
   private final MailItemType type;
   private final long color;
 
-  public static class ColorItemInitializationException extends RuntimeException{
-
-    public ColorItemInitializationException(Throwable cause) {
-      super(cause);
-    }
-
-  }
-
   public ColorItem(RedoableOp op) {
     com.zimbra.cs.redolog.op.ColorItem colorItem = (com.zimbra.cs.redolog.op.ColorItem) op.getProxiedObject();
     this.ids = colorItem.getIds();

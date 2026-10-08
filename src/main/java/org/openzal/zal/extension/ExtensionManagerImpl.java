@@ -21,8 +21,6 @@
 package org.openzal.zal.extension;
 
 import org.apache.commons.io.IOUtils;
-import org.openzal.zal.ZalVersion;
-import org.openzal.zal.lib.Version;
 import org.openzal.zal.log.ZimbraLog;
 
 import java.io.File;
@@ -41,11 +39,6 @@ class ExtensionManagerImpl implements ExtensionManager
   private       Extension              mExtension;
   private       ZalExtensionController mCustomZalExtensionController;
   private       ClassLoader            mCustomClassLoader;
-
-  public Extension getExtension()
-  {
-    return mExtension;
-  }
 
   public ExtensionManagerImpl()
   {
@@ -158,11 +151,6 @@ class ExtensionManagerImpl implements ExtensionManager
       return mExtensionClass;
     }
 
-    public Version getRequiredVersion()
-    {
-      return mRequiredVersion;
-    }
-
     public String getZalExtensionName()
     {
       return mZalExtensionName;
@@ -170,24 +158,13 @@ class ExtensionManagerImpl implements ExtensionManager
 
     private final String mExtensionClass;
     private final String  mZalExtensionName;
-    private final Version mRequiredVersion;
 
-    public ExtensionInfo(String extensionClass, String zalExtensionName, Version requiredVersion)
+    public ExtensionInfo(String extensionClass, String zalExtensionName)
     {
       mExtensionClass = extensionClass;
       mZalExtensionName = zalExtensionName;
-      mRequiredVersion = requiredVersion;
     }
 
-    public boolean isCompatible(Version currentVersion)
-    {
-      return withoutPatch(currentVersion).equals(withoutPatch(mRequiredVersion)) &&
-             currentVersion.isAtLeast(mRequiredVersion);
-    }
-
-    static Version withoutPatch(Version v) {
-      return Version.of(v.getMajor(), v.getMinor(), 0);
-    }
   }
 
   private void readExtension(File parentDirectory)
@@ -238,17 +215,9 @@ class ExtensionManagerImpl implements ExtensionManager
             zalExtensionName = zalExtensionClass;
           }
 
-
-          String zalRequiredVersion = manifest.getMainAttributes().getValue("ZAL-Required-Version");
-          if (zalRequiredVersion == null || zalRequiredVersion.isEmpty())
-          {
-            zalRequiredVersion = ZalVersion.current.toString();
-          }
-
           ExtensionInfo extensionInfo = new ExtensionInfo(
             zalExtensionClass,
-            zalExtensionName,
-            Version.parse(zalRequiredVersion)
+            zalExtensionName
           );
           extensionInfoList.add(extensionInfo);
         }

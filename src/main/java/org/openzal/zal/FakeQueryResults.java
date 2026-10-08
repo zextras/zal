@@ -27,7 +27,6 @@ import com.zimbra.cs.index.ZimbraHit;
 import com.zimbra.cs.index.ZimbraQueryResults;
 import javax.annotation.Nonnull;
 
-import java.io.IOException;
 import java.util.List;
 
 public class FakeQueryResults extends QueryResults
@@ -89,8 +88,7 @@ public class FakeQueryResults extends QueryResults
         }
 
         @Override
-        public void close() throws IOException
-        {
+        public void close() {
 
         }
 
@@ -118,13 +116,7 @@ public class FakeQueryResults extends QueryResults
     return element < mZimbraQueryResults.size();
   }
 
-  @Override
-  public SearchHit skipToHit(int int1)
-  {
-    return mZimbraQueryResults.get(0);
-  }
-
-  @Override
+    @Override
   public void close()
   {}
 }

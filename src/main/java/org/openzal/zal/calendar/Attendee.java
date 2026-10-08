@@ -24,9 +24,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zimbra.cs.mailbox.calendar.ZAttendee;
-import com.zimbra.cs.mailbox.calendar.ZOrganizer;
-
-import javax.annotation.Nonnull;
 
 @JsonIgnoreProperties( ignoreUnknown = true )
 public class Attendee
@@ -36,21 +33,6 @@ public class Attendee
   private final String mName;
   private final AttendeeInviteStatus mStatus;
   private final Boolean mRsvp;
-
-  public Attendee(
-    String address
-  )
-  {
-    this(address, address);
-  }
-
-  public Attendee(
-    String address,
-    String name
-  )
-  {
-    this(address, name, AttendeeInviteStatus.NEEDS_ACTION);
-  }
 
   public Attendee(
     String address,
@@ -107,23 +89,12 @@ public class Attendee
     return mType;
   }
 
-  public boolean hasRsvp()
-  {
-    return getRsvp() != null;
-  }
-
-  public Boolean getRsvp()
+    public Boolean getRsvp()
   {
     return mRsvp;
   }
 
-  @Nonnull
-  public ZOrganizer toZOrganizer()
-  {
-    return new ZOrganizer(mAddress, mName);
-  }
-
-  public ZAttendee toZAttendee()
+    public ZAttendee toZAttendee()
   {
     return new ZAttendee(
       getAddress(),

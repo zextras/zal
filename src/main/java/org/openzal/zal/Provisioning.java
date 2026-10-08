@@ -23,7 +23,6 @@ package org.openzal.zal;
 import org.openzal.zal.exceptions.NoSuchAccountException;
 import org.openzal.zal.exceptions.NoSuchGrantException;
 import org.openzal.zal.exceptions.NoSuchGroupException;
-import org.openzal.zal.exceptions.UnableToFindDistributionListException;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.ldap.SearchDirectoryOptions;
 import org.openzal.zal.lib.Filter;
@@ -42,7 +41,6 @@ public interface Provisioning
   String A_member = com.zimbra.cs.account.Provisioning.A_member;
   String ZIMBRA_USER_ID = "e0fafd89-1360-11d9-8661-000a95d98ef2";
   String DEFAULT_COS_ID = "e00428a1-0c00-11d9-836a-000d93afea2a";
-  String DEFAULT_EXTERNAL_COS_ID = "f27456a8-0c00-11d9-280a-286d93afea2g";
 
   boolean isValidUid(@Nonnull String uid);
 
@@ -86,16 +84,11 @@ public interface Provisioning
 
   void visitDomainsWithAttributes(@Nonnull SimpleVisitor<Domain> visitor, Map<String, Object> attributes) throws ZimbraException;
 
-  Collection<String> getGroupMembers(String list) throws UnableToFindDistributionListException;
-
   void authAccount(@Nonnull Account account, String password, @Nonnull Protocol protocol, Map<String, Object> context)
               throws ZimbraException;
 
   void authAccountWithLdap(@Nonnull Account account, String password, Map<String, Object> context)
     throws ZimbraException;
-
-  void authAccountSkippingCustom(@Nonnull Account account, String password, Map<String, Object> context, @Nullable String customName)
-      throws ZimbraException;
 
   Account getAccountByAccountIdOrItemId(String id);
 
@@ -143,10 +136,6 @@ public interface Provisioning
     throws ZimbraException;
 
   @Nullable
-  DistributionList get(@Nonnull ProvisioningKey.ByDistributionList id, String dlStr)
-    throws ZimbraException;
-
-  @Nullable
   Account get(@Nonnull ProvisioningKey.ByAccount by, String target)
     throws ZimbraException;
 
@@ -161,9 +150,6 @@ public interface Provisioning
   @Nullable
   Account getAccountByName(String accountStr)
     throws NoSuchAccountException;
-
-  List<Account> getAllAdminAccounts()
-    throws ZimbraException;
 
   Locale getLocale(Entry entry)
     throws ZimbraException;
@@ -180,10 +166,6 @@ public interface Provisioning
     throws ZimbraException;
 
   List<CalendarResource> getAllCalendarResources(@Nonnull Domain domain)
-    throws ZimbraException;
-
-  @Nullable
-  GlobalGrant getGlobalGrant()
     throws ZimbraException;
 
   @Nonnull
@@ -230,25 +212,8 @@ public interface Provisioning
   Account createAccount(String dstAccount, @Nullable String newPassword, Map<String, Object> attrs)
     throws ZimbraException;
 
-  Account createGalAccount(String dstAccount, String newPassword, Map<String, Object> attrs)
-    throws ZimbraException;
-
   Account createFakeAccount(Map<String, Object> attrs)
     throws ZimbraException;
-
-  void restoreAccount(String emailAddress, Map<String, Object> attrs);
-
-  DataSource restoreDataSource(Account account, DataSourceType dsType, String dsName, Map<String, Object> dataSourceAttrs);
-
-  Identity restoreIdentity(Account account, String identityName, Map<String, Object> identityAttrs);
-
-  Signature restoreSignature(Account account, String signatureName, Map<String, Object> signatureAttrs);
-
-  void restoreCos(Map<String,Object> attributes);
-
-  void restoreDomain(Map<String, Object> attributes);
-
-  void restoreDistributionList(String name, Map<String, Object> attributes);
 
 
   @Nullable
@@ -275,21 +240,6 @@ public interface Provisioning
     String granteeType, @Nonnull GrantedBy granteeBy, String grantee,
     String right
   ) throws NoSuchGrantException;
-
-  void revokeRight(
-    String targetType, Targetby targetBy, String target,
-    String granteeType, @Nonnull GrantedBy granteeBy, String grantee,
-    String right, RightModifier rightModifier
-  ) throws NoSuchGrantException;
-
-  boolean checkRight(
-    String targetType,
-    Targetby targetBy,
-    String target,
-    GrantedBy granteeBy,
-    String granteeVal,
-    String right
-  );
 
   @Nullable
   Grants getGrants(
@@ -336,10 +286,6 @@ public interface Provisioning
   boolean onLocalServer(@Nonnull Account userAccount)
       throws ZimbraException;
 
-  List<Account> getAllDelegatedAdminAccounts() throws ZimbraException;
-
-  void visitAllDelegatedAdminAccounts(SimpleVisitor<Account> visitor) throws ZimbraException;
-
   @Nullable
   Group getGroupById(String dlStr)
     throws ZimbraException;
@@ -372,9 +318,6 @@ public interface Provisioning
   GalSearchResult galSearch(@Nonnull Account account, String query, int skip, int limit);
 
   @Nonnull
-  GalSearchResult galSearch(@Nonnull Account account, Domain domain, String query, int skip, int limit);
-
-  @Nonnull
   Domain assertDomainById(String domainId);
 
   @Nonnull
@@ -383,15 +326,10 @@ public interface Provisioning
   @Nonnull
   DistributionList assertDistributionListById(String targetId);
 
-  void deleteAccountByName(String id);
-
   @Nonnull
   void deleteAccountById(String id);
 
   String getAccountToken(Account account, boolean isAdmin);
-
-  @Nonnull
-  void deleteDomainById(String id);
 
   @Nonnull
   void deleteCosById(String id);
@@ -408,23 +346,15 @@ public interface Provisioning
 
   int rawCountQuery(String base, String query);
 
-  void registerChangePasswordListener(ChangePasswordListener listener);
-
   long getLastLogonTimestampFrequency();
 
   @Nonnull
   Group assertGroupById(String groupId)
     throws NoSuchGroupException;
 
-  @Nonnull
-  Group assertGroupByName(String groupName)
-    throws NoSuchGroupException;
-
   boolean doExternalLdapAuth(Domain domain, String account, String password, Map<String, Object> context);
 
   Account getForeignAccount(String principal);
-
-  Account autoProvisioningAndAuthenticate(Domain domain, String account, String password);
 
   Cos getDefaultCOS(Domain d);
 
@@ -442,11 +372,6 @@ public interface Provisioning
     public String getCosId()
     {
       return mCountAccountByCos.getCosId();
-    }
-
-    public String getCosName()
-    {
-      return mCountAccountByCos.getCosName();
     }
 
     public long getCount()

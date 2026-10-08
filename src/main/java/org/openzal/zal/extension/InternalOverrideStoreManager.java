@@ -473,8 +473,4 @@ class InternalOverrideStoreManager extends com.zimbra.cs.store.StoreManager {
     return store.toPrimaryStore();
   }
 
-  public Object getWrapped()
-  {
-    return mStoreManager;
-  }
 }

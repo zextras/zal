@@ -65,18 +65,6 @@ public class QueryResults implements Closeable
     }
   }
 
-  public SearchHit skipToHit(int int1)
-  {
-    try
-    {
-      return new SearchHit(mZimbraQueryResults.skipToHit(int1));
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public void close()
   {
     try

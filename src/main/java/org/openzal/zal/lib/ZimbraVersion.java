@@ -22,7 +22,6 @@ package org.openzal.zal.lib;
 
 import com.zimbra.cs.util.BuildInfo;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 public class ZimbraVersion extends Version
 {

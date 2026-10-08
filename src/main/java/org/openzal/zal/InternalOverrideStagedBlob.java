@@ -21,7 +21,6 @@
 package org.openzal.zal;
 
 import com.zimbra.cs.mailbox.Mailbox;
-import com.zimbra.cs.store.file.VolumeStagedBlob;
 
 import java.io.IOException;
 

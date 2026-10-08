@@ -27,20 +27,18 @@ import java.util.Map;
 
 public enum GlobalInviteStatus
 {
-  APPOINTMENT_TENTATIVE("TENT", AttendeeInviteStatus.TENTATIVE),
-  APPOINTMENT_CANCELLED("CANC", AttendeeInviteStatus.DECLINED),
-  APPOINTMENT_CONFIRMED("CONF", AttendeeInviteStatus.ACCEPTED),
-  APPOINTMENT_NEED_ACTION("NEED", AttendeeInviteStatus.NEEDS_ACTION),
-  TASK_COMPLETED("COMP", AttendeeInviteStatus.COMPLETED),
-  TASK_IN_PROGRESS("INPR", AttendeeInviteStatus.IN_PROCESS);
+  APPOINTMENT_TENTATIVE("TENT"),
+  APPOINTMENT_CANCELLED("CANC"),
+  APPOINTMENT_CONFIRMED("CONF"),
+  APPOINTMENT_NEED_ACTION("NEED"),
+  TASK_COMPLETED("COMP"),
+  TASK_IN_PROGRESS("INPR");
 
   public final String mRawStatus;
-  private final AttendeeInviteStatus mAttendeeInviteStatus;
 
-  GlobalInviteStatus(String status, @Nonnull AttendeeInviteStatus attendeeInviteStatus)
+    GlobalInviteStatus(String status)
   {
     mRawStatus = status;
-    mAttendeeInviteStatus = attendeeInviteStatus;
   }
 
 
@@ -87,20 +85,4 @@ public enum GlobalInviteStatus
     return globalInviteStatus;
   }
 
-  @Nonnull
-  public static GlobalInviteStatus fromICal(String status)
-  {
-    GlobalInviteStatus globalInviteStatus = sICal2Zimbra.get(status);
-    if (globalInviteStatus == null)
-    {
-      throw new RuntimeException("Invalid invite status: " + status);
-    }
-    return globalInviteStatus;
-  }
-
-  @Nonnull
-  public AttendeeInviteStatus toAttendeeStatus()
-  {
-    return mAttendeeInviteStatus;
-  }
 }

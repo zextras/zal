@@ -87,8 +87,7 @@ class InternalOverrideMailboxBlob extends com.zimbra.cs.store.MailboxBlob
   }
 
   @Override
-  public Blob getLocalBlob() throws IOException
-  {
+  public Blob getLocalBlob() {
     return mZalMailboxBlob.getLocalBlob().toZimbra(Blob.class);
   }
 

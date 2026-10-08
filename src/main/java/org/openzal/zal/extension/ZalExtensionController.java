@@ -21,13 +21,10 @@
 package org.openzal.zal.extension;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public interface ZalExtensionController
 {
-  void shutdown();
-  void reboot();
-  void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader) throws IOException;
+    void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader);
   boolean canControlExtension();
 }

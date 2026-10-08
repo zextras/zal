@@ -175,19 +175,4 @@ public abstract class JarUtils
     return  outputStream.toByteArray();
   }
 
-  public static byte[] decodeHexStringToByteArray(String hexEncoded)
-  {
-    if (hexEncoded.length() % 2 != 0)
-    {
-      throw new RuntimeException("Not an HEX encoded string");
-    }
-
-    byte[] buffer = new byte[hexEncoded.length() / 2];
-    for (int i = 0; i < hexEncoded.length(); i += 2)
-    {
-      buffer[i/2] = (byte) Integer.parseInt(hexEncoded.substring(i, i + 2), 16);
-    }
-
-    return buffer;
-  }
 }

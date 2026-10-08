@@ -157,21 +157,6 @@ public final class HSQLZimbraDatabase extends HSQLDB
     executeFromClasspath(conn,classpathFile,1);
   }
 
-  private static void execute(DbPool.DbConnection conn, String file, int mboxId) throws Exception
-  {
-    Map<String, String> vars = Collections.singletonMap("DATABASE_NAME", DbMailbox.getDatabaseName(mboxId));
-    SqlFile sql = new SqlFile(new File(file));
-    sql.addUserVars(vars);
-    sql.setConnection(conn.getConnection());
-    sql.execute();
-    conn.commit();
-  }
-
-  public static void execute(DbPool.DbConnection conn, String file) throws Exception
-  {
-    execute(conn,file,1);
-  }
-
   public static void useMVCC() throws ServiceException, SQLException {
     //tell HSQLDB to use multiversion so our asserts can read while write is open
     PreparedStatement stmt = null;

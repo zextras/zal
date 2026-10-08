@@ -30,15 +30,6 @@ public class TestProvisioningImp extends ProvisioningImp {
     }
 
     @Override
-    public GalSearchResult galSearch(Account account, Domain domain, String query, int skip, int limit) {
-        Map<String, Object> attrs = account.getAttrs(true);
-        attrs.put("zimbraFeatureGalEnabled", "TRUE");
-        attrs.put("zimbraFeatureGalAutoCompleteEnabled", "TRUE");
-        account.setAttrs(attrs);
-        return super.galSearch(account, domain, query, skip, limit);
-    }
-
-    @Override
     public void visitAllAccounts(SimpleVisitor<Account> visitor)
             throws ZimbraException {
         for (Domain domain : getAllDomains()) {

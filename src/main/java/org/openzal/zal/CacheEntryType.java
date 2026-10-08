@@ -30,22 +30,16 @@ public class CacheEntryType
 {
   private final com.zimbra.soap.admin.type.CacheEntryType mCacheEntryType;
 
-  public static CacheEntryType locale  = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.locale);
-  public static CacheEntryType license = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.license);
-  public static CacheEntryType account = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.account);
-  public static CacheEntryType config  = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.config);
-  public static CacheEntryType cos     = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.cos);
+    public static CacheEntryType account = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.account);
+    public static CacheEntryType cos     = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.cos);
   public static CacheEntryType domain  = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.domain);
   public static CacheEntryType group   = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.group);
   public static CacheEntryType server  = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.server);
 
   public static CacheEntryType acl         = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.acl);
   public static CacheEntryType all         = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.all);
-  public static CacheEntryType globalgrant = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.globalgrant);
-  public static CacheEntryType mime        = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.mime);
-  public static CacheEntryType galgroup    = new CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType.galgroup);
 
-  CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType cacheEntryType)
+    CacheEntryType(com.zimbra.soap.admin.type.CacheEntryType cacheEntryType)
   {
     mCacheEntryType = cacheEntryType;
   }

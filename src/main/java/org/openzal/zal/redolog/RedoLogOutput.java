@@ -48,7 +48,7 @@ public class RedoLogOutput extends com.zimbra.cs.redolog.RedoLogOutput {
   }
 
   @Override
-  public void write(byte[] b) throws IOException {}
+  public void write(byte[] b) {}
 
   private void callReader(Object o) {
     if( counter < readers.size() ) {
@@ -58,7 +58,7 @@ public class RedoLogOutput extends com.zimbra.cs.redolog.RedoLogOutput {
   }
 
   @Override
-  public void writeBoolean(boolean v) throws IOException {
+  public void writeBoolean(boolean v) {
     callReader(v);
   }
 
@@ -68,32 +68,32 @@ public class RedoLogOutput extends com.zimbra.cs.redolog.RedoLogOutput {
   }
 
   @Override
-  public void writeShort(short v) throws IOException {
+  public void writeShort(short v) {
     callReader(v);
   }
 
   @Override
-  public void writeInt(int v) throws IOException {
+  public void writeInt(int v) {
     callReader(v);
   }
 
   @Override
-  public void writeLong(long v) throws IOException {
+  public void writeLong(long v) {
     callReader(v);
   }
 
   @Override
-  public void writeDouble(double v) throws IOException {
+  public void writeDouble(double v) {
     callReader(v);
   }
 
   @Override
-  public void writeUTF(String v) throws IOException {
+  public void writeUTF(String v) {
     callReader(v);
   }
 
   @Override
-  public void writeUTFArray(String[] v) throws IOException {
+  public void writeUTFArray(String[] v) {
     callReader(v);
   }
 }

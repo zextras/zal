@@ -27,14 +27,12 @@ import com.zimbra.cs.account.AuthToken;
 import com.zimbra.cs.session.Session;
 import com.zimbra.soap.DocumentHandler;
 import com.zimbra.soap.ZimbraSoapContext;
-import org.openzal.zal.exceptions.ExceptionWrapper;
 
 import java.util.Map;
 
 public class InternalOverrideDocumentHandler extends DocumentHandler
 {
   private final InternalDocumentHelper mInternalDocumentHelper;
-  private final SoapHandler            mSoapHandler;
   private final DocumentHandler        mOriginalDocumentHandler;
 
   public InternalOverrideDocumentHandler(
@@ -42,7 +40,6 @@ public class InternalOverrideDocumentHandler extends DocumentHandler
     DocumentHandler originalDocumentHandler
   )
   {
-    mSoapHandler = soapHandler;
     mOriginalDocumentHandler = originalDocumentHandler;
     mInternalDocumentHelper = new InternalDocumentHelper(soapHandler);
   }
@@ -50,20 +47,7 @@ public class InternalOverrideDocumentHandler extends DocumentHandler
   @Override
   public Element handle(final Element request, final Map<String, Object> context) throws ServiceException
   {
-    return mInternalDocumentHelper.handle(request, context, new InternalDocumentHandler.Proxier()
-    {
-      @Override
-      public Element proxy(String accountId) {
-        try
-        {
-          return InternalOverrideDocumentHandler.this.proxyRequest(request, context, accountId);
-        }
-        catch (ServiceException e)
-        {
-          throw ExceptionWrapper.wrap(e);
-        }
-      }
-    });
+    return mInternalDocumentHelper.handle(request, context);
   }
 
   @Override

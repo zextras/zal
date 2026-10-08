@@ -24,11 +24,8 @@ import com.zimbra.cs.mailbox.MailboxManager;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MailboxManagerListenerWrapper implements MailboxManager.Listener

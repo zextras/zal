@@ -20,32 +20,19 @@
 
 package org.openzal.zal.soap;
 
-import org.openzal.zal.Continuation;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface ZimbraContext extends SoapNode
 {
-  SoapResponse proxyRequestTo(String accountId);
 
-  String getTargetAccountId();
-
-  String getAuthenticatedAccontId();
+    String getAuthenticatedAccontId();
 
   String getRequesterIp();
 
-  SoapResponse execLocalRequest();
+    HttpServletRequest getHttpServletRequest();
 
-  HttpServletRequest getHttpServletRequest();
-
-  Continuation getContinuation();
-
-  boolean isDelegatedAuth();
-
-  InternalDocumentHelper.ElementFactory getElementFactory();
-
-  SoapElement getRequest();
+    SoapElement getRequest();
 
   boolean hasParameter(String key);
 

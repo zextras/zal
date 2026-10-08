@@ -32,28 +32,7 @@ public class ParsedMessage
 {
   private com.zimbra.cs.mime.ParsedMessage mParsedMessage;
 
-  protected ParsedMessage(@Nonnull Object parsedMessage)
-  {
-    if ( parsedMessage == null )
-    {
-      throw new NullPointerException();
-    }
-    mParsedMessage = (com.zimbra.cs.mime.ParsedMessage)parsedMessage;
-  }
-
-  public ParsedMessage(byte[] rawData, boolean indexAttachments) throws ZimbraException
-  {
-    try
-    {
-      mParsedMessage = new com.zimbra.cs.mime.ParsedMessage(rawData, indexAttachments);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  /*
+    /*
    * This triggers MimeMessage.parse(InputStream) to set internal headers and DataSources
    */
   public ParsedMessage(MimeMessage msg, boolean indexAttachments) throws ZimbraException
@@ -91,12 +70,7 @@ public class ParsedMessage
     return mParsedMessage.getMimeMessage();
   }
 
-  public boolean hasAttachments()
-  {
-    return mParsedMessage.hasAttachments();
-  }
-
-  public <T> T toZimbra(@Nonnull Class<T> cls)
+    public <T> T toZimbra(@Nonnull Class<T> cls)
   {
     return cls.cast(mParsedMessage);
   }

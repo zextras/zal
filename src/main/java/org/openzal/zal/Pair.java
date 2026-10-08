@@ -30,11 +30,6 @@ public class Pair<F, S>
     mPair = new com.zimbra.common.util.Pair<F, S>(first, second);
   }
 
-  protected Pair(com.zimbra.common.util.Pair<F, S> pair)
-  {
-    mPair = pair;
-  }
-
   public F getFirst()
   {
     return mPair.getFirst();

@@ -26,8 +26,6 @@ import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.mailbox.MailServiceException;
 import javax.annotation.Nonnull;
 
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class Metadata
@@ -51,19 +49,7 @@ public class Metadata
     }
   }
 
-  public Metadata(@Nullable Map<String, Object> map)
-  {
-    this();
-    if( map != null )
-    {
-      for(String key : map.keySet())
-      {
-        put(key, map.get(key));
-      }
-    }
-  }
-
-  protected Metadata(@Nonnull Object metadata)
+    protected Metadata(@Nonnull Object metadata)
   {
     if (metadata == null)
     {
@@ -82,19 +68,7 @@ public class Metadata
     return mZObject.containsKey(key);
   }
 
-  public long getLong(String key, long defaultValue)
-  {
-    try
-    {
-      return mZObject.getLong(key, defaultValue);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public Metadata put(String key, long value)
+    public Metadata put(String key, long value)
   {
     mZObject.put(key, value);
     return this;
@@ -105,12 +79,7 @@ public class Metadata
     return mZObject.toString();
   }
 
-  public Map<String, Object> asMap()
-  {
-    return (Map<String, Object>) mZObject.asMap();
-  }
-
-  public String get(String key)
+    public String get(String key)
   {
     try
     {
@@ -127,13 +96,7 @@ public class Metadata
     return mZObject.get(key, defaultValue);
   }
 
-  public Metadata remove(String key)
-  {
-    mZObject.remove(key);
-    return this;
-  }
-
-  public Metadata put(String key, Object value)
+    public Metadata put(String key, Object value)
   {
     if( value instanceof Metadata )
     {
@@ -170,32 +133,7 @@ public class Metadata
     }
   }
 
-  public short getShort(String key, short i)
-  {
-    try
-    {
-      String value = mZObject.get(key);
-      if( value == null )
-      {
-        return i;
-      }
-      else
-      {
-        return Short.valueOf(value);
-      }
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void put(String key, List<Object> list )
-  {
-    mZObject.put(key, list);
-  }
-
-  public MetadataList getList(String key)
+    public MetadataList getList(String key)
   {
     try
     {

@@ -241,8 +241,7 @@ public class BootstrapClassLoader extends ClassLoader
 
   private void definePackageIfMissing(
     String packageName,
-    Manifest man,
-    URL url
+    Manifest man
   )
   {
     if( getPackage(packageName) != null )
@@ -306,8 +305,7 @@ public class BootstrapClassLoader extends ClassLoader
     {
       definePackageIfMissing(
         name.substring(0, lastIndexOf),
-        jarFile.getManifest(),
-        url
+        jarFile.getManifest()
       );
     }
 

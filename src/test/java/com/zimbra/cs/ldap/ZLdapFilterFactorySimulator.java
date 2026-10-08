@@ -51,18 +51,10 @@ public class ZLdapFilterFactorySimulator extends ZLdapFilterFactory {
   public ZLdapFilter hasSubordinates() {
     ZLdapFilter filter = Mockito.mock(ZLdapFilter.class);
     when(filter.toFilterString()).thenReturn("");
-
     return filter;
-
-//    return new ZLdapFilter(FilterId.HAS_SUBORDINATES) {
-//      @Override
-//      public String toFilterString() {
-//        return "";
-//      }
-//    };
   }
 
-  class FakeLdapFilter extends ZLdapFilter
+  static class FakeLdapFilter extends ZLdapFilter
   {
     protected FakeLdapFilter(FilterId filterId)
     {

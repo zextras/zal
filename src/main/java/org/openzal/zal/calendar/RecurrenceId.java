@@ -23,18 +23,15 @@ package org.openzal.zal.calendar;
 import com.zimbra.common.calendar.ParsedDateTime;
 import com.zimbra.cs.mailbox.calendar.RecurId;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 
 public class RecurrenceId
 {
   private final long mExceptionStartTimeUtc;
-  private ParsedDateTime mDt;
 
   public RecurrenceId(long exceptionStartTimeUtc)
   {
     mExceptionStartTimeUtc = exceptionStartTimeUtc;
-    mDt = null;
   }
 
   public long getExceptionStartTimeUtc()
@@ -45,12 +42,6 @@ public class RecurrenceId
   public <T> T toZimbra(@Nonnull Class<T> cls)
   {
     return cls.cast(new RecurId(ParsedDateTime.fromUTCTime(mExceptionStartTimeUtc), RecurId.RANGE_NONE));
-  }
-
-  @Nullable
-  ParsedDateTime getDt()
-  {
-    return mDt;
   }
 
   @Override

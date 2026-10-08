@@ -55,11 +55,6 @@ class Extension implements Comparable<Extension>
     mZalExtension = createZalExtension();
   }
 
-  public ClassLoader getClassLoader()
-  {
-    return mClassLoader;
-  }
-
   private static BootstrapClassLoader createClassLoader(List<File> libraries)
   {
     List<URL> urls = new ArrayList<URL>(libraries.size());
@@ -118,11 +113,6 @@ class Extension implements Comparable<Extension>
     }
 
     return zalExtensionCasted;
-  }
-
-  public String getExtensionClassName()
-  {
-    return mExtensionClassName;
   }
 
   @Override

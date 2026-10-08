@@ -22,16 +22,6 @@ public class LDIFWriter implements Closeable
     }
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mLDIFWriter);
-  }
-
-  public void writeEntry(Entry entry, String comment) throws IOException
-  {
-    mLDIFWriter.writeEntry(entry.toZimbra(com.unboundid.ldap.sdk.Entry.class),comment);
-  }
-
   public void writeEntry(Entry entry) throws IOException
   {
     mLDIFWriter.writeEntry(entry.toZimbra(com.unboundid.ldap.sdk.Entry.class));

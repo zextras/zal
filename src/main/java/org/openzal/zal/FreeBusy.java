@@ -31,11 +31,6 @@ public class FreeBusy {
   }
 
 
-  public String getName() {
-    return mFreeBusy.getName();
-  }
-
-
   public String getBusiest() {
     return mFreeBusy.getBusiest();
   }
@@ -59,37 +54,8 @@ public class FreeBusy {
     sBusyOrder[4] = FBTYPE_FREE;
   }
 
-  public static String chooseBusier(String freeBusy1, String freeBusy2) {
-    for (int i = 0; i < sBusyOrder.length; i++) {
-      String busy = sBusyOrder[i];
-      if (busy.equals(freeBusy1))
-        return freeBusy1;
-      if (busy.equals(freeBusy2))
-        return freeBusy2;
-    }
-    if (freeBusy1 != null)
-      return freeBusy1;
-    else
-      return freeBusy2;
-  }
-
-  public enum Method {
-    PUBLISH, REQUEST, REPLY
-  }
-
-  private static final String NL = "\r\n";
-  private static final String MAILTO = "mailto:";
-  private static final String HTTP = "http:";
-
   public String toString() {
     return mFreeBusy.toString();
   }
 
-  public long getStartTime() {
-    return mFreeBusy.getStartTime();
-  }
-
-  public long getEndTime() {
-    return mFreeBusy.getEndTime();
-  }
 }

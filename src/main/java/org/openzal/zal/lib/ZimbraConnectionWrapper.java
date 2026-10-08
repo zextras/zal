@@ -22,12 +22,10 @@ package org.openzal.zal.lib;
 
 import org.openzal.zal.Connection;
 import org.openzal.zal.exceptions.*;
-import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.cs.db.DbPool;
 import javax.annotation.Nonnull;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -108,19 +106,6 @@ public class ZimbraConnectionWrapper implements Connection
     catch (com.zimbra.common.service.ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Override
-  public void closeResults(ResultSet resultSet)
-  {
-    try
-    {
-      DbPool.closeResults(resultSet);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      //
     }
   }
 

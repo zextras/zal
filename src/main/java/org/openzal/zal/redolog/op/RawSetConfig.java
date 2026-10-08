@@ -18,18 +18,6 @@ public class RawSetConfig extends RedoableOp {
     this.config = config;
   }
 
-  protected RawSetConfig() {
-    this(null, null, null);
-  }
-
-  public String getSection() {
-    return section;
-  }
-
-  public String getConfig() {
-    return config;
-  }
-
   @Override
   public void redo() {
     throw new UnsupportedOperationException();

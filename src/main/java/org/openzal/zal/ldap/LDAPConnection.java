@@ -1,12 +1,7 @@
 package org.openzal.zal.ldap;
 
-import com.unboundid.ldap.matchingrules.CaseIgnoreStringMatchingRule;
-import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.LDAPSearchException;
-import com.unboundid.ldap.sdk.SearchRequest;
-import com.unboundid.ldap.sdk.controls.ServerSideSortRequestControl;
-import com.unboundid.ldap.sdk.controls.SortKey;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
 import com.unboundid.util.ssl.SSLUtil;
 import com.zimbra.common.net.TrustManagers;
@@ -18,25 +13,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.io.Closeable;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 
 public class LDAPConnection implements Closeable, LDAPInterface
 {
   @Nonnull
   private final com.unboundid.ldap.sdk.LDAPConnection mLDAPConnection;
-
-  public LDAPConnection(SocketFactory socketFactory, String host, int port, String bindDN, String bindPassword)
-    throws LDAPException
-  {
-    try
-    {
-      mLDAPConnection = new com.unboundid.ldap.sdk.LDAPConnection(socketFactory, host, port, bindDN, bindPassword);
-    }
-    catch (com.unboundid.ldap.sdk.LDAPException e)
-    {
-      throw new LDAPException(e);
-    }
-  }
 
   public LDAPConnection(SocketFactory socketFactory, String host, int port)
     throws LDAPException
@@ -49,16 +30,6 @@ public class LDAPConnection implements Closeable, LDAPInterface
     {
       throw new LDAPException(e);
     }
-  }
-
-  public LDAPConnection(Object connection)
-  {
-    mLDAPConnection = (com.unboundid.ldap.sdk.LDAPConnection)connection;
-  }
-
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mLDAPConnection);
   }
 
   @Override
@@ -92,28 +63,6 @@ public class LDAPConnection implements Closeable, LDAPInterface
       return new ZalSearchResult(mLDAPConnection.search(baseDN, sub.toZimbra(com.unboundid.ldap.sdk.SearchScope.class), s, strings));
     }
     catch (LDAPSearchException e)
-    {
-      throw new LDAPException(e);
-    }
-  }
-
-  public ZalSearchResult searchAddSortControl(String baseDN, SearchScope sub, String filter, String[] attributes) throws LDAPException
-  {
-    try
-    {
-      SearchRequest searchRequest = new SearchRequest(
-        baseDN,
-        sub.toZimbra(com.unboundid.ldap.sdk.SearchScope.class),
-        filter,
-        attributes
-      );
-      Control sss = new ServerSideSortRequestControl(
-        new SortKey("cn", CaseIgnoreStringMatchingRule.ORDERING_RULE_NAME, false)
-      );
-      searchRequest.setControls(sss);
-      return new ZalSearchResult(mLDAPConnection.search(searchRequest));
-    }
-    catch( com.unboundid.ldap.sdk.LDAPException e )
     {
       throw new LDAPException(e);
     }

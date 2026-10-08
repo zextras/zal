@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.zimbra.common.service.ServiceException;
-import com.zimbra.cs.extension.ZimbraExtension;
+
 import javax.annotation.Nonnull;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.NoSuchDomainException;
@@ -97,16 +97,5 @@ public class Config extends Entry
     return mConfig.getAttr(name, applyDefaults);
   }
 
-  public void setMessageIdDedupeCacheSize(int messageIdDedupeCacheSize)
-  {
-    try
-    {
-      mConfig.setMessageIdDedupeCacheSize(messageIdDedupeCacheSize);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
 }
 

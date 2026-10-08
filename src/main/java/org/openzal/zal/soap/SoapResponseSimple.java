@@ -40,41 +40,10 @@ public class SoapResponseSimple implements SoapResponse
   }
 
   @Override
-  public void setValue(String key, boolean value)
-  {
-    mMap.put(key, value);
-  }
-
-  @Override
-  public void setValue(String key, long value)
-  {
-    mMap.put(key, value);
-  }
-
-  @Override
-  public void setQName(QName qName)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public void setResponse(SoapResponse soapResponse)
   {
     SoapResponseSimple simple = (SoapResponseSimple) soapResponse;
     mMap = simple.getMap();
-  }
-
-  @Override
-  public SoapResponse createNode(String name)
-  {
-    SoapResponse node = new SoapResponseSimple();
-    mMap.put(name, node);
-    return node;
-  }
-
-  public Object getAttribute(String responses)
-  {
-    return mMap.get(responses);
   }
 
   public HashMap<String, Object> getMap()

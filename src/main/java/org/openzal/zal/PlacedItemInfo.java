@@ -21,8 +21,6 @@
 package org.openzal.zal;
 
 
-import javax.annotation.Nonnull;
-
 public class PlacedItemInfo extends ItemInfo
 {
   public int folderId;
@@ -35,15 +33,6 @@ public class PlacedItemInfo extends ItemInfo
   )
   {
     super(itemId, sequence, date);
-    this.folderId = folderId;
-  }
-
-  public PlacedItemInfo(
-    int folderId,
-    @Nonnull ItemInfo itemInfo
-  )
-  {
-    super(itemInfo.itemId, itemInfo.sequence, itemInfo.date);
     this.folderId = folderId;
   }
 

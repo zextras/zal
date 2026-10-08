@@ -31,7 +31,6 @@ public interface PrimaryStore extends Store
   boolean delete(Blob blob) throws IOException;
   InputStream getContent(Blob blob) throws IOException;
   BlobBuilder getBlobBuilder() throws IOException;
-  <T> T toZimbra(Class<T> cls);
 }
 
 

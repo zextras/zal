@@ -26,17 +26,13 @@ import org.openzal.zal.Connection;
 import org.openzal.zal.Item;
 import org.openzal.zal.LocalConfig;
 import org.openzal.zal.Mailbox;
-import org.openzal.zal.StoreVolume;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.exceptions.ZimbraException;
 import org.openzal.zal.exceptions.UnableToObtainDBConnectionException;
-import com.zimbra.cs.db.DbMailItem;
-import com.zimbra.cs.db.DbPool;
 import com.zimbra.cs.index.SortBy;
 import com.zimbra.cs.mailbox.MailItem;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -155,55 +151,11 @@ public class ZimbraDatabase
     DbPool.quietCloseStatement(st);
   }
 
-  public static void closeResults(@Nullable ResultSet res )
-    throws ZimbraException
-  {
-    try
-    {
-      DbPool.closeResults(res);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public static String suitableNumberOfVariables(byte[] array)    { return DbUtil.suitableNumberOfVariables(array.length); }
-  public static String suitableNumberOfVariables(short[] array)   { return DbUtil.suitableNumberOfVariables(array.length); }
-  public static String suitableNumberOfVariables(int[] array)     { return DbUtil.suitableNumberOfVariables(array.length); }
-  public static String suitableNumberOfVariables(Object[] array)  { return DbUtil.suitableNumberOfVariables(array.length); }
   public static String suitableNumberOfVariables(Collection<?> c) { return DbUtil.suitableNumberOfVariables(c.size()); }
-
-  @Nonnull
-  public static CurrentVolumes getCurrentVolumes(@Nonnull Connection conn) throws ZimbraException
-  {
-    DbVolume.CurrentVolumes cv;
-    try
-    {
-      cv = DbVolume.getCurrentVolumes(conn.toZimbra(DbPool.DbConnection.class));
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    CurrentVolumes myCv = new CurrentVolumes();
-    myCv.msgVolId = cv.msgVolId;
-    myCv.secondaryMsgVolId = cv.secondaryMsgVolId;
-    myCv.indexVolId = cv.indexVolId;
-
-    return myCv;
-  }
 
   public interface ConnectionProvider
   {
     Connection getConnection() throws UnableToObtainDBConnectionException;
-  }
-
-  public static class CurrentVolumes {
-    public short msgVolId          = StoreVolume.ID_NONE;
-    public short secondaryMsgVolId = StoreVolume.ID_NONE;
-    public short indexVolId        = StoreVolume.ID_NONE;
   }
 
   public static String getItemTableName(Mailbox mbox)
@@ -229,47 +181,14 @@ public class ZimbraDatabase
     return s;
   }
 
-  public static String getCalendarTableName(Mailbox mbox)
-  {
-    return getCalendarTableName(mbox.getSchemaGroupId(), false);
-  }
-
-  public static String getCalendarTableName(int mailboxGroupId)
-  {
-    return getCalendarTableName(mailboxGroupId, false);
-  }
-
-  public static String getCalendarTableName(Mailbox mbox, boolean dumpster)
-  {
-    return getCalendarTableName(mbox.getSchemaGroupId(), dumpster);
-  }
-
-  public static String getCalendarTableName(int mailboxGroupId, boolean dumpster)
-  {
-    String s = "mboxgroup" + mailboxGroupId + ".appointment";
-    if (dumpster)
-      s += "_dumpster";
-    return s;
-  }
-
   public static String getTombstoneTable(Mailbox mbox)
   {
     return "mboxgroup" + mbox.getSchemaGroupId() + ".tombstone";
   }
 
-  public static String getTombstoneTable(int mailboxGroupId)
-  {
-    return "mboxgroup" + mailboxGroupId + ".tombstone";
-  }
-
   public static String getRevisionTableName(Mailbox mbox)
   {
     return getRevisionTableName(mbox.getSchemaGroupId(),false);
-  }
-
-  public static String getRevisionTableName(int mailboxGroupId)
-  {
-    return getRevisionTableName(mailboxGroupId,false);
   }
 
   public static String getRevisionTableName(Mailbox mbox,boolean dumpster)

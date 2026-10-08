@@ -48,9 +48,5 @@ public class Signature
     return new HashMap<String, Object>(mSignature.getAttrs(applyDefaults));
   }
 
-  public String getAttr(String name)
-  {
-    return mSignature.getAttr(name);
-  }
 }
 

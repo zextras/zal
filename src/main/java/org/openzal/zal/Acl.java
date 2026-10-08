@@ -42,15 +42,9 @@ public class Acl
 
   public static final short RIGHT_READ     = ACL.RIGHT_READ;
   public static final short RIGHT_WRITE    = ACL.RIGHT_WRITE;
-  public static final short RIGHT_INSERT   = ACL.RIGHT_INSERT;
-  public static final short RIGHT_DELETE   = ACL.RIGHT_DELETE;
-  public static final short RIGHT_ACTION   = ACL.RIGHT_ACTION;
-  public static final short RIGHT_ADMIN    = ACL.RIGHT_ADMIN;
-  public static final short RIGHT_PRIVATE  = ACL.RIGHT_PRIVATE;
-  public static final short RIGHT_FREEBUSY = ACL.RIGHT_FREEBUSY;
-  public static final short ROLE_MANAGER   = ACL.RIGHT_READ | ACL.RIGHT_WRITE | ACL.RIGHT_DELETE | ACL.RIGHT_INSERT | ACL.RIGHT_ACTION;
+    public static final short RIGHT_ADMIN    = ACL.RIGHT_ADMIN;
 
-  @Nonnull private final ACL mAcl;
+    @Nonnull private final ACL mAcl;
 
   public Acl()
   {
@@ -109,12 +103,7 @@ public class Acl
     return new Grant(grant);
   }
 
-  public Acl duplicate()
-  {
-    return new Acl(mAcl.duplicate());
-  }
-
-  public List<Grant> getGrants()
+    public List<Grant> getGrants()
   {
     return ZimbraListWrapper.wrapGrants(mAcl.getGrants());
   }
@@ -129,36 +118,8 @@ public class Acl
     return ACL.rightsToString(rights);
   }
 
-  public boolean revokeAccess(String zimbraId)
-  {
-    return mAcl.revokeAccess(zimbraId);
-  }
 
-
-  public Grant grantAccess(String zimbraId, byte type, short rights, String secret, long expiry)
-    throws org.openzal.zal.exceptions.ZimbraException
-  {
-    try
-    {
-      return new Grant(mAcl.grantAccess(zimbraId, type, rights, secret, expiry));
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public long getInternalGrantExpiry()
-  {
-    return mAcl.getInternalGrantExpiry();
-  }
-
-  public long getGuestGrantExpiry()
-  {
-    return mAcl.getGuestGrantExpiry();
-  }
-
-  public <T> T toZimbra(Class<T> cls)
+    public <T> T toZimbra(Class<T> cls)
   {
     return cls.cast(mAcl);
   }

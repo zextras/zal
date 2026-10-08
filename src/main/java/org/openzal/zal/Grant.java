@@ -21,10 +21,8 @@
 package org.openzal.zal;
 
 import javax.annotation.Nonnull;
-import org.openzal.zal.exceptions.*;
-import com.zimbra.cs.account.Account;
+
 import com.zimbra.cs.mailbox.ACL;
-import com.zimbra.cs.mailbox.Metadata;
 
 
 public class Grant
@@ -61,42 +59,9 @@ public class Grant
     return mGrant.getGranteeName();
   }
 
-  public void setGranteeName(String name)
-  {
-    mGrant.setGranteeName(name);
-  }
-
-  public boolean matches(Account acct)
-    throws org.openzal.zal.exceptions.ZimbraException
-  {
-    try
-    {
-      return mGrant.matches(acct);
-    }
-    catch (com.zimbra.common.service.ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public boolean isGrantee(String zimbraId)
-  {
-    return mGrant.isGrantee(zimbraId);
-  }
-
-  public String getPassword()
+    public String getPassword()
   {
     return mGrant.getPassword();
   }
 
-  @Nonnull
-  public Metadata encode()
-  {
-    return mGrant.encode();
-  }
-
-  public <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mGrant);
-  }
 }

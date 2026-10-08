@@ -63,8 +63,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception
-  {
+  public void beforeEach(ExtensionContext context) {
   }
 
   @Override
@@ -193,8 +192,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     MailboxIndex.startup();
   }
 
-  private void initProvisioning() throws Exception
-  {
+  private void initProvisioning() {
     com.zimbra.cs.account.Provisioning.setInstance(createProvisioning());
     ZLdapFilterFactorySimulator.setInstance();
     /* $if ZimbraVersion >= 8.7.6$ */
@@ -227,18 +225,11 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     });
     mZimbra.restoreZimbraStoreManager();
     recursiveDelete(mTmpDir);
-    //sVolumeManagerInstance.set(null, sVolumeManagerBuilder.newInstance());
-    //((StoreManagerSimulator) com.zimbra.cs.store.StoreManager.getInstance()).shutdown();
   }
 
   public Provisioning getProvisioning()
   {
     return new ProvisioningImpProxy(com.zimbra.cs.account.Provisioning.getInstance());
-  }
-
-  public MockProvisioning getMockProvisioning()
-  {
-    return (MockProvisioning) com.zimbra.cs.account.Provisioning.getInstance();
   }
 
   public org.openzal.zal.MailboxManager getMailboxManager()

@@ -10,7 +10,7 @@ public class MailboxIT
   private ZalZimbraSimulator mZimbraSimulator;
 
   @BeforeEach
-  public void setup() throws Exception {
+  public void setup() {
     mZimbraSimulator = new ZalZimbraSimulator();
   }
 
