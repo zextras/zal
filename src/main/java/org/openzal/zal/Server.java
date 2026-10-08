@@ -22,24 +22,14 @@ package org.openzal.zal;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.zimbra.cs.httpclient.URLUtil;
-import com.zimbra.soap.admin.message.BackupQueryRequest;
-import com.zimbra.soap.admin.message.BackupQueryResponse;
-import com.zimbra.soap.admin.type.BackupQueryAccounts;
-import com.zimbra.soap.admin.type.BackupQueryInfo;
-import com.zimbra.soap.admin.type.BackupQuerySpec;
 import org.openzal.zal.exceptions.ExceptionWrapper;
-import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.service.ServiceException;
 import javax.annotation.Nonnull;
-import org.openzal.zal.log.ZimbraLog;
-import org.openzal.zal.soap.SoapTransport;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -112,13 +102,7 @@ public class Server extends Entry
     }
   }
 
-  @Nonnull
-  public Collection<String> getServiceInstalled()
-  {
-    return Arrays.asList(mServer.getServiceInstalled());
-  }
-
-  public String getId()
+    public String getId()
   {
     return mServer.getId();
   }
@@ -168,21 +152,7 @@ public class Server extends Entry
     return cls.cast(mServer);
   }
 
-  public int getIntAttr(String name, int defaultValue)
-  {
-    return mServer.getIntAttr(name, defaultValue);
-  }
-
-  public boolean hasMailboxService()
-  {
-    return getMultiAttrSet(
-      com.zimbra.cs.account.Provisioning.A_zimbraServiceEnabled
-    ).contains(
-      com.zimbra.cs.account.Provisioning.SERVICE_MAILBOX
-    );
-  }
-
-  @Nonnull
+    @Nonnull
   public String getAdminURL(String path)
   {
     return URLUtil.getAdminURL(mServer,path);
@@ -200,29 +170,7 @@ public class Server extends Entry
     }
   }
 
-  public boolean isNetworkLegacyBackupActive(SoapTransport soapTransport)
-  {
-    BackupQueryRequest request = new BackupQueryRequest(new BackupQuerySpec());
-    try
-    {
-      BackupQueryResponse response = soapTransport.invoke(request);
-      List<BackupQueryInfo> backups = response.getBackups();
-      for (BackupQueryInfo backup : backups)
-      {
-        BackupQueryAccounts accounts = backup.getAccounts();
-        if (!accounts.getAccounts().isEmpty())
-        {
-          return true;
-        }
-      }
-    }
-    catch (IOException ignore)
-    {}
-
-    return false;
-  }
-
-  @Override
+    @Override
   public boolean equals(Object o)
   {
     if(this == o)
@@ -243,17 +191,5 @@ public class Server extends Entry
     return getServerHostname().hashCode();
   }
 
-  /**
-   * Return true if zimbraMailMode is https and false when both or http.
-   * Both is treated as http to avoid issues with clients who have broken SSL
-   * setup, most zimbra calls {@code URLUtil.getServiceURL()} with
-   * {@code preferSSL} at {@code false}.
-   *
-   * @see com.zimbra.cs.httpclient.URLUtil#getServiceURL
-   */
-  public boolean isMailModeHttps()
-  {
-    return "https".equals(getAttr("zimbraMailMode", "http"));
-  }
 }
 

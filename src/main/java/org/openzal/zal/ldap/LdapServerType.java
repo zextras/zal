@@ -8,9 +8,8 @@ public class LdapServerType
   private final com.zimbra.cs.ldap.LdapServerType mLdapServerType;
 
   public final static LdapServerType MASTER = new LdapServerType(com.zimbra.cs.ldap.LdapServerType.MASTER);
-  public final static LdapServerType REPLICA = new LdapServerType(com.zimbra.cs.ldap.LdapServerType.REPLICA);
 
-  public LdapServerType(@Nonnull Object ldapServerType)
+    public LdapServerType(@Nonnull Object ldapServerType)
   {
     mLdapServerType = (com.zimbra.cs.ldap.LdapServerType)ldapServerType;
   }
@@ -20,7 +19,4 @@ public class LdapServerType
     return cls.cast(mLdapServerType);
   }
 
-  public boolean isMaster() {
-    return mLdapServerType.isMaster();
-  }
 }

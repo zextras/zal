@@ -68,19 +68,7 @@ public class Domain extends Entry
     );
   }
 
-  public void unsetPasswordChangeListener()
-  {
-    try
-    {
-      mDomain.unsetPasswordChangeListener();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public String getDomainDefaultCOSId()
+    public String getDomainDefaultCOSId()
   {
     return mDomain.getDomainDefaultCOSId();
   }
@@ -101,19 +89,7 @@ public class Domain extends Entry
     return new HashMap<String, Object>(mDomain.getAttrs(applyDefaults));
   }
 
-  public void setDomainCOSMaxAccounts(@Nonnull Collection<String> zimbraDomainCOSMaxAccounts)
-  {
-    try
-    {
-      mDomain.setDomainCOSMaxAccounts(zimbraDomainCOSMaxAccounts.toArray(new String[zimbraDomainCOSMaxAccounts.size()]));
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nullable
+    @Nullable
   public String getDomainAliasTargetId()
   {
     return mDomain.getDomainAliasTargetId();
@@ -147,12 +123,7 @@ public class Domain extends Entry
     return Arrays.asList(mDomain.getDomainCOSMaxAccounts());
   }
 
-  public String getPasswordChangeListener()
-  {
-    return mDomain.getPasswordChangeListener();
-  }
-
-  @Nonnull
+    @Nonnull
   @Deprecated //instant-kill big infrastructures
   public List<Account> getAllAccounts()
   {
@@ -172,12 +143,7 @@ public class Domain extends Entry
     return cls.cast(mDomain);
   }
 
-  public long getLongAttr(String name, int defaultValue)
-  {
-    return mDomain.getLongAttr(name, defaultValue);
-  }
-
-  @Nullable
+    @Nullable
   public String getPublicHostname()
   {
     return mDomain.getPublicServiceHostname();
@@ -242,26 +208,6 @@ public class Domain extends Entry
   public List<String> getGalAccountIds()
   {
     return Arrays.asList(mDomain.getGalAccountId());
-  }
-
-  @Nullable
-  public String getSkinLogoAppBanner()
-  {
-    return mDomain.getSkinLogoAppBanner();
-  }
-
-  @Nullable
-  public String getSkinLogoURL()
-  {
-    return mDomain.getSkinLogoURL();
-  }
-
-  public String getAuthMech() {
-    return mDomain.getAuthMech();
-  }
-
-  public String getAuthMechAdmin() {
-    return mDomain.getAuthMechAdmin();
   }
 
   @Nullable

@@ -25,7 +25,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class ExtensionVersionValidator
 {
-  public final static String ATTR_ZAL_REQUIRED = "ZAL-Required-Version";
 
   public void validate(JarAccessor jar, Version zalVersion)
     throws IOException, NoSuchAlgorithmException

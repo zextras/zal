@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -57,11 +56,6 @@ public abstract class Entry
   public Object toZimbraEntry()
   {
     return mEntry;
-  }
-
-  public EntryType getEntryType()
-  {
-    return new EntryType(mEntry.getEntryType());
   }
 
   public String getName()
@@ -107,38 +101,6 @@ public abstract class Entry
     return new HashSet<String>(mEntry.getMultiAttrSet(name));
   }
 
-  public void addMultiAttrValue(String key, String value)
-  {
-    if (value != null && !value.isEmpty())
-    {
-      Set<String> values = getMultiAttrSet(key);
-      values.add(value);
-
-      modify(
-        Collections.<String, Object>singletonMap(
-          key,
-          values.toArray(new String[values.size()])
-        )
-      );
-    }
-  }
-
-  public void removeMultiAttrValue(String key, String value)
-  {
-    if (value != null && !value.isEmpty())
-    {
-      Set<String> values = getMultiAttrSet(key);
-      values.remove(value);
-
-      modify(
-        Collections.<String, Object>singletonMap(
-          key,
-          values.toArray(new String[values.size()])
-        )
-      );
-    }
-  }
-
   public void modify(Map<String, Object> attrs)
   {
     modify(attrs, true);
@@ -152,44 +114,6 @@ public abstract class Entry
     catch (ServiceException e)
     {
       throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public class EntryType
-  {
-    EntryType ENTRY                     = new EntryType(com.zimbra.cs.account.EntryType.ENTRY);
-    EntryType ACCOUNT                   = new EntryType(com.zimbra.cs.account.EntryType.ACCOUNT);
-    EntryType ALIAS                     = new EntryType(com.zimbra.cs.account.EntryType.ALIAS);
-    EntryType CALRESOURCE               = new EntryType(com.zimbra.cs.account.EntryType.CALRESOURCE);
-    EntryType COS                       = new EntryType(com.zimbra.cs.account.EntryType.COS);
-    EntryType DATASOURCE                = new EntryType(com.zimbra.cs.account.EntryType.DATASOURCE);
-    EntryType DISTRIBUTIONLIST          = new EntryType(com.zimbra.cs.account.EntryType.DISTRIBUTIONLIST);
-    EntryType DOMAIN                    = new EntryType(com.zimbra.cs.account.EntryType.DOMAIN);
-    EntryType DYNAMICGROUP              = new EntryType(com.zimbra.cs.account.EntryType.DYNAMICGROUP);
-    EntryType DYNAMICGROUP_DYNAMIC_UNIT = new EntryType(com.zimbra.cs.account.EntryType.DYNAMICGROUP_DYNAMIC_UNIT);
-    EntryType DYNAMICGROUP_STATIC_UNIT  = new EntryType(com.zimbra.cs.account.EntryType.DYNAMICGROUP_STATIC_UNIT);
-    EntryType GLOBALCONFIG              = new EntryType(com.zimbra.cs.account.EntryType.GLOBALCONFIG);
-    EntryType GLOBALGRANT               = new EntryType(com.zimbra.cs.account.EntryType.GLOBALGRANT);
-    EntryType IDENTITY                  = new EntryType(com.zimbra.cs.account.EntryType.IDENTITY);
-    EntryType MIMETYPE                  = new EntryType(com.zimbra.cs.account.EntryType.MIMETYPE);
-    EntryType SERVER                    = new EntryType(com.zimbra.cs.account.EntryType.SERVER);
-    EntryType SIGNATURE                 = new EntryType(com.zimbra.cs.account.EntryType.SIGNATURE);
-    EntryType XMPPCOMPONENT             = new EntryType(com.zimbra.cs.account.EntryType.XMPPCOMPONENT);
-    private final com.zimbra.cs.account.EntryType mEntryType;
-
-    private EntryType(com.zimbra.cs.account.EntryType entryType)
-    {
-      mEntryType = entryType;
-    }
-
-    com.zimbra.cs.account.EntryType toZimbra()
-    {
-      return mEntryType;
-    }
-
-    public String getName()
-    {
-      return mEntryType.getName();
     }
   }
 

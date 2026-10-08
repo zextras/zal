@@ -410,21 +410,6 @@ public class ExceptionWrapper
     return new UnableToSanitizeFolderNameException(folderName, ex);
   }
 
-  public static UnableToSanitizeFolderNameException createUnableToSanitizeFolder(String folderName)
-  {
-    return new UnableToSanitizeFolderNameException(folderName);
-  }
-
-  public static UnableToFindDistributionListException createUnableToFindDistributionList(String list, Throwable t)
-  {
-    return new UnableToFindDistributionListException(list, t);
-  }
-
-  public static UnableToFindDistributionListException createUnableToFindDistributionList(String list)
-  {
-    return new UnableToFindDistributionListException(list);
-  }
-
   public static UnableToObtainDBConnectionException createUnableToObtainDBConnection(
     com.zimbra.common.service.ServiceException e
   )

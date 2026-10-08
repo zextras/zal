@@ -42,12 +42,6 @@ public class ACE
     return mACE.right();
   }
 
-  public String rightWithModifier()
-  {
-
-    return mACE.rightModifier()!=null?mACE.rightModifier().getModifier()+mACE.right():mACE.right();
-  }
-
   public RightModifier modifier()
   {
     return mACE.rightModifier()!=null?new RightModifier(mACE.rightModifier()):null;

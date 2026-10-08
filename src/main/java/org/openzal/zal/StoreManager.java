@@ -28,8 +28,8 @@ public interface StoreManager
 {
   void register(CacheableStoreBuilder cacheableStoreBuilder, String volumeId);
   void unregister(String volumeId);
-  void makeActive(String volumeId);
-  void startup() throws IOException;
+
+    void startup() throws IOException;
   void shutdown();
   PrimaryStore getPrimaryStore();
   Store getStore(String locator);

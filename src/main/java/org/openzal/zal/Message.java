@@ -141,12 +141,7 @@ public class Message extends Item
     );
   }
 
-  public boolean isInvite()
-  {
-    return mMessage.isInvite();
-  }
-
-  public String getFragment()
+    public String getFragment()
   {
     return mMessage.getFragment();
   }

@@ -118,13 +118,7 @@ public class FakeQueryResults extends QueryResults
     return element < mZimbraQueryResults.size();
   }
 
-  @Override
-  public SearchHit skipToHit(int int1)
-  {
-    return mZimbraQueryResults.get(0);
-  }
-
-  @Override
+    @Override
   public void close()
   {}
 }

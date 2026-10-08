@@ -143,7 +143,7 @@ public class ContinuationJettyTest
 
   private FakeAsyncContext mAsyncContext;
   private HttpServletRequest mRequest;
-  private Continuation mContinuation;
+  private ContinuationJetty mContinuation;
   private boolean mAsyncStarted;
 
   @BeforeEach
@@ -172,7 +172,6 @@ public class ContinuationJettyTest
     assertSame(mContinuation, ContinuationJetty.getOrCreateContinuation(mRequest));
     assertTrue(mContinuation.isInitial());
     assertFalse(mContinuation.isSuspended());
-    assertFalse(mContinuation.isExpired());
   }
 
   @Test

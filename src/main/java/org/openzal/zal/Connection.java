@@ -22,7 +22,6 @@ package org.openzal.zal;
 
 import org.openzal.zal.exceptions.ZimbraException;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -42,8 +41,6 @@ public interface Connection
   void rollback() throws ZimbraException;
 
   void setTransactionIsolation(int transactionRepeatableRead) throws org.openzal.zal.exceptions.ZimbraException;
-
-  void closeResults(ResultSet resultSet);
 
   void closeStatement(Statement statement);
 

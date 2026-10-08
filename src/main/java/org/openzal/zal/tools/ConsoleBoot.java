@@ -20,8 +20,6 @@
 
 package org.openzal.zal.tools;
 
-import org.openzal.zal.lib.JarAccessor;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;

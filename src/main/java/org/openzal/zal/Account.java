@@ -51,10 +51,8 @@ import java.util.Set;
 
 public class Account extends Entry
 {
-  public static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
-  public static final String END_CERT = "-----END CERTIFICATE-----";
 
-  @Nonnull private final com.zimbra.cs.account.Account mAccount;
+    @Nonnull private final com.zimbra.cs.account.Account mAccount;
 
   public Account(@Nonnull Object account)
   {
@@ -203,26 +201,7 @@ public class Account extends Entry
     return toReturn;
   }
 
-  /**
-   * Returns a list of every zimlet that the user decided to disable from its preferences
-   * @return a list of {@link String} names representing user hidden zimlets
-   */
-  public List<String> getUserPrefHiddenZimlets()
-  {
-    return Arrays.asList(mAccount.getMultiAttr("zimbraPrefDisabledZimlets"));
-  }
-
-  /**
-   * Returns a list of every zimlet that the user decided to not have disabled from its preferences
-   * @return a list of {@link String} names representing hidden zimlets that the user decided
-   * to see using its preferences
-   */
-  public List<String> getUserPrefZimlets()
-  {
-    return Arrays.asList(mAccount.getMultiAttr("zimbraPrefZimlets"));
-  }
-
-  public boolean isIsExternalVirtualAccount()
+    public boolean isIsExternalVirtualAccount()
   {
     return mAccount.isIsExternalVirtualAccount();
   }
@@ -292,21 +271,7 @@ public class Account extends Entry
     }
   }
 
-  // !mAccount.getServer().mailTransportMatches(mAccount.getAttr("zimbraMailTransport"));
-  // Probably you want isIsExternalVirtualAccount
-  public boolean isAccountExternal()
-  {
-    try
-    {
-      return mAccount.isAccountExternal();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nullable
+    @Nullable
   public Identity getIdentityByName(String name) throws NoSuchAccountException
   {
     com.zimbra.cs.account.Identity identity;
@@ -525,13 +490,7 @@ public class Account extends Entry
     }
   }
 
-  @Nonnull
-  public PrefExternalSendersType getPrefExternalSendersType()
-  {
-    return new PrefExternalSendersType(mAccount.getPrefExternalSendersType());
-  }
-
-  @Nullable
+    @Nullable
   public Cos getCOS() throws NoSuchDomainException
   {
     com.zimbra.cs.account.Cos cos;
@@ -575,39 +534,7 @@ public class Account extends Entry
     return mAccount.isMobilePolicyAllowPartialProvisioning();
   }
 
-  public void authAccount(String password, @Nonnull Protocol proto, Map<String, Object> authCtxt) {
-    try {
-      mAccount.getProvisioning().authAccount(mAccount, password, proto.toZimbra(), authCtxt);
-    } catch (ServiceException e) {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void authAccount(String password, @Nonnull Protocol proto)
-  {
-    try
-    {
-      mAccount.authAccount(password, proto.toZimbra());
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void setPassword(String newPassword, boolean enforcePolicy)
-  {
-    try
-    {
-      mAccount.getProvisioning().setPassword(mAccount, newPassword, enforcePolicy);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public boolean isIsAdminAccount()
+    public boolean isIsAdminAccount()
   {
     return mAccount.isIsAdminAccount();
   }
@@ -680,12 +607,7 @@ public class Account extends Entry
     }
   }
 
-  public Object getAttrDefault(String name)
-  {
-    return mAccount.getAttrDefault(name);
-  }
-
-  @Nonnull
+    @Nonnull
   public Collection<String> getMailAlias()
   {
     return Arrays.asList(mAccount.getMailAlias());
@@ -730,26 +652,7 @@ public class Account extends Entry
     return mAccount.getPrefFromDisplay();
   }
 
-  @Nonnull
-  public Set<String> getDistributionLists()
-  {
-    Set<String> distributionLists;
-    try
-    {
-      distributionLists = mAccount.getDistributionLists();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    HashSet<String> set = new HashSet<String>(distributionLists.size());
-    set.addAll(distributionLists);
-
-    return set;
-  }
-
-  @Nonnull
+    @Nonnull
   public Collection<String> getMailDeliveryAddress()
   {
     return Arrays.asList(mAccount.getMailDeliveryAddress());
@@ -770,21 +673,7 @@ public class Account extends Entry
     return mAccount.isCarbonioFeatureOTPMgmtEnabled();
   }
 
-  public void setPrefExternalSendersType(@Nonnull PrefExternalSendersType zimbraPrefExternalSendersType)
-  {
-    try
-    {
-      mAccount.setPrefExternalSendersType(
-        zimbraPrefExternalSendersType.toZimbra(ZAttrProvisioning.PrefExternalSendersType.class)
-      );
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void deleteAccount() throws NoSuchAccountException
+    public void deleteAccount() throws NoSuchAccountException
   {
     try
     {
@@ -870,13 +759,7 @@ public class Account extends Entry
     return mAccount.getPrefFromAddress();
   }
 
-  @Nonnull
-  public Collection<String> getMobilePolicyUnapprovedInROMApplication()
-  {
-    return Arrays.asList(mAccount.getMobilePolicyUnapprovedInROMApplication());
-  }
-
-  public void setPrefOutOfOfficeFromDate(Date zimbraPrefOutOfOfficeFromDate)
+    public void setPrefOutOfOfficeFromDate(Date zimbraPrefOutOfOfficeFromDate)
   {
     try
     {
@@ -925,13 +808,7 @@ public class Account extends Entry
     return mAccount.getDomainName();
   }
 
-  @Nonnull
-  public Collection<String> getMobilePolicyApprovedApplicationList()
-  {
-    return Arrays.asList(mAccount.getMobilePolicyApprovedApplicationList());
-  }
-
-  @Nonnull
+    @Nonnull
   public DataSource createDataSource(
     @Nonnull DataSourceType sourceType,
     String sourceName,
@@ -1014,20 +891,7 @@ public class Account extends Entry
     return mAccount.isPrefOutOfOfficeExternalReplyEnabled() && mAccount.getPrefExternalSendersType() == ZAttrProvisioning.PrefExternalSendersType.ALLNOTINAB;
   }
 
-  public void removeAlias(String alias)
-    throws NoSuchDomainException, NoSuchAliasException
-  {
-    try
-    {
-      mAccount.removeAlias(alias);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nonnull
+    @Nonnull
   public Identity createIdentity(String identityName, Map<String, Object> attrs)
     throws NoSuchAccountException, TooManyIdentitiesException, IdentityExistsException
   {
@@ -1079,12 +943,7 @@ public class Account extends Entry
     return mAccount.getCn();
   }
 
-  public long getLongAttr(String name, long defaultValue)
-  {
-    return mAccount.getLongAttr(name, defaultValue);
-  }
-
-  public <T> T toZimbra(@Nonnull Class<T> cls)
+    public <T> T toZimbra(@Nonnull Class<T> cls)
   {
     return cls.cast(mAccount);
   }
@@ -1118,17 +977,7 @@ public class Account extends Entry
     mAccount.setAttrs(attrs);
   }
 
-  public void setIsDelegatedAdminAccount(boolean zimbraIsDelegatedAdminAccount)
-  {
-    try
-    {
-      mAccount.setIsDelegatedAdminAccount(zimbraIsDelegatedAdminAccount);
-    } catch(ServiceException se) {
-      throw ExceptionWrapper.wrap(se);
-    }
-  }
-
-  public String getPrefMailDefaultCharset()
+    public String getPrefMailDefaultCharset()
   {
     return mAccount.getPrefMailDefaultCharset();
   }
@@ -1154,19 +1003,7 @@ public class Account extends Entry
     return mAccount.getAttr(ProvisioningImp.A_zimbraMailHost,"localhost");
   }
 
-  public boolean checkAuthTokenValidityValue(AuthToken authToken)
-  {
-    try
-    {
-      return mAccount.checkAuthTokenValidityValue(authToken.toZimbra(com.zimbra.cs.account.AuthToken.class));
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  @Nonnull
+    @Nonnull
   public ICalendarTimezone getAccountTimeZone()
   {
     ICalTimeZone accountTimeZone = Util.getAccountTimeZone(
@@ -1175,30 +1012,7 @@ public class Account extends Entry
     return new ICalendarTimezone(accountTimeZone);
   }
 
-  public Collection<String> getGroups()
-  {
-    try
-    {
-      com.zimbra.cs.account.Provisioning.GroupMembership memberships = mAccount.getAclGroups(false);
-      return memberships.groupIds();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public long getMailTrashLifetime()
-  {
-    return mAccount.getMailTrashLifetime();
-  }
-
-  public long getPrefTrashLifetime()
-  {
-    return mAccount.getPrefTrashLifetime();
-  }
-
-  public Identity getDefaultIdentity() {
+    public Identity getDefaultIdentity() {
     try
     {
       return new Identity(mAccount.getDefaultIdentity());
@@ -1244,11 +1058,7 @@ public class Account extends Entry
     return mustChangePassword() || isPasswordExpired();
   }
 
-  public boolean isNE2FAEnabled() {
-    return mAccount.isTwoFactorAuthEnabled() || mAccount.isFeatureTwoFactorAuthRequired();
-  }
-
-  public List<String> getAuthTokenEncoded() {
+    public List<String> getAuthTokenEncoded() {
     Object encodedTokens = mAccount.getAttrs(false).get(ProvisioningImp.A_zimbraAuthTokens);
     if (encodedTokens == null) {
       return new ArrayList<>();
@@ -1269,21 +1079,7 @@ public class Account extends Entry
     }
   }
 
-  public boolean invalidateAllTokens() {
-    try {
-      if (!mAccount.getProvisioning().getConfig().isAuthTokenValidityValueEnabled()) {
-        return false;
-      }
-
-      int validityValue = mAccount.getAuthTokenValidityValue();
-      mAccount.setAuthTokenValidityValue(validityValue == Integer.MAX_VALUE ? 0 : ++validityValue);
-      return true;
-    } catch (ServiceException e) {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public void cancelAllDataSources() {
+    public void cancelAllDataSources() {
     try {
       List<com.zimbra.cs.account.DataSource> dataSources = com.zimbra.cs.account.Provisioning.getInstance().getAllDataSources(mAccount);
       for (com.zimbra.cs.account.DataSource ds : dataSources) {

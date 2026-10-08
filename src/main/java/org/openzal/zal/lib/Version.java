@@ -76,10 +76,6 @@ public class Version implements Comparable<Version> {
     }
   }
 
-  public Version withPatch(Optional<String> p) {
-    return new Version(major, minor, p);
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -94,18 +90,6 @@ public class Version implements Comparable<Version> {
   @Override
   public int hashCode() {
     return Objects.hash(getMajor(), getMinor(), getPatch());
-  }
-
-  static <A extends Comparable<A>> int compareOpt(Optional<A> a1, Optional<A> a2) {
-    if (a1.isPresent() && a2.isPresent()) {
-      return a1.get().compareTo(a2.get());
-    } else if (!a1.isPresent() && !a2.isPresent()) {
-      return 0;
-    } else if (a1.isPresent()) {
-      return 1;
-    } else {
-      return -1;
-    }
   }
 
   @Override

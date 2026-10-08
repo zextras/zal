@@ -21,7 +21,6 @@
 package org.openzal.zal.extension;
 
 import com.zimbra.cs.extension.ExtensionUtil;
-import com.zimbra.cs.extension.ZimbraExtension;
 import com.zimbra.cs.store.file.FileBlobStore;
 import org.openzal.zal.FileBlobStoreWrapImpl;
 import org.openzal.zal.MailboxManager;
@@ -113,13 +112,7 @@ public Zimbra(Zimbra zimbra)
     return mMailboxManager;
   }
 
-  @Nonnull
-  public ZimbraDatabase getZimbraDatabase()
-  {
-    return mZimbraDatabase;
-  }
-
-  @Nullable
+    @Nullable
   public StoreManager getStoreManager()
   {
     return mStoreManager;
@@ -131,20 +124,7 @@ public Zimbra(Zimbra zimbra)
     return mVolumeManager;
   }
 
-  public boolean shutdownExtension(String extensionName)
-  {
-    ZimbraExtension extension = ExtensionUtil.getExtension(extensionName);
-
-    if (extension != null)
-    {
-      extension.destroy();
-      return true;
-    }
-
-    return false;
-  }
-
-  public boolean removeExtension(String extensionName)
+    public boolean removeExtension(String extensionName)
   {
     return ExtensionUtil.removeExtension(extensionName);
   }

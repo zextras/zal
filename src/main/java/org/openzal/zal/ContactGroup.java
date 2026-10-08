@@ -29,15 +29,6 @@ public class ContactGroup
 {
   private final com.zimbra.cs.mailbox.ContactGroup mContactGroup;
 
-  ContactGroup(@Nonnull Object contactGroup)
-  {
-    if (contactGroup == null)
-    {
-      throw new NullPointerException();
-    }
-    mContactGroup = (com.zimbra.cs.mailbox.ContactGroup) contactGroup;
-  }
-
   public ContactGroup()
   {
     try
@@ -72,18 +63,6 @@ public class ContactGroup
   public String encode()
   {
     return mContactGroup.encode();
-  }
-
-  com.zimbra.cs.mailbox.ContactGroup init()
-  {
-    try
-    {
-      return mContactGroup.init();
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
   }
 
   public void addMember(@Nonnull Type type, String value)

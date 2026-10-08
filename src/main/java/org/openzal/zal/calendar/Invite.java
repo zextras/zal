@@ -35,25 +35,14 @@ import com.zimbra.cs.mailbox.calendar.ZOrganizer;
 import com.zimbra.cs.mailbox.calendar.ZRecur;
 import org.openzal.zal.Account;
 import org.openzal.zal.Item;
-import org.openzal.zal.Provisioning;
 import org.openzal.zal.ProvisioningImp;
-import org.openzal.zal.ZimbraListWrapper;
 import org.openzal.zal.exceptions.ExceptionWrapper;
-import org.openzal.zal.exceptions.ZimbraException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -151,12 +140,7 @@ public class Invite
     return GlobalInviteStatus.fromZimbra(mInvite.getStatus());
   }
 
-  public boolean hasFreeBusy()
-  {
-    return mInvite.hasFreeBusy();
-  }
-
-  public boolean hasAlarm()
+    public boolean hasAlarm()
   {
     if (mInvite.hasAlarm())
     {
@@ -339,19 +323,7 @@ public class Invite
     return endTime.getDate();
   }
 
-  public long getEffectiveDuration()
-  {
-    try
-    {
-      return Math.abs(mInvite.getEffectiveDuration().subtractFromTime(0));
-    }
-    catch (Exception ex)
-    {
-      throw ExceptionWrapper.wrap(ex);
-    }
-  }
-
-  public long getUtcStartTime()
+    public long getUtcStartTime()
   {
     ParsedDateTime parsedDateTime = mInvite.getStartTime();
     if (parsedDateTime == null)
@@ -373,14 +345,7 @@ public class Invite
     return new RecurrenceRule(zrec);
   }
 
-  /*
-    warning: it only works AFTER you added the calendar to the mailbox (it uses calendar item)
-  */
-  public List<Invite> getExceptionInstances(){
-    return getRecurrencesInvitees(Invite.TYPE_EXCEPTION);
-  }
-
-  public List<Invite> getRecurrencesInvitees(int recurrenceType)
+    public List<Invite> getRecurrencesInvitees(int recurrenceType)
   {
      return getRecurrencesInvitees(recurrenceType, null);
   }
@@ -703,27 +668,7 @@ public class Invite
     return new MapTimeZone(mInvite.getTimeZoneMap());
   }
 
-  static List<Invite> createFromCalendar(Account account, ZCalendar.ZVCalendar cal, boolean sentByMe)
-    throws ZimbraException
-  {
-    try
-    {
-      List<com.zimbra.cs.mailbox.calendar.Invite> inviteList = com.zimbra.cs.mailbox.calendar.Invite.createFromCalendar(
-        account.toZimbra(com.zimbra.cs.account.Account.class),
-        null,
-        cal,
-        sentByMe
-      );
-
-      return ZimbraListWrapper.wrapInvites(inviteList);
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public <T> T toZimbra(Class<T> cls)
+    public <T> T toZimbra(Class<T> cls)
   {
     return cls.cast(mInvite);
   }
@@ -740,14 +685,7 @@ public class Invite
     }
   }
 
-  public String getICS() throws IOException
-  {
-    Writer w = new StringWriter();
-    newToICalendar(true).toICalendar(w);
-    return w.toString();
-  }
-
-  public boolean hasEndDate()
+    public boolean hasEndDate()
   {
     return mInvite.getEffectiveEndTime() != null;
   }
@@ -777,12 +715,7 @@ public class Invite
     mInvite.setSeqNo(sequence);
   }
 
-  public Invite newCopy()
-  {
-    return new Invite(mInvite.newCopy());
-  }
-
-  public void setMailItemId(int id)
+    public void setMailItemId(int id)
   {
     mInvite.setMailItemId(id);
   }
@@ -820,34 +753,7 @@ public class Invite
             getSubject(), getLocaleForAccount(account));
   }
 
-  private void formatAttendeeStatus(Provisioning provisioning, Account account, String partStat)
-  {
-    List<ZAttendee> attendees = mInvite.getAttendees();
-    ZAttendee accountAttendee = null;
-    Collection<String> aliases = account.getAllAddressesIncludeDomainAliases(provisioning);
-    for( ZAttendee attendee : attendees )
-    {
-      if( aliases.contains(attendee.getAddress()) )
-      {
-        accountAttendee = attendee;
-        break;
-      }
-    }
-    if( Objects.isNull(accountAttendee) )
-    {
-      accountAttendee = new ZAttendee(account.getName());
-    }
-    accountAttendee.setPartStat(partStat);
-    mInvite.clearAttendees();
-    mInvite.addAttendee(accountAttendee);
-  }
-
-  public void setDescription(String description, String descriptionHtml)
-  {
-    mInvite.setDescription(description, descriptionHtml);
-  }
-
-  public boolean methodIsReply()
+    public boolean methodIsReply()
   {
     ZCalendar.ICalTok method = ZCalendar.ICalTok.lookup( mInvite.getMethod() );
     return method == ZCalendar.ICalTok.REPLY;
@@ -859,25 +765,7 @@ public class Invite
    return method == ZCalendar.ICalTok.CANCEL;
   }
 
-  @Nullable
-  public String getBody()
-  {
-    try
-    {
-      byte[] content = mInvite.getCalendarItem().getContent();
-      if (content == null)
-      {
-        return null;
-      }
-      return new String(mInvite.getCalendarItem().getContent(), Charset.defaultCharset());
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public List<String> getTags()
+    public List<String> getTags()
   {
     try
     {
@@ -899,22 +787,7 @@ public class Invite
     return mInvite.isPublic();
   }
 
-  public InputStream toIcal()
-    throws ZimbraException, IOException, MessagingException
-  {
-    MimeBodyPart icalPart;
-    try {
-      ZCalendar.ZVCalendar cal = mInvite.newToICalendar(true);
-      icalPart = CalendarMailSender.makeICalIntoMimePart(cal);
-      return icalPart.getInputStream();
-    }
-    catch (ServiceException ex)
-    {
-      throw ExceptionWrapper.wrap(ex);
-    }
-  }
-
-  public void addAttendee(Map<String, Object> metadata)
+    public void addAttendee(Map<String, Object> metadata)
   {
     try
     {
@@ -955,12 +828,7 @@ public class Invite
      return rsvp != null;
    }
 
-   public void setResponseRequest(boolean value)
-   {
-     mInvite.setRsvp(value);
-   }
-
-   public boolean getResponseRequest()
+    public boolean getResponseRequest()
    {
      return mInvite.getRsvp();
    }

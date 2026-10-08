@@ -2,24 +2,15 @@ package org.openzal.zal;
 
 import java.util.*;
 
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-
 import javax.annotation.Nonnull;
 import org.openzal.zal.exceptions.ZimbraException;
-import com.zimbra.cs.account.*;
-import com.zimbra.cs.account.accesscontrol.RightModifier;
-import com.zimbra.cs.account.auth.AuthContext;
 import com.zimbra.common.service.ServiceException;
 
 /* $if ZimbraVersion >= 8.0.6 $*/
-import com.zimbra.soap.admin.type.GranteeSelector.GranteeBy;
 /* $else$
  import com.zimbra.common.account.Key.GranteeBy;
 /* $endif$ */
 
-import com.zimbra.common.account.Key;
-import com.zimbra.soap.admin.type.CacheEntryType;
-import com.zimbra.soap.type.TargetBy;
 import org.mockito.Mockito;
 
 public class ProvisioningSimulator extends ProvisioningImp
@@ -58,8 +49,7 @@ public class ProvisioningSimulator extends ProvisioningImp
   private Map<String, Domain> mDomainMap;
   private Map<String, Account> mAccountMap;
   private Map<String, DistributionList> mDistributionListMap;
-  private Map<String, InMemoryDirectoryServer> mLDAPServer;
-  private Map<String,Server> mServers;
+    private Map<String,Server> mServers;
 
   /*************** Simulator methods ********************/
   public ProvisioningSimulator()
@@ -69,7 +59,6 @@ public class ProvisioningSimulator extends ProvisioningImp
     mAccountMap = new HashMap<String, Account>();
     mAccountIdMap = new HashMap<String, Account>();
     mDistributionListMap = new HashMap<String, DistributionList>();
-    mLDAPServer = new HashMap<String, InMemoryDirectoryServer>();
     mServers = new HashMap<String, Server>();
     addServer("localhost");
   }
@@ -95,35 +84,7 @@ public class ProvisioningSimulator extends ProvisioningImp
     mDomainMap.put(domain, createFakeDomain(domain));
   }
 
-  public void addDistributionList(String name, Set<String> members)
-  {
-    if (mDistributionListMap.containsKey(name))
-    {
-      return;
-    }
-    mDistributionListMap.put(name, createFakeDistributionList(name, members));
-  }
-
-  private DistributionList createFakeDistributionList(String name, Set<String> members)
-  {
-    Map<String, Object> listAttrs = new HashMap<String, Object>();
-
-    String[] arrayMembers = new String[ members.size() ];
-    members.toArray(arrayMembers);
-    listAttrs.put(ProvisioningImp.A_zimbraMailForwardingAddress, arrayMembers);
-    String id = UUID.randomUUID().toString();
-    listAttrs.put(ProvisioningImp.A_zimbraId, id);
-    return new DistributionList( new com.zimbra.cs.account.DistributionList(name, id, listAttrs, null) {} );
-  }
-
-  public Collection<String> getGroupMembers(String list)
-  {
-    return getDistributionListById(list).getAllMembersSet();
-  }
-
-  public List<DistributionList> getDistributionLists(Account userAccount,
-                                                     boolean
-    directOnly, Map<String, String> mapDLInDL) throws ServiceException
+  public List<DistributionList> getDistributionLists(Account userAccount) throws ServiceException
   {
     List<DistributionList> distributionListsWithInTargetUser = new ArrayList<DistributionList>();
     Collection<DistributionList>
@@ -145,32 +106,9 @@ public class ProvisioningSimulator extends ProvisioningImp
     return distributionListsWithInTargetUser;
   }
 
-  public void addUserWithAliases(String address, List<String> aliases)
-  {
-    addUser(address);
-    Account account = mAccountMap.get(address);
-
-    for (String alias : aliases)
-    {
-      mAccountMap.put(alias, account);
-    }
-  }
-
-  public Account addUser(String address)
-  {
-    return addUser(address, address);
-  }
-
   public Account addUser(String address, String displayName)
   {
     return addUser(address, displayName, new HashMap<String, Object>());
-  }
-
-  public Account addUserToHost(String address, String displayName, final String hostname)
-  {
-    return addUser(address, displayName, new HashMap<String, Object>(1) {{
-      put(ProvisioningImp.A_zimbraMailHost, hostname);
-    }});
   }
 
   public Account addUser(String address, String displayName, Map<String, Object> attrs)
@@ -299,30 +237,6 @@ public class ProvisioningSimulator extends ProvisioningImp
     return mDistributionListMap.get(name);
   }
 
-  public void visitAllAccounts( NamedEntry.Visitor visitor )
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public void visitAllDomains(NamedEntry.Visitor visitor)
-    throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public void visitDomain(NamedEntry.Visitor visitor, Domain domain)
-    throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public void authAccount(Account account, String password, AuthContext.Protocol protocol, Map<String, Object> context)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
   public Server getLocalServer()
       throws ZimbraException
   {
@@ -336,12 +250,6 @@ public class ProvisioningSimulator extends ProvisioningImp
     }
     server.modify(attrs);
     return server;
-  }
-
-  public List<NamedEntry> searchAccountsOnServer(Server localServer, SearchAccountsOptions searchOpts)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
   }
 
   public List<Domain> getAllDomains()
@@ -382,30 +290,6 @@ public class ProvisioningSimulator extends ProvisioningImp
   }
 
 
-  public List<Account> searchDirectory(SearchDirectoryOptions opts)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public void searchDirectory(SearchDirectoryOptions opts, NamedEntry.Visitor visitor)
-    throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public DistributionList get(Key.DistributionListBy id, String dlStr)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public List<Account> getAllAdminAccounts()
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
   public List<Account> getAllAccounts(Domain domain)
       throws ZimbraException
   {
@@ -425,12 +309,6 @@ public class ProvisioningSimulator extends ProvisioningImp
   }
 
   public List<CalendarResource> getAllCalendarResources(Domain domain)
-      throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
-  public GlobalGrant getGlobalGrant()
       throws ZimbraException
   {
     throw new RuntimeException("Provisioning method not implemented");
@@ -507,23 +385,10 @@ public class ProvisioningSimulator extends ProvisioningImp
     throw new RuntimeException("Provisioning method not implemented");
   }
 
-  public void grantRight(String targetType, TargetBy targetBy, String target,
-                         String granteeType, GranteeBy granteeBy, String grantee, String secret,
-                         String right, RightModifier rightModifier) throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
-  }
-
   public Domain getDomain(Account account)
     throws ZimbraException
   {
     return mDomainMap.get(account.getDomainName());
-  }
-
-  public void flushCache(CacheEntryType account, com.zimbra.cs.account.Provisioning.CacheEntry[] cacheEntries)
-    throws ZimbraException
-  {
-    throw new RuntimeException("Provisioning method not implemented");
   }
 
   public CountAccountResult countAccount(Domain domain)
@@ -571,19 +436,6 @@ public class ProvisioningSimulator extends ProvisioningImp
       mProvisioning = prov;
     }
 
-    private void setAttr( String key, Object value )
-    {
-      Map<String,Object> attrs = getAttrs();
-      attrs.put(key, value);
-      setAttrs(attrs);
-    }
-
-    @Override
-    public void setIsDelegatedAdminAccount(boolean value)
-    {
-      setAttr(com.zimbra.cs.account.Provisioning.A_zimbraIsDelegatedAdminAccount, String.valueOf(value).toUpperCase());
-    }
-
     @Override
     public boolean isLocalAccount()
     {
@@ -596,9 +448,8 @@ public class ProvisioningSimulator extends ProvisioningImp
      try
      {
        return ((ProvisioningSimulator) mProvisioning).getDistributionLists //TODO
-         (this,
-          directOnly,
-          via);
+         (this
+         );
      }
      catch (ServiceException e)
      {
@@ -620,18 +471,10 @@ public class ProvisioningSimulator extends ProvisioningImp
     }
 
     @Override
-    public void authAccount(String password, Protocol proto)
-    {}
-
-    @Override
     public String getAccountStatus(Provisioning prov)
     {
       return "test status";
     }
   }
 
-  public Cos getCOS(Account acct) throws ZimbraException
-  {
-    return new Cos("test", "id", new HashMap<String, Object>(), this);
-  }
 }

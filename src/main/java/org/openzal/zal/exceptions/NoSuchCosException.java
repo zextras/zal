@@ -24,11 +24,6 @@ import com.zimbra.cs.account.AccountServiceException;
 
 public class NoSuchCosException extends ZimbraException
 {
-  protected NoSuchCosException(Exception exception)
-  {
-    super(exception);
-  }
-
   public NoSuchCosException(String cosId)
   {
     super(AccountServiceException.NO_SUCH_COS(cosId));

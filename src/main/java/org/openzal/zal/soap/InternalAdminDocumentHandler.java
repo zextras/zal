@@ -22,7 +22,7 @@ package org.openzal.zal.soap;
 
 import com.zimbra.common.service.ServiceException;
 import javax.annotation.Nullable;
-import org.openzal.zal.exceptions.ExceptionWrapper;
+
 import org.openzal.zal.exceptions.ZimbraException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.cs.service.admin.AdminDocumentHandler;
@@ -41,21 +41,7 @@ class InternalAdminDocumentHandler extends AdminDocumentHandler
   @Override
   public Element handle(final Element request, final Map<String, Object> context) throws ServiceException
   {
-    return mInternalDocumentHelper.handle(request, context, new InternalDocumentHandler.Proxier()
-    {
-      @Override
-      public Element proxy(String accountId)
-      {
-        try
-        {
-          return InternalAdminDocumentHandler.this.proxyRequest(request, context, accountId);
-        }
-        catch (ServiceException e)
-        {
-          throw ExceptionWrapper.wrap(e);
-        }
-      }
-    });
+    return mInternalDocumentHelper.handle(request, context);
   }
 
   @Override

@@ -2,10 +2,9 @@ package org.openzal.zal;
 
 import com.zimbra.cs.session.Session;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.openzal.zal.lib.ZimbraVersion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

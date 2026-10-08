@@ -41,22 +41,6 @@ public class ACLAccessManager
     }
   }
 
-  public boolean canLoginAsAccount(Account authAccount, Account target)
-  {
-    try
-    {
-      return mAclAccessManager.canAccessAccount(
-        authAccount.toZimbra(com.zimbra.cs.account.Account.class),
-        target.toZimbra(com.zimbra.cs.account.Account.class),
-        true
-      );
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
   public boolean canModifyAccountStatus(Account authAccount, Account target)
   {
     try

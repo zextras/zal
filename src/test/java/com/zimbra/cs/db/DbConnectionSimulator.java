@@ -13,11 +13,6 @@ public class DbConnectionSimulator extends DbPool.DbConnection
     super(conn);
   }
 
-  DbConnectionSimulator(Connection conn, Integer mboxId)
-  {
-    super(conn, mboxId);
-  }
-
   public void disableForeignKeyConstraints() throws ServiceException
   {
     String sql = "SET DATABASE REFERENTIAL INTEGRITY FALSE";

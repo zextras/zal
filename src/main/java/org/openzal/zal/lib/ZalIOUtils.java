@@ -22,7 +22,6 @@ package org.openzal.zal.lib;
 
 import com.zimbra.znative.IO;
 
-import java.io.File;
 import java.io.IOException;
 
 
@@ -34,15 +33,4 @@ public class ZalIOUtils
     return IO.linkCount(path);
   }
 
-  public static void link(String oldPath, String newPath)
-    throws IOException
-  {
-    IO.link(oldPath, newPath);
-  }
-
-  public static long getInodeId(String path)
-    throws IOException
-  {
-    return IO.fileInfo(path).getInodeNum();
-  }
 }

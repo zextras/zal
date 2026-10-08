@@ -12,11 +12,6 @@ public class Schema
     mSchema = (com.unboundid.ldap.sdk.schema.Schema)schema;
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mSchema);
-  }
-
   public Entry getSchemaEntry()
   {
     return new Entry(mSchema.getSchemaEntry());

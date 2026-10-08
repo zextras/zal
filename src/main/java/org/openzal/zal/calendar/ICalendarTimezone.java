@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.openzal.zal.Account;
 import javax.annotation.Nonnull;
 
-import java.util.Date;
 import java.util.TimeZone;
 
 import com.zimbra.common.calendar.ICalTimeZone;
@@ -221,8 +220,4 @@ public class ICalendarTimezone
     return mICalTimeZone;
   }
 
-  public boolean inDaylightTime(Date date)
-  {
-    return mICalTimeZone.inDaylightTime(date);
-  }
 }

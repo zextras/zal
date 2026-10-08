@@ -18,19 +18,9 @@ public class LDAPException extends Exception
     mLDAPException = new com.unboundid.ldap.sdk.LDAPException(paramError.toZimbra(com.unboundid.ldap.sdk.ResultCode.class),s);
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mLDAPException);
-  }
-
   public ResultCode getResultCode()
   {
     return new ResultCode(mLDAPException.getResultCode());
-  }
-
-  public String getDiagnosticMessage()
-  {
-    return mLDAPException.getDiagnosticMessage();
   }
 
   public String getMessage()

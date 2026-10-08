@@ -56,11 +56,8 @@ public interface MailboxManager
 
   Mailbox cleanCacheAndGetUpdatedMailbox(Mailbox mailbox);
 
-  Mailbox cleanCacheAndGetUpdatedMailboxById(Mailbox mailbox, boolean skipMailhostCheck);
-
-  MailboxData getMailboxData(long mailboxId);
+    MailboxData getMailboxData(long mailboxId);
 
   void forceDeleteMailbox(@Nonnull MailboxData data);
 
-  void createMailboxWithSpecificId(Connection connection, Account account, long mailboxId);
 }

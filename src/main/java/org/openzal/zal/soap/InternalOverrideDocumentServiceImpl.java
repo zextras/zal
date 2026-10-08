@@ -72,10 +72,7 @@ public class InternalOverrideDocumentServiceImpl implements DocumentService
           Element response = documentHandler.handle(zimbraContext.getRequest().toZimbra(Element.class), zimbraContext.getContext());
           soapResponse.setResponse(
             new SoapResponseImpl(
-              response,
-              new InternalDocumentHelper.ElementFactory(
-                zimbraContext.getZimbraSoapContext()
-              )
+              response
             )
           );
         }

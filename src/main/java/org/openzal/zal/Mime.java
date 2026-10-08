@@ -49,12 +49,7 @@ public class Mime
                                                                preferHtml));
   }
 
-  public static void recursiveRepairTransferEncoding(MimeMessage mimemessage1) throws IOException, MessagingException
-  {
-    com.zimbra.cs.mime.Mime.recursiveRepairTransferEncoding(mimemessage1);
-  }
-
-  @Nullable
+    @Nullable
   public static MimeMultipart getMultipartContent(MimeMessage mimeMessage, String contentType)
     throws IOException, MessagingException
   {
@@ -74,28 +69,15 @@ public class Mime
     return com.zimbra.cs.mime.Mime.getSubject(mimeMessage);
   }
 
-  @Nullable
-  public static MimePart getMimePart(MimePart mimePart, String part) throws IOException, MessagingException
-  {
-    return com.zimbra.cs.mime.Mime.getMimePart(mimePart, part);
-  }
-
-  @Nonnull
+    @Nonnull
   public static MimeMessage buildFixedMimeMessage(Session session)
   {
     return new com.zimbra.cs.mime.Mime.FixedMimeMessage(session);
   }
-  
-  @Nonnull
-  public static MimeMessage buildFixedMimeMessage(MimeMessage mimeMessage)
-    throws MessagingException
-  {
-    return new com.zimbra.cs.mime.Mime.FixedMimeMessage(mimeMessage);
-  }
 
-/*
-  Apply zimbra own modifiers
-*/
+    /*
+    Apply zimbra own modifiers
+  */
   public static MimeMessage expandMessage(MimeMessage original) throws MessagingException
   {
     try

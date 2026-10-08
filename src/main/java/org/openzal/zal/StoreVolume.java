@@ -21,7 +21,7 @@
 package org.openzal.zal;
 
 import com.zimbra.common.service.ServiceException;
-import com.zimbra.cs.store.*;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.openzal.zal.exceptions.ExceptionWrapper;
@@ -38,16 +38,12 @@ public class StoreVolume
   private Volume mVolume;
 
   public static final short ID_AUTO_INCREMENT = Volume.ID_AUTO_INCREMENT;
-  public static final short ID_NONE           = Volume.ID_NONE;
-  public static final short ID_MAX            = Volume.ID_MAX;
 
   public static final short TYPE_MESSAGE           = Volume.TYPE_MESSAGE;
   public static final short TYPE_MESSAGE_SECONDARY = Volume.TYPE_MESSAGE_SECONDARY;
   public static final short TYPE_INDEX             = Volume.TYPE_INDEX;
 
-  public static final String SUBDIR_MESSAGE = "msg";
-
-  private static final short sMboxGroupBits = 8;
+    private static final short sMboxGroupBits = 8;
   private static final short sMboxBits = 12;
   private static final short sFileGroupBits = 8;
   private static final short sFileBits = 12;
@@ -64,8 +60,8 @@ public class StoreVolume
   public String getId() { return String.valueOf(mVolume.getId()); }
   public short getType() { return mVolume.getType(); }
   public String getName() { return mVolume.getName(); }
-  public String getLocator() { return mVolume.getLocator(); }
-  public String getRootPath() { return mVolume.getRootPath(); }
+
+    public String getRootPath() { return mVolume.getRootPath(); }
   public String getMailboxDir(int id, short type) {
     try {
       return mVolume.getMailboxDir(id, type);
@@ -73,11 +69,8 @@ public class StoreVolume
       throw new RuntimeException(e);
     }
   }
-  public String getIncomingMsgDir() { return mVolume.getIncomingMsgDir(); }
-  public IncomingDirectory getIncomingDirectory() {
-    return mVolume.getIncomingDirectory();
-  }
-  public short getMboxGroupBits() { return mVolume.getMboxGroupBits(); }
+
+    public short getMboxGroupBits() { return mVolume.getMboxGroupBits(); }
   public short getMboxBits() { return mVolume.getMboxBits(); }
   public short getFileGroupBits() { return mVolume.getFileGroupBits(); }
   public short getFileBits() { return mVolume.getFileBits(); }

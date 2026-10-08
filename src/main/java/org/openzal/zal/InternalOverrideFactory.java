@@ -34,10 +34,5 @@ public class InternalOverrideFactory
     return InternalOverrideMailboxBlob.wrap(blob);
   }
 
-  public static Object wrapStagedBlob(StagedBlob blob)
-  {
-    return InternalOverrideStagedBlob.wrap(blob);
-  }
-
   public static Object wrapBlobBuilder(BlobBuilder builder) {return InternalOverrideBlobBuilder.wrap(builder); }
 }

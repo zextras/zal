@@ -59,8 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +80,6 @@ class MaintenanceModeAccountExceptionStub extends MaintenanceModeAccountExceptio
 
 public class MockProvisioning extends Provisioning
 {
-  public static final String DEFAULT_ACCOUNT_ID = new UUID(0L, 0L).toString();
 
   private final Map<String, Account>            id2account   = new HashMap<String, Account>();
   protected final Map<String, Account>            name2account = new HashMap<String, Account>();
@@ -108,8 +105,6 @@ public class MockProvisioning extends Provisioning
   private Server mLocalhost;
   private final List<Server> mServers;
   private final Cos          mDefaultCos;
-
-  private int mCounter = 1;
 
   public MockProvisioning()
   {
@@ -185,12 +180,6 @@ public class MockProvisioning extends Provisioning
     addMimeType("all", mime);
   }
 
-
-  public Account createAccount(String name)
-    throws ServiceException
-  {
-    return createAccount(name, "", new HashMap<String, Object>());
-  }
 
   public Account createAccount(String email, String password, Map<String, Object> attrs)
     throws ServiceException
@@ -359,16 +348,6 @@ public class MockProvisioning extends Provisioning
     list.add(info);
   }
 
-  private void initializeMimeHandlers()
-  {
-
-  }
-
-  public void clearMimeHandlers()
-  {
-    mimeConfig.clear();
-  }
-
   public Config getConfig()
   {
     return config;
@@ -403,11 +382,6 @@ public class MockProvisioning extends Provisioning
     entry.setAttrs(map);
   }
 
-
-  public void setLocalServer(Server server)
-  {
-    mLocalhost = server;
-  }
 
   public Server getLocalServer()
   {
@@ -816,12 +790,6 @@ public class MockProvisioning extends Provisioning
       .filter(server -> server.getAttr(A_zimbraServiceEnabled).contains(service))
       .collect(Collectors.toList());
   }
-
-  public List<Server> getAllServers(String service, String clusterId)
-  {
-    throw new UnsupportedOperationException();
-  }
-
 
   public void deleteServer(String zimbraId) {
     throw new UnsupportedOperationException();
@@ -1421,43 +1389,6 @@ class MockZAttributes
 
 
 class RegexUtil {
-
-  static final Pattern BACKSLASH = Pattern.compile("\\\\");
-  static final Pattern DOT = Pattern.compile("\\.");
-
-  /**
-   * Replaces all backslashes "\" with forward slashes "/". Convenience method to
-   * convert path Strings to URI format.
-   */
-  static String substBackslashes(String string) {
-    if (string == null) {
-      return null;
-    }
-
-    Matcher matcher = BACKSLASH.matcher(string);
-    return matcher.find() ? matcher.replaceAll("\\/") : string;
-  }
-
-  /**
-   * Returns package name for the Java class as a path separated with forward slash
-   * ("/"). Method is used to lookup resources that are located in package
-   * subdirectories. For example, a String "a/b/c" will be returned for class name
-   * "a.b.c.ClassName".
-   */
-  static String getPackagePath(String className) {
-    if (className == null) {
-      return "";
-    }
-
-    Matcher matcher = DOT.matcher(className);
-    if (matcher.find()) {
-      String path = matcher.replaceAll("\\/");
-      return path.substring(0, path.lastIndexOf("/"));
-    }
-    else {
-      return "";
-    }
-  }
 
   /**
    * Converts a SQL-style pattern to a valid Perl regular expression. E.g.:

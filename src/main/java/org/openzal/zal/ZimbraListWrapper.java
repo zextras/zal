@@ -22,7 +22,7 @@ package org.openzal.zal;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.openzal.zal.calendar.Invite;
+
 import org.openzal.zal.soap.SoapElement;
 import com.zimbra.common.soap.Element;
 import com.zimbra.cs.account.accesscontrol.RightCommand;
@@ -394,19 +394,4 @@ public class ZimbraListWrapper
     return newList;
   }
 
-  @Nonnull
-  public static List<Invite> wrapInvites(@Nullable List<com.zimbra.cs.mailbox.calendar.Invite> inviteList)
-  {
-    if (inviteList == null || inviteList.size() == 0)
-    {
-      return Collections.emptyList();
-    }
-
-    List<Invite> newList = new ArrayList<Invite>(inviteList.size());
-    for( com.zimbra.cs.mailbox.calendar.Invite invite : inviteList )
-    {
-      newList.add(new Invite(invite));
-    }
-    return newList;
-  }
 }

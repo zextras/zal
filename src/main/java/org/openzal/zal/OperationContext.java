@@ -21,7 +21,6 @@
 package org.openzal.zal;
 
 import javax.annotation.Nonnull;
-import org.openzal.zal.calendar.Attendee;
 
 
 public class OperationContext

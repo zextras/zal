@@ -27,10 +27,8 @@ import com.zimbra.common.util.BEncoding;
 import com.zimbra.common.util.ByteUtil;
 import com.zimbra.common.util.FileUtil;
 import com.zimbra.common.util.StringUtil;
-import com.zimbra.cs.db.DbMailItem;
 import com.zimbra.cs.httpclient.URLUtil;
 import com.zimbra.cs.mailbox.MessageCache;
-import com.zimbra.cs.mailbox.calendar.IcalXmlStrMap;
 import com.zimbra.cs.mailbox.calendar.WindowsSystemTime;
 import com.zimbra.cs.util.JMSession;
 import com.zimbra.soap.admin.message.FlushCacheRequest;
@@ -39,7 +37,6 @@ import com.zimbra.soap.admin.type.CacheEntrySelector.CacheEntryBy;
 import com.zimbra.soap.admin.type.CacheSelector;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,10 +48,8 @@ import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
 import org.openzal.zal.calendar.ICalendarTimezone;
-import org.openzal.zal.calendar.Invite;
 import org.openzal.zal.calendar.WinSystemTime;
 import org.openzal.zal.exceptions.ExceptionWrapper;
-import org.openzal.zal.exceptions.ZimbraException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,10 +62,9 @@ import org.openzal.zal.soap.SoapTransport;
 
 public abstract class Utils
 {
-  public static String FBTYPE_BUSY = IcalXmlStrMap.FBTYPE_BUSY;
 
 
-  public static void addStackTraceElements(StringBuilder sb, Throwable e)
+    public static void addStackTraceElements(StringBuilder sb, Throwable e)
   {
     StackTraceElement elements[] = e.getStackTrace();
 
@@ -156,12 +150,7 @@ public abstract class Utils
     return ByteUtil.encodeFSSafeBase64(data);
   }
 
-  public static byte[] decodeFSSafeBase64(String  data)
-  {
-    return ByteUtil.decodeFSSafeBase64(data);
-  }
-
-  public static void addToMultiMap(Map<String, Object> result, String name, String value)
+    public static void addToMultiMap(Map<String, Object> result, String name, String value)
   {
     StringUtil.addToMultiMap(result, name, value);
   }
@@ -190,17 +179,7 @@ public abstract class Utils
     }
   }
 
-  public static boolean isGzipped(byte[] data) throws IOException
-  {
-    return ByteUtil.isGzipped(data);
-  }
-
-  public static byte[] getContent(InputStream stream, int sizeHint) throws IOException
-  {
-    return ByteUtil.getContent(stream, sizeHint);
-  }
-
-  public static long copy(InputStream in, boolean closeIn, OutputStream out, boolean closeOut) throws IOException
+    public static long copy(InputStream in, boolean closeIn, OutputStream out, boolean closeOut) throws IOException
   {
     return ByteUtil.copy(in, closeIn, out, closeOut);
   }
@@ -222,20 +201,7 @@ public abstract class Utils
     }
   }
 
-  public static void setDefaultAlarm(Invite invite, Account account)
-  {
-    try
-    {
-      com.zimbra.cs.mailbox.calendar.Invite.setDefaultAlarm(invite.toZimbra(com.zimbra.cs.mailbox.calendar.Invite.class),
-                                                            account.toZimbra(com.zimbra.cs.account.Account.class));
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public static WinSystemTime windowsSystemTimeFromSimpleOnset(ICalendarTimezone.SimpleOnset simpleOnset)
+    public static WinSystemTime windowsSystemTimeFromSimpleOnset(ICalendarTimezone.SimpleOnset simpleOnset)
   {
     ICalTimeZone.SimpleOnset zimbraSimpleOnSet;
     if (simpleOnset == null)
@@ -268,22 +234,7 @@ public abstract class Utils
     }
   }
 
-  public static String getEmailNamePart(String address)
-  {
-    if (address.contains("@"))
-    {
-      String[] parts = address.split("@");
-
-      if (parts.length == 2)
-      {
-        return address.split("@")[0];
-      }
-    }
-
-    throw new RuntimeException("Invalid mail address " + address);
-  }
-
-  public static String computeDigest(InputStream inputStream) throws IOException
+    public static String computeDigest(InputStream inputStream) throws IOException
   {
     try
     {
@@ -315,35 +266,7 @@ public abstract class Utils
     }
   }
 
-  public static String currentStackTrace()
-  {
-    StringBuilder sb = new StringBuilder(128);
-    StackTraceElement elements[] = Thread.currentThread().getStackTrace();
-
-    sb.append( "Thread Stack:\n");
-
-    for( int n=2; n < elements.length; ++n ){
-      sb.append( "        at ");
-      sb.append( elements[n].getClassName() );
-      sb.append( "." );
-      sb.append( elements[n].getMethodName() );
-      sb.append( " ( ");
-      sb.append( elements[n].getFileName()  );
-      sb.append( ":");
-      sb.append( elements[n].getLineNumber()  );
-      sb.append( " )");
-
-      if( elements[n].isNativeMethod() ) {
-        sb.append(" [native]");
-      }
-
-      sb.append("\n");
-    }
-
-    return sb.toString();
-  }
-
-  public static String dnToName(String dn)
+    public static String dnToName(String dn)
   {
     char[] chars = new char[ dn.length() ];
 
@@ -393,19 +316,7 @@ public abstract class Utils
     return address.substring(0,address.length()-1);
   }
 
-  public static String encodeMetadataForDb(String metadata) throws ZimbraException
-  {
-    try
-    {
-      return DbMailItem.checkMetadataLength(metadata);
-    }
-    catch( ServiceException e )
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-  }
-
-  public static void flushAllServersCache(final SoapTransport soapTransport, List<String> accounts)
+    public static void flushAllServersCache(final SoapTransport soapTransport, List<String> accounts)
       throws IOException {
     CacheSelector cacheSelector = new CacheSelector();
     cacheSelector.setAllServers(true);

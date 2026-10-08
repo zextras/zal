@@ -44,18 +44,7 @@ public interface FileBlobStoreWrap
 
     Blob storeIncoming(InputStream in, boolean storeAsIs) throws IOException, ServiceException;
 
-    VolumeStagedBlob stage(InputStream in, long actualSize, Mailbox mbox) throws IOException, ServiceException;
-
     VolumeStagedBlob stage(Blob blob, Mailbox mbox) throws IOException;
-
-    VolumeMailboxBlob copy(MailboxBlob src, Mailbox destMbox, int destItemId, int destRevision)
-    throws IOException, ServiceException;
-
-    VolumeMailboxBlob copy(Blob src, Mailbox destMbox, int destItemId, int destRevision, String destVolumeId)
-    throws IOException, ServiceException;
-
-    VolumeMailboxBlob link(StagedBlob src, Mailbox destMbox, int destItemId, int destRevision)
-    throws IOException, ServiceException;
 
     VolumeMailboxBlob link(Blob src, Mailbox destMbox, int destItemId, int destRevision, String destVolumeId)
     throws IOException, ServiceException;
@@ -75,5 +64,4 @@ public interface FileBlobStoreWrap
 
     boolean deleteStore(Mailbox mbox, Iterable blobs) throws IOException, ServiceException;
 
-    Object getWrappedObject();
 }

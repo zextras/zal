@@ -4,16 +4,9 @@ import javax.annotation.Nonnull;
 import org.junit.jupiter.api.Disabled;
 import org.openzal.zal.exceptions.ZimbraException;
 
-import java.util.Map;
-
 @Disabled
 public class ProvisioningImpProxy extends ProvisioningImp
 {
-  public ProvisioningImpProxy()
-  {
-    this(com.zimbra.cs.account.Provisioning.getInstance());
-  }
-
   public ProvisioningImpProxy(Object provisioning)
   {
     super(provisioning);
@@ -26,18 +19,7 @@ public class ProvisioningImpProxy extends ProvisioningImp
     return super.galSearch(account, query, skip, limit);
   }
 
-  @Override
-  @Nonnull
-  public GalSearchResult galSearch(@Nonnull Account account, Domain domain, String query, int skip, int limit)
-  {
-    Map<String, Object> attrs = account.getAttrs(true);
-    attrs.put("zimbraFeatureGalEnabled", "TRUE");
-    attrs.put("zimbraFeatureGalAutoCompleteEnabled", "TRUE");
-    account.setAttrs(attrs);
-    return super.galSearch(account, domain, query, skip, limit);
-  }
-
-  @Override
+    @Override
   public void visitAllAccounts(@Nonnull SimpleVisitor<Account> visitor)
     throws ZimbraException
   {

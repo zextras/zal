@@ -66,58 +66,13 @@ public class FileBlobStoreSimulatorWrap implements FileBlobStoreWrap
     }
   }
 
-  @Override
-  public VolumeStagedBlob stage(InputStream in, long actualSize, Mailbox mbox)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
+    @Override
   public VolumeStagedBlob stage(Blob blob, Mailbox mbox) throws IOException
   {
     String volumeId = String.valueOf(VolumeManager.getInstance().getCurrentMessageVolume().getId());
     return new MockVolumeStagedBlob(mbox, (ZalMockBlob) blob, volumeId);
   }
 
-  @Override
-  public VolumeMailboxBlob copy(MailboxBlob src, Mailbox destMbox, int destItemId, int destRevision) throws IOException
-  {
-    try {
-      String volumeId = String.valueOf(VolumeManager.getInstance().getCurrentMessageVolume().getId());
-      return new MockVolumeMailboxBlob(mStore.copy(src, destMbox, destItemId, destRevision), volumeId);
-    } catch (ServiceException e) {
-      throw new IOException(e);
-    }
-  }
-
-
-  private static ZalMockBlob getMockBlob(Blob src)
-  {
-    return (ZalMockBlob) src;
-  }
-
-  @Override
-  public VolumeMailboxBlob copy(Blob src, Mailbox destMbox, int destItemId, int destRevision, String destVolumeId) throws IOException
-  {
-    return new MockVolumeMailboxBlob(mStore.copy(
-        getMockBlob(src),
-        destMbox,
-        destItemId,
-        destRevision,
-        String.valueOf(destVolumeId)
-    ), destVolumeId);
-  }
-
-  @Override
-  public VolumeMailboxBlob link(StagedBlob src, Mailbox destMbox, int destItemId, int destRevision) throws IOException
-  {
-    try {
-      String volumeId = String.valueOf(VolumeManager.getInstance().getCurrentMessageVolume().getId());
-      return new MockVolumeMailboxBlob(mStore.link(src, destMbox, destItemId, destRevision), volumeId);
-    } catch (ServiceException e) {
-      throw new IOException(e);
-    }
-  }
 
   @Override
   public VolumeMailboxBlob link(Blob src, Mailbox destMbox, int destItemId, int destRevision, String destVolumeId) throws IOException
@@ -178,12 +133,6 @@ public class FileBlobStoreSimulatorWrap implements FileBlobStoreWrap
     } catch (ServiceException e) {
       throw new IOException(e);
     }
-  }
-
-  @Override
-  public Object getWrappedObject()
-  {
-    return mStore;
   }
 
 }

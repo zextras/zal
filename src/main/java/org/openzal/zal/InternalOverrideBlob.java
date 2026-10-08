@@ -129,15 +129,4 @@ class InternalOverrideBlob extends com.zimbra.cs.store.Blob
     }
     return mBlob;
   }
-
-  public static Object wrap(org.openzal.zal.Blob src)
-  {
-    if (src instanceof BlobWrap)
-      return src.toZimbra(Blob.class);
-
-    if (src instanceof Blob)
-      return src;
-
-    return new InternalOverrideBlob(src);
-  }
 }

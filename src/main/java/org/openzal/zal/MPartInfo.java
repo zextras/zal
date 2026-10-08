@@ -21,7 +21,7 @@
 package org.openzal.zal;
 
 import com.zimbra.common.mime.ContentDisposition;
-import com.zimbra.common.mime.ContentType;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

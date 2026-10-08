@@ -15,11 +15,6 @@ public class ZalSearchResult
     mSearchResult = (com.unboundid.ldap.sdk.SearchResult)searchResult;
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mSearchResult);
-  }
-
   public List<ZalSearchResultEntry> getSearchEntries()
   {
     List<com.unboundid.ldap.sdk.SearchResultEntry> entries = mSearchResult.getSearchEntries();

@@ -224,12 +224,7 @@ public class IndexerManager
       return false;
     }
 
-    public Object getInstance()
-    {
-      return this;
-    }
-
-    private static class EmptyIndexer implements Indexer
+      private static class EmptyIndexer implements Indexer
     {
       @Override
       public boolean canHandle(String contentType, String fileExtension)

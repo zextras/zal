@@ -24,13 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public class FakeContinuation implements Continuation
 {
-  private final HttpServletRequest mReq;
-  private Object mObject;
+    private Object mObject;
 
   public FakeContinuation(HttpServletRequest req)
   {
-    mReq = req;
-    mObject = null;
+      mObject = null;
   }
 
   @Override
@@ -63,13 +61,7 @@ public class FakeContinuation implements Continuation
     throw new UnsupportedOperationException();
   }
 
-  @Override
-  public boolean isExpired()
-  {
-    return false;
-  }
-
-  @Override
+    @Override
   public void setObject(Object obj)
   {
     mObject = obj;

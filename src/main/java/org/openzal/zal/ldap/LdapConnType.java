@@ -17,11 +17,6 @@ public class LdapConnType
     mLdapConnType = (com.zimbra.cs.ldap.LdapConnType)ldapConnType;
   }
 
-  protected <T> T toZimbra(Class<T> cls)
-  {
-    return cls.cast(mLdapConnType);
-  }
-
   @Override
   public boolean equals(Object o)
   {

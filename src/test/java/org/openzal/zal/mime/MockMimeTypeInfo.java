@@ -30,11 +30,7 @@ public class MockMimeTypeInfo implements MimeTypeInfo {
     return extension;
   }
 
-  public void setExtension(String value) {
-    extension = value;
-  }
-
-  public String getHandlerClass() {
+    public String getHandlerClass() {
     return handlerClass;
   }
 
@@ -46,19 +42,11 @@ public class MockMimeTypeInfo implements MimeTypeInfo {
     return indexingEnabled;
   }
 
-  public void setIndexingEnabled(boolean value) {
-    indexingEnabled = value;
-  }
-
-  public String getDescription() {
+    public String getDescription() {
     return description;
   }
 
-  public void setDescription(String value) {
-    description = value;
-  }
-
-  public Set<String> getFileExtensions() {
+    public Set<String> getFileExtensions() {
     return fileExtensions;
   }
 
@@ -71,10 +59,6 @@ public class MockMimeTypeInfo implements MimeTypeInfo {
 
   public int getPriority() {
     return priority;
-  }
-
-  public void setPriority(int value) {
-    priority = value;
   }
 
 }

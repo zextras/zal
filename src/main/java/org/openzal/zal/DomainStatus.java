@@ -30,13 +30,9 @@ import org.openzal.zal.exceptions.ExceptionWrapper;
 public class DomainStatus
 {
   public static String DOMAIN_STATUS_ACTIVE = Provisioning.DOMAIN_STATUS_ACTIVE;
-  public static String DOMAIN_STATUS_MAINTENANCE = Provisioning.DOMAIN_STATUS_MAINTENANCE;
-  public static String DOMAIN_STATUS_LOCKED = Provisioning.DOMAIN_STATUS_LOCKED;
-  public static String DOMAIN_STATUS_CLOSED = Provisioning.DOMAIN_STATUS_CLOSED;
-  public static String DOMAIN_STATUS_SUSPENDED = Provisioning.DOMAIN_STATUS_SUSPENDED;
-  public static String DOMAIN_STATUS_SHUTDOWN = Provisioning.DOMAIN_STATUS_SHUTDOWN;
+    public static String DOMAIN_STATUS_CLOSED = Provisioning.DOMAIN_STATUS_CLOSED;
 
-  private final ZAttrProvisioning.DomainStatus domainStatus;
+    private final ZAttrProvisioning.DomainStatus domainStatus;
 
   protected DomainStatus(@Nonnull Object domainStatus) {
     if (domainStatus == null) {
@@ -70,12 +66,7 @@ public class DomainStatus
     return Objects.hash(domainStatus);
   }
 
-  public <T> T toZimbra(@Nonnull Class<T> cls)
-  {
-    return cls.cast(domainStatus);
-  }
-
-  @Override
+    @Override
   public String toString()
   {
     return domainStatus.toString();

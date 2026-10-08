@@ -22,8 +22,7 @@ package org.openzal.zal.soap;
 
 import com.zimbra.common.soap.AdminConstants;
 import javax.annotation.Nullable;
-import org.openzal.zal.Continuation;
-import org.openzal.zal.Jetty;
+
 import com.zimbra.common.soap.Element;
 import com.zimbra.soap.SoapEngine;
 import com.zimbra.soap.SoapServlet;
@@ -45,36 +44,21 @@ class ZimbraContextImpl implements ZimbraContext
   @Nullable private final Element             mRequest;
   private final           Map<String, Object> mContext;
   private final           ZimbraSoapContext   mZimbraSoapContext;
-  private final InternalDocumentHandler.Proxier mProxier;
   private final           Map<String, String> mMap;
-
-  public ZimbraSoapContext getZimbraSoapContext()
-  {
-    return mZimbraSoapContext;
-  }
 
   ZimbraContextImpl(Map<String, Object> context)
   {
     mContext = context;
     mZimbraSoapContext = (ZimbraSoapContext) context.get(SoapEngine.ZIMBRA_CONTEXT);
-    mProxier = new InternalDocumentHandler.Proxier()
-    {
-      @Override
-      public Element proxy(String accountId)
-      {
-        throw new UnsupportedOperationException();
-      }
-    };
     mMap = Collections.emptyMap();
     mRequest = null;
   }
 
-  ZimbraContextImpl(Element request, Map<String, Object> context, InternalDocumentHandler.Proxier proxier)
+  ZimbraContextImpl(Element request, Map<String, Object> context)
   {
     mRequest = request;
     mContext = context;
     mZimbraSoapContext = (ZimbraSoapContext) context.get(SoapEngine.ZIMBRA_CONTEXT);
-    mProxier = proxier;
     mMap = new HashMap<String, String>(32);
 
     Set<Element.Attribute> attributes = request.listAttributes();
@@ -161,18 +145,7 @@ class ZimbraContextImpl implements ZimbraContext
       return new StubSoapNode();
     }
 
-    return new ZimbraContextImpl(subElement,mContext,mProxier);
-  }
-
-  @Override
-  public SoapResponse proxyRequestTo(String accountId)
-  {
-    Element response = mProxier.proxy(accountId);
-    SoapResponseImpl soapResponse = new SoapResponseImpl(
-      response,
-      new InternalDocumentHelper.ElementFactory(mZimbraSoapContext)
-    );
-    return soapResponse;
+    return new ZimbraContextImpl(subElement,mContext);
   }
 
   @Override
@@ -201,13 +174,6 @@ class ZimbraContextImpl implements ZimbraContext
   }
 
   @Override
-  public String getTargetAccountId()
-  {
-    String accountId = mZimbraSoapContext.getRequestedAccountId();
-    return accountId == null ? "" : accountId;
-  }
-
-  @Override
   public String getAuthenticatedAccontId()
   {
     String accountId =  mZimbraSoapContext.getAuthtokenAccountId();
@@ -222,35 +188,9 @@ class ZimbraContextImpl implements ZimbraContext
   }
 
   @Override
-  public SoapResponse execLocalRequest()
-  {
-    SoapEngine soapEngine = (SoapEngine) mContext.get(SoapEngine.ZIMBRA_ENGINE);
-    ZimbraSoapContext zimbraSoapContext = (ZimbraSoapContext) mContext.get(SoapEngine.ZIMBRA_CONTEXT);
-    return new SoapResponseImpl(soapEngine.dispatchRequest(mRequest, mContext, mZimbraSoapContext), new InternalDocumentHelper.ElementFactory(zimbraSoapContext));
-  }
-
-  @Override
   public HttpServletRequest getHttpServletRequest()
   {
     return (HttpServletRequest) mContext.get(SoapServlet.SERVLET_REQUEST);
-  }
-
-  @Override
-  public Continuation getContinuation()
-  {
-    return Jetty.getContinuation(getHttpServletRequest());
-  }
-
-  @Override
-  public boolean isDelegatedAuth()
-  {
-    return mZimbraSoapContext.getAuthToken().isDelegatedAuth();
-  }
-
-  @Override
-  public InternalDocumentHelper.ElementFactory getElementFactory()
-  {
-    return new InternalDocumentHelper.ElementFactory(mZimbraSoapContext);
   }
 
   @Override

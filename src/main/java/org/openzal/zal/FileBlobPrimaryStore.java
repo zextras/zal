@@ -22,7 +22,7 @@ package org.openzal.zal;
 
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.store.StoreManager;
-import com.zimbra.cs.store.file.VolumeStagedBlob;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.openzal.zal.exceptions.ExceptionWrapper;
@@ -294,12 +294,6 @@ public class FileBlobPrimaryStore implements PrimaryStore
     {
       throw ExceptionWrapper.wrap(e);
     }
-  }
-
-  @Override
-  public <T> T toZimbra(Class<T> claz)
-  {
-    return claz.cast(sm.getWrappedObject());
   }
 
   @Override

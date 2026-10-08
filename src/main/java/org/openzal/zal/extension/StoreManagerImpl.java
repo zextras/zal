@@ -129,13 +129,7 @@ public class StoreManagerImpl implements StoreManager
     }
   }
 
-  @Override
-  public void makeActive(String volumeId)
-  {
-    mVolumeManager.setCurrentVolume(StoreVolume.TYPE_MESSAGE, Short.parseShort(volumeId));
-  }
-
-  @Override
+    @Override
   public void startup() throws IOException
   {
     for (Store store : mStoresCached.values())

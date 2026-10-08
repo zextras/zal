@@ -24,12 +24,8 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 import org.openzal.zal.BuildProperties;
 import org.openzal.zal.ZalVersion;
-import org.openzal.zal.lib.JarAccessor;
-import org.openzal.zal.lib.Version;
-import org.openzal.zal.lib.ZimbraVersion;
 import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.tools.JarUtils;
-import org.openzal.zal.lib.ExtensionVersionValidator;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -157,22 +153,6 @@ public class ZalEntrypointImpl implements ZalEntrypoint
       {
         throw new RuntimeException();
       }
-    }
-
-    @Override
-    public void shutdown()
-    {
-      checkState();
-      destroy();
-    }
-
-    @Override
-    public void reboot()
-    {
-      checkState();
-      destroy();
-      init();
-      postInit();
     }
 
     @Override

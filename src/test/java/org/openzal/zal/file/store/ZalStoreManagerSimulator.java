@@ -19,7 +19,7 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
-import java.util.function.BiConsumer;
+
 import org.apache.commons.io.IOUtils;
 import org.openzal.zal.BlobWrap;
 import org.openzal.zal.Utils;
@@ -57,8 +57,6 @@ public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
   public abstract ZalMockBlob createMockBlob(String id);
 
   public abstract OutputStream openOutputStream(String id);
-
-  protected abstract void finish(ZalMockBlob mockblob, byte content[]) throws IOException;
 
   public Blob storeIncoming(InputStream data, boolean storeAsIs) throws IOException {
     String id = UUID.randomUUID().toString();
@@ -200,17 +198,6 @@ public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
     return newBlob;
   }
 
-  public MailboxBlob link(MailboxBlob src, Mailbox destMbox, int destItemId, int destRevision) throws IOException {
-    MailboxBlob newBlob = copy(
-        src.getLocalBlob(),
-        destMbox,
-        destItemId,
-        destRevision,
-        String.valueOf(currentVolume())
-    );
-    return newBlob;
-  }
-
   public MailboxBlob renameTo(StagedBlob src, Mailbox destMbox, int destItemId, int destRevision) throws IOException {
     MailboxBlob newBlob = copy(
         ((MockVolumeBlob) ((MockVolumeStagedBlob) src).getLocalBlob()).getMockBlob(),
@@ -343,13 +330,9 @@ public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
 
   public static class MockBlobBuilder extends BlobBuilder {
 
-    private final BiConsumer<ZalMockBlob, byte[]> finish;
-    private byte[] out;
-
-    public MockBlobBuilder(Blob blob, BiConsumer<ZalMockBlob, byte[]> finish) {
-      super(blob);
-      this.finish = finish;
-    }
+      public MockBlobBuilder(Blob blob) {
+        super(blob);
+      }
 
     protected FileChannel getFileChannel() {
       return null;
@@ -357,11 +340,6 @@ public abstract class ZalStoreManagerSimulator extends ZalStoreManager {
 
     public Blob finish() throws IOException, ServiceException {
       ZalMockBlob mockblob = (ZalMockBlob) super.finish();
-
-      if (out != null) {
-        this.finish.accept(mockblob, out);
-      }
-
       return mockblob;
     }
   }

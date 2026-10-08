@@ -26,7 +26,6 @@ import java.lang.ref.WeakReference;
 
 public interface ExtensionManager
 {
-  Extension getExtension();
   void setCustomClassLoader(ClassLoader classLoader);
   void setCustomZalExtensionController(ZalExtensionController customZalExtensionController);
   void setCustomExtensionDirectory(File zalRoot);

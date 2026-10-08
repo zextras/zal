@@ -39,23 +39,6 @@ public class ZimbraItemId
     this(new ZimbraId(accountId), itemId);
   }
 
-  public ZimbraItemId(Mailbox mbox, int itemId)
-  {
-    this(new ZimbraId(mbox.getAccountId()), itemId);
-  }
-
-  public static ZimbraItemId fromString(String string)
-  {
-    String[] parts = string.split("/");
-    if (parts.length != 2)
-    {
-      throw new RuntimeException("Invalid item id: " + string);
-    }
-    ZimbraId accountId = new ZimbraId(parts[0]);
-    int itemId = Integer.parseInt(parts[1]);
-    return new ZimbraItemId(accountId, itemId);
-  }
-
   @Override
   public String toString()
   {

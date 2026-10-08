@@ -26,19 +26,8 @@ import java.lang.ref.WeakReference;
 
 public class StubZalExtensionController implements ZalExtensionController
 {
-  @Override
-  public void shutdown()
-  {
-    throw new UnsupportedOperationException();
-  }
 
-  @Override
-  public void reboot()
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
+    @Override
   public void reload(File extensionDirectory, WeakReference<ClassLoader> previousClassLoader) throws IOException
   {
     throw new UnsupportedOperationException();

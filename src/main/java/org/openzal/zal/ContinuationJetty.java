@@ -66,7 +66,7 @@ public class ContinuationJetty implements Continuation
   private volatile boolean mExpired;
   private volatile boolean mIsInitial;
 
-  public static Continuation getOrCreateContinuation(HttpServletRequest req)
+  public static ContinuationJetty getOrCreateContinuation(HttpServletRequest req)
   {
     ContinuationJetty cont = (ContinuationJetty) req.getAttribute(CONTINUATION_ATTR);
     if (cont == null)
@@ -81,8 +81,7 @@ public class ContinuationJetty implements Continuation
   {
     mReq = req;
     mSuspended = new AtomicBoolean(false);
-    mExpired = false;
-    mAsyncContext = null;
+      mAsyncContext = null;
     mIsInitial = !req.isAsyncStarted();
     mListener = new ContinuationListener();
   }
@@ -173,8 +172,7 @@ public class ContinuationJetty implements Continuation
     mListenerRegistered = true;
   }
 
-  @Override
-  public boolean isExpired()
+  boolean isExpired()
   {
     return mExpired;
   }

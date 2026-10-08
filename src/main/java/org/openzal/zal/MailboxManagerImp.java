@@ -34,7 +34,6 @@ import org.openzal.zal.lib.ZimbraDatabase;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,11 +41,8 @@ import java.util.Set;
 @SuppressWarnings({"StaticVariableOfConcreteClass", "StaticNonFinalField", "Singleton"})
 public class MailboxManagerImp implements MailboxManager
 {
-  static final String TABLE_MAILBOX       = "mailbox";
-  static final String TABLE_METADATA      = "mailbox_metadata";
-  static final String TABLE_OUT_OF_OFFICE = "out_of_office";
 
-  public static final String[] sTABLES = {
+    public static final String[] sTABLES = {
                                            "mail_item",
                                            "appointment",
                                            "data_source_item",
@@ -69,9 +65,8 @@ public class MailboxManagerImp implements MailboxManager
   };
 
   private final          com.zimbra.cs.mailbox.MailboxManager                           mMailboxManager;
-  @Nonnull private final HashMap<MailboxManagerListener, MailboxManagerListenerWrapper> mListenerMap;
 
-  public MailboxManagerImp()
+    public MailboxManagerImp()
   {
     try
     {
@@ -81,14 +76,11 @@ public class MailboxManagerImp implements MailboxManager
     {
       throw ExceptionWrapper.wrap(ex);
     }
-
-    mListenerMap = new HashMap<MailboxManagerListener, MailboxManagerListenerWrapper>();
   }
 
   public MailboxManagerImp(Object mailboxManager)
   {
     mMailboxManager = (com.zimbra.cs.mailbox.MailboxManager) mailboxManager;
-    mListenerMap = new HashMap<MailboxManagerListener, MailboxManagerListenerWrapper>();
   }
 
   @Override
@@ -299,18 +291,6 @@ public class MailboxManagerImp implements MailboxManager
   }
 
   @Override
-  public Mailbox cleanCacheAndGetUpdatedMailboxById(Mailbox mailbox, boolean skipMailhostCheck)
-  {
-    cleanCache(mailbox);
-    return getMailboxById(mailbox.getId(), skipMailhostCheck);
-  }
-
-  private interface ZalProxyObject
-  {
-    Object getProxiedObject();
-  }
-
-  @Override
   public MailboxData getMailboxData(long mailboxId)
   {
     DbPool.DbConnection conn = null;
@@ -410,27 +390,6 @@ public class MailboxManagerImp implements MailboxManager
     Remove mailbox entry from mailbox manager caches, it never existed....muhahaha
 */
     mMailboxManager.removeMailboxData(data.getId(), data.getAccountId());
-  }
-
-  @Override
-  public void createMailboxWithSpecificId(Connection connection, Account account, long mailboxId)
-  {
-    try
-    {
-      DbMailbox.createMailbox(
-        connection.toZimbra(DbPool.DbConnection.class),
-        (int)mailboxId,
-        account.getId(),
-        account.getName(),
-        -1
-      );
-    }
-    catch (ServiceException e)
-    {
-      throw ExceptionWrapper.wrap(e);
-    }
-
-    mMailboxManager.setupMailboxWithSpecificId(mailboxId, account.getId().toLowerCase());
   }
 
 }

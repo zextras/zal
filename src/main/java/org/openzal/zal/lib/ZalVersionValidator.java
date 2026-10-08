@@ -26,14 +26,10 @@ import java.security.NoSuchAlgorithmException;
 public class ZalVersionValidator
 {
   private final static String ATTR_VERSION            = "Specification-Version";
-  private final static String ATTR_ZAL_IMPLEMENTATION = "Implementation-Version";
 
-  public Version validate(JarAccessor jar, ZimbraVersion zimbraVersion) throws IOException, NoSuchAlgorithmException
+    public Version validate(JarAccessor jar) throws IOException, NoSuchAlgorithmException
   {
     return Version.parse(jar.getAttributeInManifest(ATTR_VERSION));
   }
 
-  private void validateVersion(JarAccessor jar, ZimbraVersion zalVersion) throws IOException
-  {
-  }
 }

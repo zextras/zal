@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.zextras</groupId>
+    <artifactId>maven-ci-parent</artifactId>
+    <version>1.1.0</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>org.openzal</groupId>
+  <artifactId>zal</artifactId>
+  <version>4.35.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <revision>4.35.2</revision>
+    <mailbox.version>4.35.1</mailbox.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jackson.version>2.15.4</jackson.version>
+    <jfreechart.version>1.0.15</jfreechart.version>
+    <log4j.version>2.20.0</log4j.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <commit.id>1.1.1</commit.id>
+    <jetty.version>12.1.10</jetty.version>
+    <junit5.version>5.11.4</junit5.version>
+    <mockito.version>5.4.0</mockito.version>
+    <httpcomponents.version>4.5.13</httpcomponents.version>
+    <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
+    <zextras-public-repo.url>s3://zextras-public-repositories</zextras-public-repo.url>
+    <execute.fast.compatibility>true</execute.fast.compatibility>
+    <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+    <build.version>${project.version}</build.version>
+    <build.timestamp>${maven.build.timestamp}</build.timestamp>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Maven public</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>artifactory</id>
+      <name>Zextras public maven repo</name>
+      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+    </repository>
+    <repository>
+      <id>zextras-public-snapshots</id>
+      <name>Zextras public maven snapshot repository</name>
+      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>zextras-public-release</id>
+      <name>Zextras public releases</name>
+      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <repository>
+      <id>maven-redhat</id>
+      <url>https://maven.repository.redhat.com/ga/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>default</id>
+      <name>Maven public</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>jitpack.io</id>
+      <name>Jitpack</name>
+      <url>https://jitpack.io</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>zextras-public-snapshots</id>
+      <name>Zextras public snaposhots</name>
+      <url>https://zextras.jfrog.io/maven/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>zextras-public-release</id>
+      <name>Zextras public releases</name>
+      <url>https://zextras.jfrog.io/maven/release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>artifactory</id>
+      <name>Zextras public maven repo</name>
+      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>artifactory</id>
+      <name>Zextras snapshots</name>
+      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
+    </snapshotRepository>
+    <repository>
+      <id>artifactory</id>
+      <name>Zextras releases</name>
+      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+    </repository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+
+    <!-- provided: zal is meant to run against whatever jackson version the
+         host process (carbonio-mailbox) already has loaded; bundling our
+         own copy just duplicates it in every consumer's extension jar.
+         Matches the javax.activation-api/javax.mail-api pattern below. -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>javax.activation-api</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-common</artifactId>
+      <version>${mailbox.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-client</artifactId>
+      <version>${mailbox.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-soap</artifactId>
+      <version>${mailbox.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-http</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>28.1-jre</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbutils</groupId>
+      <artifactId>commons-dbutils</artifactId>
+      <version>1.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpcomponents.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfreechart.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.lowagie</groupId>
+          <artifactId>itext</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.5.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jaxme</groupId>
+          <artifactId>jaxme-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>msv</groupId>
+          <artifactId>xsdlib</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>pull-parser</groupId>
+          <artifactId>pull-parser</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>msv</groupId>
+          <artifactId>relaxngDatatype</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xpp3</groupId>
+          <artifactId>xpp3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>javax.mail-api</artifactId>
+      <version>1.4.7</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.unboundid</groupId>
+      <artifactId>unboundid-ldapsdk</artifactId>
+      <version>2.3.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.28.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit5.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit5.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit5.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.4.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>sqltool</artifactId>
+      <version>2.4.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20201115</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.20.0</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.11</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-store</artifactId>
+      <classifier>tests</classifier>
+      <version>${mailbox.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>zm-store</artifactId>
+      <version>${mailbox.version}</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sourceforge.nekohtml</groupId>
+          <artifactId>nekohtml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.gnu.inet</groupId>
+          <artifactId>libidn</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>oauth</groupId>
+          <artifactId>oauth</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>zimbra</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ews_2010</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.zookeeper</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ant-1.7.0-ziputil-patched</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.newsclub</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.sshd</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ant-tar-patched</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.yahoo.platform.yui</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <!-- brings in an old version of guava -->
+          <groupId>com.google.javascript</groupId>
+          <artifactId>closure-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ant-contrib</groupId>
+          <artifactId>ant-contrib</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.powermock</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hsqldb</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis-ext</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.newsclub.net</groupId>
+          <artifactId>junixsocket</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <version>1.3.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4.7</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ical4j</groupId>
+      <artifactId>ical4j</artifactId>
+      <version>0.9.16-patched</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.spy</groupId>
+      <artifactId>spymemcached</artifactId>
+      <version>2.12.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.9.1-patch-01</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>com.github.ZeXtras</groupId>
+        <artifactId>maven-s3-storage</artifactId>
+        <version>${maven-s3-storage.version}</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>5.5.0.6356</version>
+      </plugin>
+      <!-- JaCoCo Configuration -->
+      <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.14</version>
+          <executions>
+              <!-- Unit Test Coverage -->
+              <execution>
+                  <id>prepare-agent-ut</id>
+                  <phase>initialize</phase>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+                  <configuration>
+                      <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
+                  </configuration>
+              </execution>
+
+              <!-- Integration Test Coverage -->
+              <execution>
+                  <id>prepare-agent-it</id>
+                  <phase>pre-integration-test</phase>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+                  <configuration>
+                      <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                  </configuration>
+              </execution>
+
+              <!-- Merge Reports -->
+              <execution>
+                  <id>merge-results</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>merge</goal>
+                  </goals>
+                  <configuration>
+                      <fileSets>
+                          <fileSet>
+                              <directory>${project.build.directory}</directory>
+                              <includes>
+                                  <include>jacoco-*.exec</include>
+                              </includes>
+                          </fileSet>
+                      </fileSets>
+                      <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+                  </configuration>
+              </execution>
+
+              <!-- Generate Report -->
+              <execution>
+                  <id>generate-report</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+                  <configuration>
+                      <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                      <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+              <compilerArgs>
+                  <arg>--enable-preview</arg>
+              </compilerArgs>
+          </configuration>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.4</version>
+          <configuration>
+              <argLine>${argLine} --enable-preview</argLine>
+          </configuration>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.5.4</version>
+          <configuration>
+              <trimStackTrace>false</trimStackTrace>
+              <forkCount>1</forkCount>
+              <argLine>
+                  ${argLine}
+                  --enable-preview
+                  -Xmx1024m
+                  -ea
+                  --add-opens java.base/java.lang=ALL-UNNAMED
+                  -Duser.timezone=Europe/Rome
+                  -Djava.awt.headless=true
+                  -Dzimbra.config=it/data/zimbra-config/localconfig-test.xml
+                  -Dfile.encoding=UTF-8
+              </argLine>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>integration-test</goal>
+                      <goal>verify</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+        <version>5.0.0</version>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <dotGitDirectory>${project.parent.basedir}/.git</dotGitDirectory>
+              <generateGitPropertiesFile>false</generateGitPropertiesFile>
+              <commitIdGenerationMode>full</commitIdGenerationMode>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+              <goal>test-jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <finalName>zal</finalName>
+              <archive>
+                <manifestEntries>
+                  <Specification-Title>Zimbra Abstraction Layer</Specification-Title>
+                  <Specification-Version>${project.version}</Specification-Version>
+                  <Specification-Commit>${git.commit.id.full}</Specification-Commit>
+                  <Specification-Vendor>Zextras</Specification-Vendor>
+                  <Implementation-Version>${mailbox.version}</Implementation-Version>
+                  <Created-By>Zextras</Created-By>
+                  <Zimbra-Extension-Class>org.openzal.zal.extension.ZalEntrypointImpl</Zimbra-Extension-Class>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <classifier>tests</classifier>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.zextras</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.1</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>write-project-properties</goal>
+            </goals>
+            <configuration>
+              <outputFile>${project.build.outputDirectory}/zalbuild.properties</outputFile>
+              <includes>
+                <include>build.version</include>
+                <include>build.timestamp</include>
+                <include>maven.build.timestamp.format</include>
+                <include>git.dirty</include>
+                <include>git.commit.id.abbrev</include>
+                <include>git.commit.id.full</include>
+                <include>mailbox.version</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

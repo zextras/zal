@@ -94,9 +94,4 @@ public class AuthProvider
   {
     return AuthToken.createNewToken(account);
   }
-
-  public AuthToken decodeJwtAuthToken(String zm_auth_jwt, String zm_jwt) throws AuthToken.TokenExpired
-  {
-    throw new UnsupportedOperationException();
-  }
 }

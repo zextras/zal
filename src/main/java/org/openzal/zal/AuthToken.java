@@ -24,7 +24,6 @@ import com.zimbra.cs.account.AuthTokenException;
 
 import com.zimbra.cs.account.ZimbraAuthToken;
 import com.zimbra.cs.service.AuthProviderException;
-import java.util.Optional;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 
 import javax.annotation.Nonnull;
@@ -42,21 +41,9 @@ public class AuthToken
    */
   public static class TokenExpired extends Exception
   {
-    private final AuthToken mAuthToken;
-
-    public TokenExpired(String reason, AuthToken authToken)
+    public TokenExpired(String reason)
     {
       super(reason);
-      mAuthToken = authToken;
-    }
-
-    /**
-     * This token is invalid, in case you still want to know who it belongs to
-     * @return the invalid auth token
-     */
-    public AuthToken getAuthToken()
-    {
-      return mAuthToken;
     }
   }
 
@@ -80,12 +67,12 @@ public class AuthToken
 
     if( zimbraToken.isExpired() )
     {
-      throw new TokenExpired("token is expired", authToken);
+      throw new TokenExpired("token is expired");
     }
 
     if( !zimbraToken.isRegistered() )
     {
-      throw new TokenExpired("token is not registered", authToken);
+      throw new TokenExpired("token is not registered");
     }
 
     return authToken;
@@ -130,19 +117,9 @@ public class AuthToken
     return mAuthToken.isDelegatedAdmin();
   }
 
-  public boolean isDelegatedAuth()
-  {
-    return mAuthToken.isDelegatedAuth();
-  }
-
   public String toString()
   {
     return mAuthToken.toString();
-  }
-
-  public <T> T toZimbra(@Nonnull Class<T> cls)
-  {
-    return cls.cast(mAuthToken);
   }
 
   public String getEncoded()

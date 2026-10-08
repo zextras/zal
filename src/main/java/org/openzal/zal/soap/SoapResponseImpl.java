@@ -20,24 +20,19 @@
 
 package org.openzal.zal.soap;
 
-import static com.zimbra.common.soap.Element.parseJSON;
-
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.Element;
 import com.zimbra.common.soap.SoapParseException;
-import com.zimbra.common.soap.XmlParseException;
-
-import javax.annotation.Nonnull;
 
 public class SoapResponseImpl implements SoapResponse
 {
   public static SoapResponseImpl of(String wrapperElementName, String responseText) {
-    return new SoapResponseImpl(parseJSON(wrapperElementName, responseText), null);
+    return new SoapResponseImpl(parseJSON(wrapperElementName, responseText));
   }
 
   public static SoapResponseImpl fromJson(String jsonText) {
     try {
-      return new SoapResponseImpl(Element.parseJSON(jsonText), null);
+      return new SoapResponseImpl(Element.parseJSON(jsonText));
     } catch (SoapParseException e) {
       throw new RuntimeException(e);
     }
@@ -55,32 +50,20 @@ public class SoapResponseImpl implements SoapResponse
     }
   }
 
-  public static SoapResponseImpl parseXML(String xmlContent) {
-    try {
-      return new SoapResponseImpl(Element.parseXML(xmlContent), null);
-    } catch (XmlParseException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private Element mElement;
-  private final InternalDocumentHelper.ElementFactory mElementFactory;
 
   public SoapResponseImpl(
-    Element element,
-    InternalDocumentHelper.ElementFactory elementFactory
+    Element element
   )
   {
     mElement = element;
-    mElementFactory = elementFactory;
   }
 
   public SoapResponseImpl(
-    SoapElement element,
-    InternalDocumentHelper.ElementFactory elementFactory
+    SoapElement element
   )
   {
-    this(element.toZimbra(Element.class), elementFactory);
+    this(element.toZimbra(Element.class));
   }
 
   @Override
@@ -89,39 +72,14 @@ public class SoapResponseImpl implements SoapResponse
     mElement.addAttribute(key, value);
   }
 
-  @Override
-  public void setValue(String key, boolean value)
-  {
-    mElement.addAttribute(key, value);
-  }
-
-  @Override
-  public void setValue(String key, long value)
-  {
-    mElement.addAttribute(key, value);
-  }
-
-  @Override
-  public void setQName(QName qName)
-  {
-   mElement = mElementFactory.createElement(qName);
-  }
-
-  @Override
+    @Override
   public void setResponse(SoapResponse soapResponse)
   {
     SoapResponseImpl response = (SoapResponseImpl)soapResponse;
     mElement = response.mElement;
   }
 
-  @Nonnull
-  @Override
-  public SoapResponse createNode(String name)
-  {
-    return new SoapResponseImpl(mElement.addElement(name), mElementFactory);
-  }
-
-  public Element getElement()
+    public Element getElement()
   {
     return mElement;
   }

@@ -38,7 +38,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import org.openzal.zal.log.ZimbraLog;
 
@@ -299,9 +299,4 @@ public class LdapToSearchParamsConverter
     return convertToQueryString(new HashMap<String, Collection<String>>(), ldapQuery);
   }
 
-  public static SearchParams convertToSearchParams(Map<String, Collection<String>> conversionKeyMap, String ldapQuery) {
-    com.zimbra.cs.index.SearchParams searchParams = new com.zimbra.cs.index.SearchParams();
-    searchParams.setQueryString(convertToQueryString(conversionKeyMap, ldapQuery));
-    return new SearchParams(searchParams);
-  }
 }

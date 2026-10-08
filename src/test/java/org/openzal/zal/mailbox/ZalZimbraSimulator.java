@@ -236,11 +236,6 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     return new ProvisioningImpProxy(com.zimbra.cs.account.Provisioning.getInstance());
   }
 
-  public MockProvisioning getMockProvisioning()
-  {
-    return (MockProvisioning) com.zimbra.cs.account.Provisioning.getInstance();
-  }
-
   public org.openzal.zal.MailboxManager getMailboxManager()
   {
     return new MailboxManagerImp(mMailboxManager);

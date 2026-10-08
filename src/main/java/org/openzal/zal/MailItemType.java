@@ -20,23 +20,16 @@
 
 package org.openzal.zal;
 
-import java.util.Iterator;
-import java.util.Set;
-
 public class MailItemType
 {
   public static MailItemType CONTACT              = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CONTACT);
   public static          MailItemType UNKNOWN              = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.UNKNOWN);
   public static          MailItemType FOLDER               = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.FOLDER);
-  public static          MailItemType SEARCHFOLDER         = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.SEARCHFOLDER);
-  public static          MailItemType TAG                  = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.TAG);
+    public static          MailItemType TAG                  = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.TAG);
   public static          MailItemType CONVERSATION         = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CONVERSATION);
   public static          MailItemType MESSAGE              = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.MESSAGE);
-  public static          MailItemType FLAG                 = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.FLAG);
-  public static          MailItemType APPOINTMENT          = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.APPOINTMENT);
-  public static          MailItemType VIRTUAL_CONVERSATION = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.VIRTUAL_CONVERSATION);
-  public static          MailItemType MOUNTPOINT           = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.MOUNTPOINT);
-  public static          MailItemType CHAT                 = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CHAT);
+    public static          MailItemType APPOINTMENT          = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.APPOINTMENT);
+    public static          MailItemType CHAT                 = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CHAT);
 
   private final com.zimbra.cs.mailbox.MailItem.Type mType;
 
@@ -51,23 +44,7 @@ public class MailItemType
     return mType.toByte();
   }
 
-  public static byte[] typeArrayFrom(String types)
-  {
-    Set<com.zimbra.cs.mailbox.MailItem.Type> typeList =
-      com.zimbra.cs.mailbox.MailItem.Type.setOf(types.toUpperCase());
-    Iterator<com.zimbra.cs.mailbox.MailItem.Type> it = typeList.iterator();
-
-    int n = 0;
-    byte[] result = new byte[typeList.size()];
-    while (it.hasNext())
-    {
-      result[n] = Item.byteType(it.next());
-      n++;
-    }
-    return result;
-  }
-
-  public static MailItemType of(String itemType)
+    public static MailItemType of(String itemType)
   {
     return new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.of(itemType));
   }

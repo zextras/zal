@@ -25,7 +25,6 @@ import org.openzal.zal.tools.JarUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -72,39 +71,9 @@ public class JarAccessor
     return mManifest;
   }
 
-  public boolean hasAttributeInManifest(String key) throws IOException
-  {
-    return getManifest().getMainAttributes().containsKey(key);
-  }
-
   public String getAttributeInManifest(String key) throws IOException
   {
     return getManifest().getMainAttributes().getValue(key);
-  }
-
-  public String getPath()
-  {
-    return mFile.getAbsolutePath();
-  }
-
-  public void validateDigest(boolean force) throws IOException, NoSuchAlgorithmException
-  {
-    String digest = new String(getDigest());
-    if (!digest.isEmpty() || force)
-    {
-      if (digest.isEmpty())
-      {
-        throw new RuntimeException("No digest found in archive " + getPath());
-      }
-
-      String actualMD5 = JarUtils.printableByteArray(JarUtils.computeDigest(getZipFile()));
-      if (! actualMD5.equalsIgnoreCase(digest))
-      {
-        throw new RuntimeException("Digest mismatch for file " + getPath() + "\n" +
-                                   " expected " + digest + "\n" +
-                                   " actual   " + actualMD5);
-      }
-    }
   }
 
   public byte[] getDigest() throws IOException
