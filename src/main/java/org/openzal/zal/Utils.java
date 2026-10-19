@@ -45,8 +45,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.http.HttpResponse;
-import org.apache.http.concurrent.FutureCallback;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletionException;
 import org.openzal.zal.calendar.ICalendarTimezone;
 import org.openzal.zal.calendar.WinSystemTime;
 import org.openzal.zal.exceptions.ExceptionWrapper;
@@ -329,22 +329,12 @@ public abstract class Utils
       cacheSelector.setEntries(entries);
     }
     FlushCacheRequest request = new FlushCacheRequest(cacheSelector);
-    soapTransport.invokeAsync(request, new FutureCallback<HttpResponse>() {
-      @Override
-      public void completed(HttpResponse httpResponse) {
-        soapTransport.shutdown();
+    soapTransport.invokeAsync(request).whenComplete((ignored, error) -> {
+      Throwable cause = error instanceof CompletionException ? error.getCause() : error;
+      if (cause != null && !(cause instanceof CancellationException)) {
+        ZimbraLog.mailbox.warn(Utils.exceptionToString(cause));
       }
-
-      @Override
-      public void failed(Exception e) {
-        ZimbraLog.mailbox.warn(Utils.exceptionToString(e));
-        soapTransport.shutdown();
-      }
-
-      @Override
-      public void cancelled() {
-        soapTransport.shutdown();
-      }
+      soapTransport.shutdown();
     });
   }
 }

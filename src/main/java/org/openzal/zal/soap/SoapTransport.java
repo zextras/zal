@@ -25,14 +25,13 @@ import com.zimbra.common.soap.SoapProtocol;
 import com.zimbra.soap.JaxbUtil;
 
 import javax.annotation.Nonnull;
-import org.apache.http.HttpResponse;
-import org.apache.http.concurrent.FutureCallback;
 import org.openzal.zal.ZAuthToken;
 import org.openzal.zal.exceptions.ExceptionWrapper;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.soap.SoapHttpTransport;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class SoapTransport
 {
@@ -59,10 +58,10 @@ public class SoapTransport
     mSoapHttpTransport.setTargetAcctId(targetAcctId);
   }
 
-    public void invokeAsync(Object requestObject, Object callback) throws IOException {
+    public CompletableFuture<Void> invokeAsync(Object requestObject) throws IOException {
     try  {
       Element req = JaxbUtil.jaxbToElement(requestObject, SoapProtocol.Soap12.getFactory());
-      mSoapHttpTransport.invokeAsync(req, (FutureCallback<HttpResponse>)callback);
+      return mSoapHttpTransport.invokeAsync(req).thenAccept(body -> {});
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
