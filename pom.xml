@@ -30,7 +30,6 @@
     <mockito.version>5.4.0</mockito.version>
     <httpcomponents.version>4.5.13</httpcomponents.version>
     <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
-    <zextras-public-repo.url>s3://zextras-public-repositories</zextras-public-repo.url>
     <execute.fast.compatibility>true</execute.fast.compatibility>
     <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
     <build.version>${project.version}</build.version>
@@ -39,95 +38,31 @@
 
   <repositories>
     <repository>
-      <id>central</id>
-      <name>Maven public</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>artifactory</id>
-      <name>Zextras public maven repo</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
-    </repository>
-    <repository>
-      <id>zextras-public-snapshots</id>
-      <name>Zextras public maven snapshot repository</name>
-      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>zextras-public-release</id>
-      <name>Zextras public releases</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-    <repository>
-      <id>maven-redhat</id>
-      <url>https://maven.repository.redhat.com/ga/</url>
+      <id>zextras-nexus</id>
+      <url>https://repo.zextras.tools/repository/java-sdk/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
-      <id>default</id>
-      <name>Maven public</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>jitpack.io</id>
-      <name>Jitpack</name>
-      <url>https://jitpack.io</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>zextras-public-snapshots</id>
-      <name>Zextras public snaposhots</name>
-      <url>https://zextras.jfrog.io/maven/snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>zextras-public-release</id>
-      <name>Zextras public releases</name>
-      <url>https://zextras.jfrog.io/maven/release</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>artifactory</id>
-      <name>Zextras public maven repo</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+      <id>zextras-nexus</id>
+      <url>https://repo.zextras.tools/repository/java-sdk/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
     </pluginRepository>
   </pluginRepositories>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>artifactory</id>
-      <name>Zextras snapshots</name>
-      <url>https://zextras.jfrog.io/artifactory/maven-snapshot</url>
-    </snapshotRepository>
     <repository>
-      <id>artifactory</id>
-      <name>Zextras releases</name>
-      <url>https://zextras.jfrog.io/artifactory/public-maven-repo</url>
+      <id>nexus-prod</id>
+      <url>https://repo.zextras.tools/repository/public-maven-repo/</url>
     </repository>
+    <snapshotRepository>
+      <id>nexus-prod</id>
+      <url>https://repo.zextras.tools/repository/maven-snapshots/</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <dependencies>
@@ -553,14 +488,6 @@
   </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>com.github.ZeXtras</groupId>
-        <artifactId>maven-s3-storage</artifactId>
-        <version>${maven-s3-storage.version}</version>
-      </extension>
-    </extensions>
-
     <plugins>
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
