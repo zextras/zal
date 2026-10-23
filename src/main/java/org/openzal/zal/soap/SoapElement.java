@@ -122,6 +122,11 @@ public class SoapElement
     }
   }
 
+  public void detach()
+  {
+    mElement.detach();
+  }
+
   public boolean hasAttribute(String name)
   {
     for(Attribute attribute : listAttributes())

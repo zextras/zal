@@ -19,16 +19,11 @@
     <revision>4.35.5</revision>
     <mailbox.version>4.38.4</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jackson.version>2.15.4</jackson.version>
-    <jfreechart.version>1.0.15</jfreechart.version>
-    <log4j.version>2.20.0</log4j.version>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <commit.id>1.1.1</commit.id>
-    <jetty.version>12.1.10</jetty.version>
     <junit5.version>5.11.4</junit5.version>
     <mockito.version>5.4.0</mockito.version>
-    <httpcomponents.version>4.5.13</httpcomponents.version>
     <maven-s3-storage.version>3.0.1</maven-s3-storage.version>
     <execute.fast.compatibility>true</execute.fast.compatibility>
     <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -54,6 +49,25 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.zextras</groupId>
+        <artifactId>zm-mailbox</artifactId>
+        <version>${mailbox.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.zextras</groupId>
+        <artifactId>zm-store</artifactId>
+        <version>${mailbox.version}</version>
+        <classifier>tests</classifier>
+        <type>test-jar</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <distributionManagement>
     <repository>
       <id>nexus-prod</id>
@@ -69,17 +83,15 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- provided: zal is meant to run against whatever jackson version the
          host process (carbonio-mailbox) already has loaded; bundling our
-         own copy just duplicates it in every consumer's extension jar.
-         Matches the javax.activation-api/javax.mail-api pattern below. -->
+         own copy just duplicates it in every consumer's extension jar. -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -93,161 +105,98 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-common</artifactId>
-      <version>${mailbox.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-client</artifactId>
-      <version>${mailbox.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-soap</artifactId>
-      <version>${mailbox.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-http</artifactId>
-      <version>${jetty.version}</version>
+      <scope>provided</scope>
     </dependency>
 
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>28.1-jre</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-dbutils</groupId>
       <artifactId>commons-dbutils</artifactId>
       <version>1.6</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>4.4.5</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${httpcomponents.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>${jfreechart.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.lowagie</groupId>
-          <artifactId>itext</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>dom4j</groupId>
+      <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.5.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>jaxme</groupId>
-          <artifactId>jaxme-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>msv</groupId>
-          <artifactId>xsdlib</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>pull-parser</groupId>
-          <artifactId>pull-parser</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>msv</groupId>
-          <artifactId>relaxngDatatype</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xpp3</groupId>
-          <artifactId>xpp3</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
-      <version>3.5.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>javax.mail-api</artifactId>
-      <version>1.4.7</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>com.unboundid</groupId>
       <artifactId>unboundid-ldapsdk</artifactId>
-      <version>2.3.5</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
       <version>1.28.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -283,56 +232,48 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.4.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>sqltool</artifactId>
-      <version>2.4.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20201115</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.20.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.11</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-cli</groupId>
       <artifactId>commons-cli</artifactId>
-      <version>1.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
       <classifier>tests</classifier>
-      <version>${mailbox.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -340,148 +281,42 @@
     <dependency>
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
-      <version>${mailbox.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mockito</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sourceforge.nekohtml</groupId>
-          <artifactId>nekohtml</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.gnu.inet</groupId>
-          <artifactId>libidn</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>oauth</groupId>
-          <artifactId>oauth</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>zimbra</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ews_2010</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.zookeeper</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ant-1.7.0-ziputil-patched</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.newsclub</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.sshd</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ant-tar-patched</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.yahoo.platform.yui</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <!-- brings in an old version of guava -->
-          <groupId>com.google.javascript</groupId>
-          <artifactId>closure-compiler</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ant-contrib</groupId>
-          <artifactId>ant-contrib</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.powermock</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hsqldb</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis-ext</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.newsclub.net</groupId>
-          <artifactId>junixsocket</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
-      <version>1.4</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
       <artifactId>concurrentlinkedhashmap-lru</artifactId>
-      <version>1.3.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <version>1.4.7</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>ical4j</groupId>
       <artifactId>ical4j</artifactId>
-      <version>0.9.16-patched</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>net.spy</groupId>
       <artifactId>spymemcached</artifactId>
-      <version>2.12.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
-      <version>2.9.1-patch-01</version>
       <scope>test</scope>
     </dependency>
 
@@ -489,6 +324,47 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[21,)</version>
+                </requireJavaVersion>
+                <banDuplicatePomDependencyVersions/>
+                <banDynamicVersions/>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.8.1</version>
+        <executions>
+          <execution>
+            <id>analyze</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <configuration>
+              <failOnWarning>false</failOnWarning>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
