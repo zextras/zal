@@ -58,6 +58,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>com.zextras</groupId>
+        <artifactId>zm-store</artifactId>
+        <version>${mailbox.version}</version>
+        <classifier>tests</classifier>
+        <type>test-jar</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -250,7 +257,6 @@
       <groupId>com.zextras</groupId>
       <artifactId>zm-store</artifactId>
       <classifier>tests</classifier>
-      <version>${mailbox.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
