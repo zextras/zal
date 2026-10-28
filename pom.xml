@@ -17,7 +17,7 @@
 
   <properties>
     <revision>4.35.6</revision>
-    <mailbox.version>4.38.4</mailbox.version>
+    <mailbox.version>4.38.8</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
@@ -96,9 +96,33 @@
     </dependency>
 
     <dependency>
+      <groupId>org.eclipse.jetty.toolchain</groupId>
+      <artifactId>jetty-servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>mailbox-attribute-manager</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.activation</groupId>
-      <artifactId>javax.activation-api</artifactId>
-      <version>1.2.0</version>
+      <artifactId>activation</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.zextras</groupId>
+      <artifactId>right-manager</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -142,7 +166,7 @@
     <dependency>
       <groupId>commons-dbutils</groupId>
       <artifactId>commons-dbutils</artifactId>
-      <version>1.6</version>
+      <version>1.8.1</version>
       <scope>provided</scope>
     </dependency>
 
@@ -327,8 +351,21 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.6.3</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>linkage-checker-enforcer-rules</artifactId>
+            <version>1.5.7</version>
+          </dependency>
+        </dependencies>
         <executions>
+          <execution>
+            <id>list-conflicts</id>
+            <goals>
+              <goal>display-info</goal>
+            </goals>
+          </execution>
           <execution>
             <id>enforce</id>
             <goals>
@@ -336,21 +373,14 @@
             </goals>
             <configuration>
               <rules>
-                <requireMavenVersion>
-                  <version>[3.9,)</version>
-                </requireMavenVersion>
-                <requireJavaVersion>
-                  <version>[21,)</version>
-                </requireJavaVersion>
                 <banDuplicatePomDependencyVersions/>
-                <banDynamicVersions/>
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.8.1</version>
         <executions>
@@ -360,7 +390,19 @@
               <goal>analyze-only</goal>
             </goals>
             <configuration>
-              <failOnWarning>false</failOnWarning>
+              <failOnWarning>true</failOnWarning>
+              <outputXML>true</outputXML>
+              <ignoreUnusedRuntime>true</ignoreUnusedRuntime>
+              <ignoreNonCompile>true</ignoreNonCompile>
+              <ignoreAllNonTestScoped>true</ignoreAllNonTestScoped>
+            </configuration>
+          </execution>
+          <execution>
+            <id>analyze-duplicate</id>
+            <goals>
+              <goal>analyze-duplicate</goal>
+            </goals>
+            <configuration>
             </configuration>
           </execution>
         </executions>
