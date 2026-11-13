@@ -2319,17 +2319,7 @@ public class ProvisioningImp implements Provisioning
 
   public Account getForeignAccount(String principal) {
     try {
-      Account account = Account.wrap(mProvisioning.getAccountByForeignPrincipal(principal));
-      if (account != null) {
-        return account;
-      }
-
-      com.zimbra.cs.account.Domain zDomain = mProvisioning.getDomainByEmailAddr(principal);
-      if (zDomain == null) {
-        return null;
-      }
-
-      return Account.wrap(mProvisioning.getAccountByForeignName(principal, null, zDomain));
+      return Account.wrap(mProvisioning.getAccountByForeignPrincipal(principal));
     } catch (ServiceException e) {
       throw ExceptionWrapper.wrap(e);
     }
