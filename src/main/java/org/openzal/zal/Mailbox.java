@@ -277,7 +277,7 @@ public class Mailbox
   {
     try
     {
-      return new Account(mMbox.getAccount());
+      return new Account(zimbraAccount());
     }
     catch (ServiceException serviceException)
     {
@@ -374,7 +374,7 @@ public class Mailbox
     MailItem item;
     try
     {
-      item = mMbox.getItemRevision(zContext.getOperationContext(), id, Item.convertType(type), revision);
+      item = mMbox.getItemRevision(zContext.getOperationContext(), id, Item.convertType(type), revision, false);
     }
     catch (ServiceException serviceException)
     {
@@ -645,7 +645,7 @@ public class Mailbox
     com.zimbra.cs.fb.FreeBusy freeBusy;
     try
     {
-      freeBusy = mMbox.getFreeBusy(octxt.getOperationContext(),start,end,FreeBusyQuery.CALENDAR_FOLDER_ALL);
+      freeBusy = mMbox.getFreeBusy(octxt.getOperationContext(), zimbraAccount(), start, end, FreeBusyQuery.CALENDAR_FOLDER_ALL);
     }
     catch (ServiceException e)
     {
@@ -959,7 +959,7 @@ public class Mailbox
     {
       if (!canWrite(octxt,itemId) || !canWrite(octxt,targetId))
       {
-        throw new PermissionDeniedException("Missing write permissions for " + octxt.getAccount().getName() + " on " + mMbox.getAccount().getMail() + " mailbox");
+        throw new PermissionDeniedException("Missing write permissions for " + octxt.getAccount().getName() + " on " + zimbraAccount().getMail() + " mailbox");
       }
       mMbox.move(octxt.getOperationContext(), itemId, Item.convertType(type), targetId);
     }
@@ -1114,7 +1114,7 @@ public class Mailbox
     {
       if (! canWrite(octxt, calItemId))
       {
-        throw new PermissionDeniedException("Missing write permissions for " + octxt.getAccount().getName() + " on " + mMbox.getAccount().getMail() + " mailbox");
+        throw new PermissionDeniedException("Missing write permissions for " + octxt.getAccount().getName() + " on " + zimbraAccount().getMail() + " mailbox");
       }
 
 
@@ -1351,24 +1351,16 @@ public class Mailbox
     {
       if (type == Item.TYPE_FOLDER || type == Item.TYPE_SEARCHFOLDER || type == Item.TYPE_MOUNTPOINT)
       {
-        final Collection<Folder> folderCache = getFolderCache();
-        for (Folder subfolder : folderCache)
+        for (MailItem folder : mMbox.getItemList(zContext.getOperationContext(), Item.convertType(type)))
         {
-          if (subfolder.getType() == type || type == Item.TYPE_FOLDER)
-          {
-            result.add(subfolder);
-          }
+          result.add(new Folder((com.zimbra.cs.mailbox.Folder) folder));
         }
       }
       else if (type == Item.TYPE_TAG)
       {
-        final Map<Object, com.zimbra.cs.mailbox.Tag> tagCache = getTagCache();
-        for (Map.Entry<Object, com.zimbra.cs.mailbox.Tag> entry : tagCache.entrySet())
+        for (com.zimbra.cs.mailbox.Tag tag : mMbox.getTagList(zContext.getOperationContext()))
         {
-          if (entry.getKey() instanceof String)
-          {
-            result.add(new Item(entry.getValue()));
-          }
+          result.add(new Item(tag));
         }
       }
       else if (type == Item.TYPE_FLAG)
@@ -1407,6 +1399,10 @@ public class Mailbox
           }
         }
       }
+    }
+    catch (ServiceException serviceException)
+    {
+      throw ExceptionWrapper.wrap(serviceException);
     }
     finally
     {
@@ -1855,41 +1851,10 @@ public class Mailbox
     return acl.isEmpty();
   }
 
-  /*
-   * Warning: unsynchronized private access to mailbox
-   */
-  @Nullable
-  private Map<Object, com.zimbra.cs.mailbox.Tag> getTagCache()
+  @Nonnull
+  private com.zimbra.cs.account.Account zimbraAccount() throws ServiceException
   {
-    return mMbox.getTagCache();
-  }
-
-  /*
-   * Warning: unsynchronized private access to mailbox
-   */
-  @Nullable
-  private Collection<Folder> getFolderCache()
-  {
-    try
-    {
-      Collection<com.zimbra.cs.mailbox.Folder> folders = mMbox.getCacheFolders();
-      ArrayList<Folder> newList = new ArrayList<>(folders.size());
-
-      for (com.zimbra.cs.mailbox.Folder folder : folders)
-      {
-        if ( folder != null)
-        {
-          newList.add(new Folder(folder));
-        }
-      }
-
-      return newList;
-    }
-    catch (Throwable ex)
-    {
-      ZimbraLog.mailbox.error("Exception: " + Utils.exceptionToString(ex));
-      return null;
-    }
+    return com.zimbra.cs.account.Provisioning.getInstance().getAccountByMailbox(mMbox);
   }
 
   @Nullable

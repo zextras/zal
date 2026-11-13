@@ -1,6 +1,7 @@
 package org.openzal.zal.encryption;
 
 import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.account.Provisioning;
 import com.zimbra.cs.mailbox.Mailbox;
 import com.zimbra.cs.pgp.PgpHandler;
 import org.junit.jupiter.api.Assertions;
@@ -12,10 +13,11 @@ class PgpHandlerRegistererTest {
     @Test
     void test_createPgpHandler() throws ServiceException {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        PgpHandler pgpHandler = PgpHandlerRegisterer.createPgpHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        PgpHandler pgpHandler = PgpHandlerRegisterer.createPgpHandler(overriddenEncryptionHandler, true, provisioning);
         Assertions.assertNotNull(pgpHandler);
         Mailbox mailbox = Mockito.mock();
-        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        Mockito.when(provisioning.getAccountByMailbox(mailbox)).thenReturn(Mockito.mock());
         pgpHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
@@ -25,7 +27,8 @@ class PgpHandlerRegistererTest {
     @Test
     void test_registerHandler() {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        PgpHandler pgpHandler = PgpHandlerRegisterer.createPgpHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        PgpHandler pgpHandler = PgpHandlerRegisterer.createPgpHandler(overriddenEncryptionHandler, true, provisioning);
         PgpHandlerRegisterer.registerHandler(pgpHandler);
         Assertions.assertEquals(pgpHandler, PgpHandler.getHandler());
         PgpHandler handler = Mockito.mock();
@@ -53,11 +56,12 @@ class PgpHandlerRegistererTest {
     @Test
     void test_registerHandler_with_overriden() throws ServiceException {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        PgpHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        PgpHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true, provisioning);
         PgpHandler pgpHandler = PgpHandler.getHandler();
         Assertions.assertNotNull(pgpHandler);
         Mailbox mailbox = Mockito.mock();
-        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        Mockito.when(provisioning.getAccountByMailbox(mailbox)).thenReturn(Mockito.mock());
         pgpHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
