@@ -42,7 +42,6 @@ import java.util.jar.Manifest;
 @SuppressWarnings({"SynchronizedMethod", "rawtypes", "CustomClassloader"})
 public class BootstrapClassLoader extends ClassLoader
 {
-  private static final CodeSigner[] sEmptyCodeSigner = new CodeSigner[0];
   private static final Permissions  sAllPermission   = new Permissions();
   static {
     sAllPermission.add(new AllPermission());
@@ -333,7 +332,9 @@ public class BootstrapClassLoader extends ClassLoader
       inputStream.close();
     }
 
-    CodeSource cs = new CodeSource(url, sEmptyCodeSigner);
+    // No signers (null, not an empty array): ClassLoader turns an empty array into empty
+    // class signers, which makes CDS treat every extension class as signed and skip it.
+    CodeSource cs = new CodeSource(url, (CodeSigner[]) null);
     ProtectionDomain domain = new ProtectionDomain(cs, sAllPermission);
 
     return defineClass(
