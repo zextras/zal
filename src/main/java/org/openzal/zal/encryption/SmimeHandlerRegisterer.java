@@ -23,6 +23,7 @@ package org.openzal.zal.encryption;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.smime.SmimeHandler;
 import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
+import com.zimbra.cs.account.Provisioning;
 import org.openzal.zal.Account;
 
 import javax.mail.internet.MimeMessage;
@@ -31,12 +32,12 @@ public final class SmimeHandlerRegisterer {
 
     private SmimeHandlerRegisterer() {}
 
-    public static SmimeHandler createSmimeHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
+    public static SmimeHandler createSmimeHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled, Provisioning provisioning) {
         return new SmimeHandlerImpl() {
 
             @Override
             public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) throws ServiceException {
-                return overriddenEncryptionHandler.decryptMessage(new Account(mailbox.getAccount()), mimeMessage, itemId);
+                return overriddenEncryptionHandler.decryptMessage(new Account(provisioning.getAccountByMailbox(mailbox)), mimeMessage, itemId);
             }
 
             @Override
@@ -68,6 +69,10 @@ public final class SmimeHandlerRegisterer {
     }
 
     public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
-        registerHandler(createSmimeHandler(overriddenEncryptionHandler, signatureEnabled));
+        registerHandler(overriddenEncryptionHandler, signatureEnabled, Provisioning.getInstance());
+    }
+
+    public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled, Provisioning provisioning) {
+        registerHandler(createSmimeHandler(overriddenEncryptionHandler, signatureEnabled, provisioning));
     }
 }

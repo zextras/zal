@@ -38,7 +38,7 @@ public class AttributeInfo
   {
     try
     {
-      LdapAttributeInfo.get(mAttributeInfo).checkValue(value, checkImmutable, null);
+      LdapAttributeInfo.get(mAttributeInfo).checkValue(value, checkImmutable);
     }
     catch (ServiceException e)
     {

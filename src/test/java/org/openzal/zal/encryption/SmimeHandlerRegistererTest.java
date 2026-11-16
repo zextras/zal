@@ -2,6 +2,7 @@ package org.openzal.zal.encryption;
 
 import com.zextras.mailbox.encryption.smime.SmimeHandlerImpl;
 import com.zimbra.common.service.ServiceException;
+import com.zimbra.cs.account.Provisioning;
 import com.zimbra.cs.mailbox.Mailbox;
 import com.zimbra.cs.smime.SmimeHandler;
 import org.junit.jupiter.api.Assertions;
@@ -13,10 +14,11 @@ class SmimeHandlerRegistererTest {
     @Test
     void test_createSmimeHandler() throws ServiceException {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true, provisioning);
         Assertions.assertNotNull(smimeHandler);
         Mailbox mailbox = Mockito.mock();
-        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        Mockito.when(provisioning.getAccountByMailbox(mailbox)).thenReturn(Mockito.mock());
         smimeHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());
@@ -26,7 +28,8 @@ class SmimeHandlerRegistererTest {
     @Test
     void test_registerHandler() {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        SmimeHandler smimeHandler = SmimeHandlerRegisterer.createSmimeHandler(overriddenEncryptionHandler, true, provisioning);
         SmimeHandlerRegisterer.registerHandler(smimeHandler);
         Assertions.assertEquals(smimeHandler, SmimeHandler.getHandler());
         SmimeHandler handler = Mockito.mock();
@@ -54,11 +57,12 @@ class SmimeHandlerRegistererTest {
     @Test
     void test_registerHandler_with_overriden() throws ServiceException {
         OverriddenEncryptionHandler overriddenEncryptionHandler = Mockito.mock();
-        SmimeHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true);
+        Provisioning provisioning = Mockito.mock();
+        SmimeHandlerRegisterer.registerHandler(overriddenEncryptionHandler, true, provisioning);
         SmimeHandler smimeHandler = SmimeHandler.getHandler();
         Assertions.assertNotNull(smimeHandler);
         Mailbox mailbox = Mockito.mock();
-        Mockito.when(mailbox.getAccount()).thenReturn(Mockito.mock());
+        Mockito.when(provisioning.getAccountByMailbox(mailbox)).thenReturn(Mockito.mock());
         smimeHandler.decryptMessage(mailbox, Mockito.mock(), 0);
         Mockito.verify(overriddenEncryptionHandler, Mockito.times(1))
                 .decryptMessage(Mockito.any(), Mockito.any(), Mockito.anyInt());

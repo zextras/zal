@@ -25,6 +25,7 @@ import com.zimbra.common.soap.Element;
 import com.zimbra.cs.mailbox.Message;
 import com.zimbra.cs.mailbox.OperationContext;
 import com.zimbra.cs.pgp.PgpHandler;
+import com.zimbra.cs.account.Provisioning;
 import org.openzal.zal.Account;
 
 import javax.mail.internet.MimeMessage;
@@ -34,12 +35,12 @@ public final class PgpHandlerRegisterer {
     private PgpHandlerRegisterer() {
     }
 
-    public static PgpHandler createPgpHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
+    public static PgpHandler createPgpHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled, Provisioning provisioning) {
         return new PgpHandler() {
 
             @Override
             public MimeMessage decryptMessage(com.zimbra.cs.mailbox.Mailbox mailbox, MimeMessage mimeMessage, int itemId) throws ServiceException {
-                return overriddenEncryptionHandler.decryptMessage(new Account(mailbox.getAccount()), mimeMessage, itemId);
+                return overriddenEncryptionHandler.decryptMessage(new Account(provisioning.getAccountByMailbox(mailbox)), mimeMessage, itemId);
             }
 
             @Override
@@ -69,7 +70,11 @@ public final class PgpHandlerRegisterer {
     }
 
     public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled) {
-        registerHandler(createPgpHandler(overriddenEncryptionHandler, signatureEnabled));
+        registerHandler(overriddenEncryptionHandler, signatureEnabled, Provisioning.getInstance());
+    }
+
+    public static void registerHandler(OverriddenEncryptionHandler overriddenEncryptionHandler, boolean signatureEnabled, Provisioning provisioning) {
+        registerHandler(createPgpHandler(overriddenEncryptionHandler, signatureEnabled, provisioning));
     }
 
     public static Class<?> getRegisteredClass() {
