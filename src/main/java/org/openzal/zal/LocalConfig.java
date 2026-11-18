@@ -30,9 +30,17 @@ import org.dom4j.DocumentException;
 
 public class LocalConfig
 {
-  public static final String zimbra_ldap_userdn = LC.zimbra_ldap_userdn.key();
-  public static final String zimbra_ldap_password = LC.zimbra_ldap_password.key();
-  public static final String zimbra_mailbox_groups = LC.zimbra_mailbox_groups.key();
+  public static final LocalConfigKey av_notify_user = new LocalConfigKey(LC.av_notify_user);
+  public static final LocalConfigKey mailboxd_keystore = new LocalConfigKey(LC.mailboxd_keystore);
+  public static final LocalConfigKey mailboxd_keystore_password = new LocalConfigKey(LC.mailboxd_keystore_password);
+  public static final LocalConfigKey zimbra_activesync_contact_image_size = new LocalConfigKey(LC.zimbra_activesync_contact_image_size);
+  public static final LocalConfigKey zimbra_home = new LocalConfigKey(LC.zimbra_home);
+  public static final LocalConfigKey zimbra_http_originating_ip_header = new LocalConfigKey(LC.zimbra_http_originating_ip_header);
+  public static final LocalConfigKey zimbra_ldap_password = new LocalConfigKey(LC.zimbra_ldap_password);
+  public static final LocalConfigKey zimbra_ldap_user = new LocalConfigKey(LC.zimbra_ldap_user);
+  public static final LocalConfigKey zimbra_ldap_userdn = new LocalConfigKey(LC.zimbra_ldap_userdn);
+  public static final LocalConfigKey zimbra_mailbox_groups = new LocalConfigKey(LC.zimbra_mailbox_groups);
+  public static final LocalConfigKey zimbra_server_hostname = new LocalConfigKey(LC.zimbra_server_hostname);
 
   public static void reload() {
     try {
@@ -49,11 +57,23 @@ public class LocalConfig
     return Arrays.asList(LC.getAllKeys());
   }
 
+  public static String get(LocalConfigKey key)
+  {
+    return key.value();
+  }
+
+  public static int getInt(LocalConfigKey key)
+  {
+    return key.intValue();
+  }
+
+  @Deprecated
   public static String get(String key)
   {
     return LC.get(key);
   }
 
+  @Deprecated
   public static int getInt(String key)
   {
     return Integer.parseInt(LC.get(key));
