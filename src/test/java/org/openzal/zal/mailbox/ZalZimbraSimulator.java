@@ -8,6 +8,7 @@ import org.openzal.zal.db.HSQLZimbraDatabase;
 import com.zimbra.cs.ephemeral.EphemeralStore;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
 import com.zimbra.cs.mailbox.MailboxIndex;
+import com.zimbra.cs.db.Db;
 import com.zimbra.cs.mailbox.MailboxManager;
 import com.zimbra.cs.mailbox.ScheduledTaskManager;
 import com.zimbra.cs.util.JMSession;
@@ -180,7 +181,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 
   private void initMailboxManager(Zimbra zimbra) throws Exception
   {
-    mMailboxManager = (MailboxManager) Class.forName(LC.zimbra_class_mboxmanager.value()).newInstance();
+    mMailboxManager = new MailboxManager();
     if (zimbra == null)
     {
       com.zimbra.cs.mailbox.MailboxManager.setInstance(mMailboxManager);
@@ -206,7 +207,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 
   public void initHSQLDatabase() throws Exception
   {
-    LC.zimbra_class_database.setDefault(HSQLZimbraDatabase.class.getName());
+    Db.setInstance(new HSQLZimbraDatabase());
     DbPool.global();
     HSQLZimbraDatabase.createDatabase();
     useMVCC();
