@@ -48,6 +48,13 @@ public class BootstrapClassLoader extends ClassLoader
     sAllPermission.add(new AllPermission());
   }
 
+  /*
+   * When the extension jars are already on the application class path, delegate
+   * everything to the parent so each class is defined once, by the application
+   * class loader (required by the JDK AOT cache).
+   */
+  private static final boolean sFlatClasspath = Boolean.getBoolean("zal.flatClasspath");
+
   private final boolean   mDelegateZalLoading;
   private final JarFile[] mJarFileList;
   private final URL[]     mUrls;
@@ -84,6 +91,11 @@ public class BootstrapClassLoader extends ClassLoader
     throws ClassNotFoundException
   {
     //System.out.printf("#### Loading class %s ",name);
+
+    if (sFlatClasspath)
+    {
+      return getParent().loadClass(name);
+    }
 
     if(!mInitialized)
     {
@@ -198,6 +210,11 @@ public class BootstrapClassLoader extends ClassLoader
   @Override
   public Enumeration<URL> getResources(String name) throws IOException
   {
+    if (sFlatClasspath)
+    {
+      return getParent().getResources(name);
+    }
+
     final LinkedList<URL> urls = new LinkedList<URL>();
 
     for( int n=0; n < mJarFileList.length; ++n)
