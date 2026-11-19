@@ -16,8 +16,8 @@
   <packaging>jar</packaging>
 
   <properties>
-    <revision>4.35.10</revision>
-    <mailbox.version>4.40.8</mailbox.version>
+    <revision>4.35.11</revision>
+    <mailbox.version>4.40.24</mailbox.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
