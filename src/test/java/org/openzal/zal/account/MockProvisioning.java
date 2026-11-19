@@ -24,7 +24,6 @@ import com.zimbra.cs.account.SearchDirectoryOptions;
 import com.zimbra.cs.account.Server;
 import com.zimbra.cs.account.ShareLocator;
 import com.zimbra.cs.account.Signature;
-import com.zimbra.cs.account.Zimlet;
 import org.openzal.zal.ZEUtils;
 import org.openzal.zal.ZxPair;
 import com.zimbra.cs.account.accesscontrol.RightCommand;
@@ -90,7 +89,6 @@ public class MockProvisioning extends Provisioning
   private final Map<String, List<MimeTypeInfo>> mimeConfig   = new HashMap<String, List<MimeTypeInfo>>();
   private final Map<String, DistributionList>   id2Dlist     = new HashMap<String, DistributionList>();
   private final Map<String, DistributionList>   name2Dlist   = new HashMap<String, DistributionList>();
-  private final Map<String, Zimlet>             id2zimlets   = new HashMap<String, Zimlet>();
   private final Map<String, Signature>          id2signatue  = new HashMap<String, Signature>();
   private final Map<String, Identity>           name2identity= new HashMap<String, Identity>();
 
@@ -860,35 +858,6 @@ public class MockProvisioning extends Provisioning
   }
 
   public void renameDistributionList(String zimbraId, String newName) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Nullable
-  public Zimlet getZimlet(String name) {
-    for( Zimlet current : id2zimlets.values() )
-    {
-      if( name.equalsIgnoreCase(current.getName()))
-      {
-        return current;
-      }
-    }
-
-    return null;
-  }
-
-  public List<Zimlet> listAllZimlets() {
-    return new ArrayList<Zimlet>(id2zimlets.values());
-  }
-
-  public Zimlet createZimlet(String name, Map<String, Object> attrs) {
-
-    Zimlet zimlet = new Zimlet(name, name, attrs, this);
-
-    id2zimlets.put(name,zimlet);
-    return zimlet;
-  }
-
-  public void deleteZimlet(String name) {
     throw new UnsupportedOperationException();
   }
 
