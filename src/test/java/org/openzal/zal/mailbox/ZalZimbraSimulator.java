@@ -4,11 +4,10 @@ import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.util.ZimbraLog;
 import org.openzal.zal.account.MockProvisioning;
 import com.zimbra.cs.db.DbPool;
-import org.openzal.zal.db.HSQLZimbraDatabase;
+import com.zimbra.cs.db.TestMariaDB;
 import com.zimbra.cs.ephemeral.EphemeralStore;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
 import com.zimbra.cs.mailbox.MailboxIndex;
-import com.zimbra.cs.db.Db;
 import com.zimbra.cs.mailbox.MailboxManager;
 import com.zimbra.cs.mailbox.ScheduledTaskManager;
 import com.zimbra.cs.util.JMSession;
@@ -39,27 +38,13 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
   public ZalZimbraSimulator(ZimbraSimulatorExtension ...extensions)
   {
     this.extensions = Arrays.asList(extensions);
-    initHsql();
     init();
   }
 
   public ZalZimbraSimulator(Zimbra zimbra, ZimbraSimulatorExtension ...extensions)
   {
     this.extensions = Arrays.asList(extensions);
-    initHsql();
     init(zimbra);
-  }
-
-  private static void initHsql() {
-    try
-    {
-      Class.forName("org.hsqldb.jdbcDriver");
-    }
-    catch (Exception e)
-    {
-      logger.error("Error loading DB Driver: ", e);
-      throw new RuntimeException(e);
-    }
   }
 
 
@@ -99,7 +84,7 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
       {
         initProvisioning();
       }
-      initHSQLDatabase();
+      initDatabase();
       mZimbra = new Zimbra(zimbra);
       initMailboxManager(zimbra);
 
@@ -205,18 +190,15 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
     return new MockProvisioning();
   }
 
-  public void initHSQLDatabase() throws Exception
+  public void initDatabase() throws Exception
   {
-    Db.setInstance(new HSQLZimbraDatabase());
-    DbPool.global();
-    HSQLZimbraDatabase.createDatabase();
-    useMVCC();
+    DbPool.global(TestMariaDB.start(mTmpDir.getAbsolutePath()));
   }
 
   public void cleanup() throws Exception
   {
     JMSession.resetSmtpHosts(); // clean bad hosts that fails during tests
-    HSQLZimbraDatabase.clearDatabase();
+    TestMariaDB.clear();
     extensions.forEach( ext -> {
       try {
         ext.cleanup(mZimbra);
@@ -241,10 +223,5 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
   public Zimbra getZimbra()
   {
     return mZimbra;
-  }
-
-  private void useMVCC() throws Exception
-  {
-    HSQLZimbraDatabase.useMVCC();
   }
 }
