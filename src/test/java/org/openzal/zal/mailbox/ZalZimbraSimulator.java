@@ -3,8 +3,6 @@ package org.openzal.zal.mailbox;
 import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.util.ZimbraLog;
 import org.openzal.zal.account.MockProvisioning;
-import com.zimbra.cs.db.DbPool;
-import com.zimbra.cs.db.TestMariaDB;
 import com.zimbra.cs.ephemeral.EphemeralStore;
 import com.zimbra.cs.ldap.ZLdapFilterFactorySimulator;
 import com.zimbra.cs.mailbox.MailboxIndex;
@@ -22,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openzal.zal.MailboxManagerImp;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.ProvisioningImpProxy;
+import org.openzal.zal.db.ZalTestDatabase;
 import org.openzal.zal.extension.Zimbra;
 
 // for testing purpose only
@@ -192,13 +191,13 @@ public class ZalZimbraSimulator implements BeforeEachCallback, AfterEachCallback
 
   public void initDatabase() throws Exception
   {
-    DbPool.global(TestMariaDB.start(mTmpDir.getAbsolutePath()));
+    ZalTestDatabase.start(mTmpDir.getAbsolutePath());
   }
 
   public void cleanup() throws Exception
   {
     JMSession.resetSmtpHosts(); // clean bad hosts that fails during tests
-    TestMariaDB.clear();
+    ZalTestDatabase.clear();
     extensions.forEach( ext -> {
       try {
         ext.cleanup(mZimbra);
