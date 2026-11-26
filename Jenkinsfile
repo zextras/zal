@@ -1,11 +1,17 @@
 library(
-        identifier: 'jenkins-lib-common@v4.13.0',
+        identifier: 'jenkins-lib-common@custom_20102026',
         retriever: modernSCM([
                 $class: 'GitSCMSource',
                 credentialsId: 'jenkins-integration-with-github-account',
                 remote: 'git@github.com:zextras/jenkins-lib-common.git',
         ])
 )
+
+// custom_* branches build release-flavoured (non-SNAPSHOT) versions, like carbonio-advanced.
+// customBranch() is provided by jenkins-lib-common@custom_20102026.
+String mvnExtraArgs() {
+    return customBranch() ? '-Dchangelist=' : ''
+}
 
 properties(defaultPipelineProperties())
 
@@ -55,7 +61,8 @@ pipeline {
                     mavenStage(
                         profile: '',
                         deployArtifacts: env.TAG_NAME ? true : false,
-                        extraDeployArgs: '-Dchangelist='
+                        extraDeployArgs: '-Dchangelist=',
+                        extraArgs: mvnExtraArgs()
                     )
                 }
             }
