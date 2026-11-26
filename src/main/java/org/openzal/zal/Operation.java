@@ -63,8 +63,6 @@ public enum Operation implements Comparable<Operation>
   FIX_CALENDAR_ITEM_TIME_ZONE(),
   RENAME_ITEM(),
   RENAME_ITEM_PATH(),
-  CREATE_CHAT(),
-  SAVE_CHAT(),
   PURGE_IMAP_DELETED(),
   DISMISS_CALENDAR_ITEM_ALARM(),
   FIX_CALENDAR_ITEM_END_TIME(),
@@ -221,10 +219,6 @@ public enum Operation implements Comparable<Operation>
         return RENAME_ITEM;
       case 62:
         return RENAME_ITEM_PATH;
-      case 63:
-        return CREATE_CHAT;
-      case 64:
-        return SAVE_CHAT;
       case 65:
         return PURGE_IMAP_DELETED;
       case 66:

@@ -29,7 +29,6 @@ public class MailItemType
   public static          MailItemType CONVERSATION         = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CONVERSATION);
   public static          MailItemType MESSAGE              = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.MESSAGE);
     public static          MailItemType APPOINTMENT          = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.APPOINTMENT);
-    public static          MailItemType CHAT                 = new MailItemType(com.zimbra.cs.mailbox.MailItem.Type.CHAT);
 
   private final com.zimbra.cs.mailbox.MailItem.Type mType;
 
