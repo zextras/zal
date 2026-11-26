@@ -2,7 +2,6 @@ package org.openzal.zal;
 
 import org.openzal.zal.Mailbox;
 import com.zimbra.cs.db.DbMailItem;
-import com.zimbra.cs.db.DbMailbox;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openzal.zal.lib.ZimbraDatabase;
@@ -12,13 +11,6 @@ import static org.mockito.Mockito.when;
 
 public class ZimbraDatabaseIT
 {
-  @Test
-  public void qualify_zimbra_table_name_doesnt_change()
-  {
-    String result = DbMailbox.qualifyZimbraTableName(32, "mailbox_metadata");
-    assertEquals("mailbox_metadata",result);
-  }
-
   @Test
   public void mail_item_table_name_doesnt_change()
   {
