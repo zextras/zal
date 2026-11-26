@@ -26,19 +26,13 @@ public class ZalQuotaHook implements QuotaCheck {
 	@Override
 	public void onSendMessage(Account acct) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final QuotaResult result = this.getCurrentCheck().onSendMessage(zalAccount);
-		if (result instanceof QuotaResult.OverQuota) {
-			throw MailServiceException.QUOTA_EXCEEDED(0);
-		}
+		enforce(this.getCurrentCheck().onSendMessage(zalAccount));
 	}
 
 	@Override
 	public void onAddMessage(Account acct, long newTotalMailboxUsage) throws ServiceException {
 		final org.openzal.zal.Account zalAccount = new org.openzal.zal.Account(acct);
-		final QuotaResult result = this.getCurrentCheck().onAddMessage(zalAccount, newTotalMailboxUsage);
-		if (result instanceof QuotaResult.OverQuota) {
-			throw MailServiceException.QUOTA_EXCEEDED(0);
-		}
+		enforce(this.getCurrentCheck().onAddMessage(zalAccount, newTotalMailboxUsage));
 	}
 
 	@Override
@@ -47,6 +41,25 @@ public class ZalQuotaHook implements QuotaCheck {
 		var result = this.getCurrentCheck().onDeleteMessage(zalAccount, size);
 		if (result instanceof DeleteFailure) {
 			throw ServiceException.FAILURE("Delete failed");
+		}
+	}
+
+	/**
+	 * Maps a {@link QuotaResult} to the outcome expected by the mailbox.
+	 * <ul>
+	 *   <li>{@link QuotaResult.OverQuota}: {@code mail.QUOTA_EXCEEDED}, rejected by LMTP as over quota
+	 *   (552/452 depending on zimbraLmtpPermanentFailureWhenOverQuota)</li>
+	 *   <li>{@link QuotaResult.Unavailable}: {@code service.FAILURE} (receiver's fault), so LMTP
+	 *   replies with a temporary failure (451) and the message stays queued</li>
+	 * </ul>
+	 */
+	private static void enforce(QuotaResult result) throws ServiceException {
+		if (result instanceof QuotaResult.OverQuota) {
+			throw MailServiceException.QUOTA_EXCEEDED(0);
+		}
+		if (result instanceof QuotaResult.Unavailable unavailable) {
+			throw ServiceException.FAILURE(
+					"quota service unavailable: " + unavailable.reason(), unavailable.cause());
 		}
 	}
 
