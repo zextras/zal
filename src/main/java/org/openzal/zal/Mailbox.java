@@ -29,7 +29,7 @@ import com.zimbra.cs.index.SearchParams;
 import com.zimbra.cs.index.SortBy;
 import com.zimbra.cs.index.ZimbraQueryResults;
 import com.zimbra.cs.mailbox.ACL;
-import com.zimbra.cs.mailbox.CalendarItem.ReplyInfo;
+import com.zimbra.cs.mailbox.Appointment.ReplyInfo;
 import com.zimbra.cs.mailbox.DeliveryOptions;
 import com.zimbra.cs.mailbox.Folder.FolderOptions;
 import com.zimbra.cs.mailbox.MailItem;
@@ -413,50 +413,16 @@ public class Mailbox
   {
     try
     {
-      if (inDumpster)
+      List<MailItem> mailItems =
+          mMbox.getAllRevisions(zContext.getOperationContext(), id, Item.convertType(type), inDumpster);
+
+      List<Item> items = new ArrayList<>(mailItems.size());
+      for (MailItem mailItem : mailItems)
       {
-        beginTransaction("getAllRevisions", zContext);
-        try
-        {
-          Item item = getItemByIdFromDumpster(zContext, id, type);
-
-          MailItem mailItem = item.toZimbra(MailItem.class);
-          List<Item> revisions;
-          List<MailItem> revisionsObject = mailItem.loadRevisions();
-          if (revisionsObject == null)
-          {
-            revisions = Collections.singletonList(item);
-          }
-          else
-          {
-            List<MailItem> zimbraRevisions = revisionsObject;
-            revisions = new ArrayList<>(zimbraRevisions.size());
-            for (MailItem zimbraItem : zimbraRevisions)
-            {
-              revisions.add(new Item(zimbraItem));
-            }
-            revisions.add(item);
-          }
-
-          return revisions;
-        }
-        finally
-        {
-          endTransaction(true);
-        }
+        items.add(new Item(mailItem));
       }
-      else
-      {
-        List<MailItem> mailItems = mMbox.getAllRevisions(zContext.getOperationContext(), id, Item.convertType(type));
 
-        List<Item> items = new ArrayList<>(mailItems.size());
-        for (MailItem mailItem : mailItems)
-        {
-          items.add(new Item(mailItem));
-        }
-
-        return items;
-      }
+      return items;
     }
     catch (ServiceException serviceException)
     {
@@ -755,7 +721,7 @@ public class Mailbox
       String oldMethod = calendarItemData.invite.getMethod();
       if (patchCalendarItemMethod) {
         calendarItemData.invite.setMethod("PUBLISH");
-        com.zimbra.cs.mailbox.CalendarItem calendarItem = calendarItemData.invite.getCalendarItem();
+        com.zimbra.cs.mailbox.Appointment calendarItem = calendarItemData.invite.getCalendarItem();
         String cid = String.format("Message Id: %s from account id %s",
                 calendarItem.getId(),
                 calendarItem.getAccount().getId()
@@ -1011,7 +977,7 @@ public class Mailbox
   {
     try
     {
-      List<com.zimbra.cs.mailbox.CalendarItem> zimbraCalendarItems = mMbox.getCalendarItemsForRange(
+      List<com.zimbra.cs.mailbox.Appointment> zimbraCalendarItems = mMbox.getCalendarItemsForRange(
               octxt.getOperationContext(),
               start,
               end,

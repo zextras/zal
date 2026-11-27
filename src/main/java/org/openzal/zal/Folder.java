@@ -122,7 +122,7 @@ public class Folder extends Item
   {
     try
     {
-      return com.zimbra.cs.mailbox.CalendarItem.allowPrivateAccess(
+      return com.zimbra.cs.mailbox.Appointment.allowPrivateAccess(
         (com.zimbra.cs.mailbox.Folder) mMailItem,
         (com.zimbra.cs.account.Account) account.toZimbra(),
         false

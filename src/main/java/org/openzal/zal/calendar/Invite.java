@@ -24,7 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.zimbra.common.calendar.ParsedDateTime;
 import com.zimbra.common.calendar.ZCalendar;
 import com.zimbra.common.service.ServiceException;
-import com.zimbra.cs.mailbox.CalendarItem;
+import com.zimbra.cs.mailbox.Appointment;
 import com.zimbra.cs.mailbox.Metadata;
 import com.zimbra.cs.mailbox.calendar.Alarm;
 import com.zimbra.cs.mailbox.calendar.CalendarMailSender;
@@ -348,7 +348,7 @@ public class Invite
   {
     List<Invite> inviteList = new LinkedList<Invite>();
 
-    CalendarItem calendarItem;
+    Appointment calendarItem;
     try
     {
       calendarItem = mInvite.getCalendarItem();
@@ -395,7 +395,7 @@ public class Invite
   {
     List<Long> startTimeOfDeletedInstances = new LinkedList<Long>();
 
-    CalendarItem calendarItem;
+    Appointment calendarItem;
     try
     {
       calendarItem = mInvite.getCalendarItem();
