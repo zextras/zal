@@ -46,12 +46,12 @@ import java.util.List;
 
 public class CalendarItem extends Item
 {
-  @Nonnull private final com.zimbra.cs.mailbox.CalendarItem mCalendarItem;
+  @Nonnull private final com.zimbra.cs.mailbox.Appointment mCalendarItem;
 
   public CalendarItem(@Nonnull Object item)
   {
     super((MailItem) item);
-    mCalendarItem = (com.zimbra.cs.mailbox.CalendarItem) item;
+    mCalendarItem = (com.zimbra.cs.mailbox.Appointment) item;
   }
 
     public void copyReplyInfoTo(CalendarItem calendar)

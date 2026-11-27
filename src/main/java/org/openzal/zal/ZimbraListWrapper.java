@@ -346,7 +346,7 @@ public class ZimbraListWrapper
   }
 
   @Nonnull
-  public static List<CalendarItem> wrapCalendarItems(@Nullable List<com.zimbra.cs.mailbox.CalendarItem> zimbraCalendarItems)
+  public static List<CalendarItem> wrapCalendarItems(@Nullable List<com.zimbra.cs.mailbox.Appointment> zimbraCalendarItems)
   {
     if (zimbraCalendarItems == null || zimbraCalendarItems.size() == 0)
     {
@@ -354,7 +354,7 @@ public class ZimbraListWrapper
     }
     List<CalendarItem> list = new ArrayList<CalendarItem>();
 
-    for (com.zimbra.cs.mailbox.CalendarItem calendarItem : zimbraCalendarItems)
+    for (com.zimbra.cs.mailbox.Appointment calendarItem : zimbraCalendarItems)
     {
       list.add(new CalendarItem(calendarItem));
     }

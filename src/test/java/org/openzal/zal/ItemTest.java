@@ -9,6 +9,6 @@ public class ItemTest
   @Test
   public void reflection_initialization()
   {
-    Item item = new Item(mock(com.zimbra.cs.mailbox.MailItem.class));
+    Item item = new Item(mock(com.zimbra.cs.mailbox.Message.class));
   }
 }
