@@ -1013,12 +1013,15 @@ public class Mailbox
     {
       List<com.zimbra.cs.mailbox.CalendarItem> zimbraCalendarItems = mMbox.getCalendarItemsForRange(
               octxt.getOperationContext(),
-              Item.convertType(type),
               start,
               end,
               folderId,
               excludeFolders
       );
+      if (type != Item.TYPE_APPOINTMENT && type != Item.TYPE_UNKNOWN)
+      {
+        return new ArrayList<>();
+      }
 
       return ZimbraListWrapper.wrapCalendarItems(zimbraCalendarItems);
     }
