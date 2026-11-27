@@ -3,7 +3,7 @@ package org.openzal.zal.db;
 public class DbPool {
 
   public static void startup() {
-    com.zimbra.cs.db.DbPool.global(com.zimbra.cs.db.Db.getInstance());
+    com.zimbra.cs.db.DbPool.global(com.zextras.db.MariaDB.fromLocalConfig());
   }
 
   public static void shutdown() throws Exception {
